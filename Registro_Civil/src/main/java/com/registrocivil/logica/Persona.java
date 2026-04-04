@@ -6,6 +6,7 @@ public class Persona {
     private String apellido;
     private String estadoCivil;
     private Persona conyuge;
+    private boolean vivo = true;
     
     public Persona(String rut, String nombre, String apellido){
         this.rut = rut;
@@ -56,5 +57,9 @@ public class Persona {
 
     public void setConyuge(Persona conyuge) {
         this.conyuge = conyuge;
+    }
+    
+    public void setVivo(boolean vivo) {
+        this.vivo = vivo;
     }
 }
