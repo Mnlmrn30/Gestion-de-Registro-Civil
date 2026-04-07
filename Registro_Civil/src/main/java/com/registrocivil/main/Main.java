@@ -1,7 +1,8 @@
 package com.registrocivil.main;
 
 import com.registrocivil.logica.GestionSistema;
-import com.registrocivil.window.VentanaMenu;
+import com.registrocivil.window.*;
+import com.registrocivil.console.*;
 import java.io.*;
 
 public class Main {
@@ -21,7 +22,8 @@ public class Main {
             String opcion = lector.readLine();
             if(opcion.equals("1")){
                 System.out.println("Iniciando modo consola");
-                // Se llamara una clase la cual inicializa el programa en modo consola. 
+                MenuConsola consola = new MenuConsola(sistemaTotal); // Instanciamos el menu para iniciarlo.  
+                consola.iniciar();
             }
             else if (opcion.equals("2")){
                 VentanaMenu menu = new VentanaMenu(sistemaTotal); // Se inicia el sistema en modo ventana.
