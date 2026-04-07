@@ -43,6 +43,34 @@ public class GestionSistema {
         return null;
     }
     
+    // Metodo para mostrar personas en lista por región. 
+    public ArrayList<Persona> listarPersonasRegion(String nombreRegion){
+        if(regiones.containsKey(nombreRegion)){
+            return regiones.get(nombreRegion); // retornamos la lista de personas por región. 
+        }
+        return new ArrayList<>(); //si no existe la region retornamos una lista vacía. 
+    }
+    
+    // Metodo para eliminar personas buscandola por el rut. 
+    public boolean eliminarPersona(String nombreRegion, String rut){
+        Persona personaAEliminar = buscarPorPersonaEnRegion(nombreRegion, rut); 
+        if(personaAEliminar != null){
+            regiones.get(nombreRegion).remove(personaAEliminar);
+            return true;
+        }
+        return false; 
+    }
+    
+    // Metodo que cambia los datos de un objeto persona. 
+    public boolean editarPersona(String nombreRegion, String rut, String nuevoNombre, String nuevoApellido){
+        Persona personaAEditar = buscarPorPersonaEnRegion(nombreRegion, rut); 
+        if(personaAEditar != null){
+            personaAEditar.setNombre(nuevoNombre); 
+            personaAEditar.setApellido(nuevoApellido);
+            return true; 
+        }
+        return false; 
+    }
     public String[] getNombreRegiones(){
         return regiones.keySet().toArray(new String[0]);
     }
