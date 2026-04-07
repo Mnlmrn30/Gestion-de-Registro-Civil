@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class GestionSistema {
-    private HashMap <String, ArrayList<Persona>> regiones;
+    private HashMap <String, Region> regiones;
     
     public GestionSistema(){
         this.regiones = new HashMap<>();
@@ -14,7 +14,7 @@ public class GestionSistema {
             "Los Rios", "Los Lagos", "Aysen","Magallanes"};
         
         for (String r : listaRegiones){
-            regiones.put(r, new ArrayList<Persona>());
+            regiones.put(r, new Region(r));
         }
         cargarDatosPrueba();
     }
@@ -27,13 +27,13 @@ public class GestionSistema {
     }
     public void registrarNacimiento(String nombreRegion, Persona p){
         if(regiones.containsKey(nombreRegion)){
-            regiones.get(nombreRegion).add(p);
+            regiones.get(nombreRegion).getCiudadanos().add(p);
         }
     }
     
     public Persona buscarPorPersonaEnRegion(String nombreRegion, String rut){
         if(regiones.containsKey(nombreRegion)){
-            ArrayList<Persona> lista = regiones.get(nombreRegion);
+            ArrayList<Persona> lista = regiones.get(nombreRegion).getCiudadanos();
             for(Persona p : lista){
                 if(p.getRut().equals(rut)){
                     return p;
@@ -43,10 +43,19 @@ public class GestionSistema {
         return null;
     }
     
+    // Metodo para agregar región. 
+    public boolean agregarRegion(String nombreRegion){
+        if(!regiones.containsKey(nombreRegion)){
+            regiones.put(nombreRegion, new Region(nombreRegion));
+            return true; 
+        }
+        return false; 
+    }
+    
     // Metodo para mostrar personas en lista por región. 
     public ArrayList<Persona> listarPersonasRegion(String nombreRegion){
         if(regiones.containsKey(nombreRegion)){
-            return regiones.get(nombreRegion); // retornamos la lista de personas por región. 
+            return regiones.get(nombreRegion).getCiudadanos(); // retornamos la lista de personas por región. 
         }
         return new ArrayList<>(); //si no existe la region retornamos una lista vacía. 
     }
@@ -55,7 +64,7 @@ public class GestionSistema {
     public boolean eliminarPersona(String nombreRegion, String rut){
         Persona personaAEliminar = buscarPorPersonaEnRegion(nombreRegion, rut); 
         if(personaAEliminar != null){
-            regiones.get(nombreRegion).remove(personaAEliminar);
+            regiones.get(nombreRegion).getCiudadanos().remove(personaAEliminar);
             return true;
         }
         return false; 
