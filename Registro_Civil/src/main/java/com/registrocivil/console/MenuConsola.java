@@ -32,17 +32,19 @@ public class MenuConsola extends MenuBase{
                         menuCiudadanos.iniciar(); 
                         break;
                     case "3": 
+                        
                         System.out.println(" === SALIENDO A MENU INTERFACES === "); 
+                        salir = true;
                         break;
                     default:
                         System.out.println("Opción Invalida. Intente Nuevamente"); 
                 }
             } catch (IOException e){
                 System.out.println("Error de lectura: "+ e.getMessage());
+            } catch (Exception e){
+                System.out.println("Ocurrió un error en el submenu: " + e.getMessage());
             } 
         }
-        
-        
     }
     
     
