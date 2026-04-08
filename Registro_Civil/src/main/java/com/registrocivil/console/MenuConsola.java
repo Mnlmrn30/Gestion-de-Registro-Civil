@@ -15,6 +15,7 @@ public class MenuConsola extends MenuBase{
     public void iniciar(){
         boolean salir = false; 
         while(!salir){
+            System.out.println("=== SISTEMA REGISTRO CIVIL ===");
             System.out.println("1. Gestionar Regiones");
             System.out.println("2. Gestionar Ciudadanos"); 
             System.out.println("3. Salir Menu Interfaz"); 
@@ -32,8 +33,7 @@ public class MenuConsola extends MenuBase{
                         menuCiudadanos.iniciar(); 
                         break;
                     case "3": 
-                        
-                        System.out.println(" === SALIENDO A MENU INTERFACES === "); 
+                        System.out.println(" === SALIENDO. CERRANDO SISTEMA === "); 
                         salir = true;
                         break;
                     default:
