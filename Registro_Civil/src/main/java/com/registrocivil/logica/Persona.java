@@ -2,64 +2,27 @@ package com.registrocivil.logica;
 
 public class Persona {
     private String rut;
-    private String nombre;
-    private String apellido;
-    private String estadoCivil;
-    private Persona conyuge;
-    private boolean vivo = true;
-    
-    public Persona(String rut, String nombre, String apellido){
+    private String primerNombre;
+    private String segundoNombre;
+    private String primerApellido;
+    private String segundoApellido;
+
+    public Persona(String rut, String primerNombre, String segundoNombre, String primerApellido, String segundoApellido) {
         this.rut = rut;
-        this.nombre = nombre;
-        this.apellido = apellido;
-        this.estadoCivil = "Soltero";
-        this.conyuge = null;
-    }
-    @Override
-    public String toString(){
-        return "RUT : " + rut + " | Nombre: " + nombre + " " + apellido + " |Estado Civil: " + estadoCivil;
-    }
-    public String getRut() {
-        return rut;
+        this.primerNombre = primerNombre;
+        this.segundoNombre = (segundoNombre == null || segundoNombre.trim().isEmpty()) ? "" : segundoNombre.trim();
+        this.primerApellido = primerApellido;
+        this.segundoApellido = segundoApellido;
     }
 
-    public void setRut(String rut) {
-        this.rut = rut;
+    public Persona(String rut, String primerNombre, String primerApellido) {
+        this(rut, primerNombre, "", primerApellido, ""); 
     }
 
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public String getApellido() {
-        return apellido;
-    }
-
-    public void setApellido(String apellido) {
-        this.apellido = apellido;
-    }
-
-    public String getEstadoCivil() {
-        return estadoCivil;
-    }
-
-    public void setEstadoCivil(String estadoCivil) {
-        this.estadoCivil = estadoCivil;
-    }
-
-    public Persona getConyuge() {
-        return conyuge;
-    }
-
-    public void setConyuge(Persona conyuge) {
-        this.conyuge = conyuge;
-    }
     
-    public void setVivo(boolean vivo) {
-        this.vivo = vivo;
-    }
+    public String getRut() { return rut; }
+    public String getPrimerNombre() { return primerNombre; }
+    public String getSegundoNombre() { return segundoNombre; }
+    public String getPrimerApellido() { return primerApellido; }
+    public String getSegundoApellido() { return segundoApellido; }
 }
