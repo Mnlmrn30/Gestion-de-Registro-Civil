@@ -1,117 +1,94 @@
-package com.registrocivil.logica;
+package com.registrocivil.logica; 
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.util.HashMap;
+import java.util.ArrayList; 
 
-public class GestionSistema {
-
-    private final String url = "jdbc:sqlite:registrocivil.db"; 
-
-    public GestionSistema() {
-        crearTablas();
-        // Manu o Hanss Puedes descomentar la siguiente línea si quieres que se carguen 
-        // los datos de prueba la primera vez que se crea la base de datos.
-        cargarDatosPrueba(); 
+public class GestionSistema{
+    private HashMap<String, Region> regiones; 
+    public GestionSistema(){
+        regiones = new HashMap<>(); 
+        inicializarRegiones(); 
+        cargarDatosPrueba();
     }
-
-    private Connection conectar() {
-        Connection conn = null;
-        try {
-            conn = DriverManager.getConnection(url);
-        } catch (SQLException e) {
-            System.out.println("Error de conexión a SQLite: " + e.getMessage());
-        }
-        return conn;
-    }
-
-    private void crearTablas() {
-        String sql = "CREATE TABLE IF NOT EXISTS personas (\n"
-                + " rut TEXT PRIMARY KEY,\n"
-                + " nombre TEXT NOT NULL,\n"
-                + " apellido TEXT NOT NULL,\n"
-                + " estado_civil TEXT NOT NULL,\n"
-                + " rut_conyuge TEXT,\n" 
-                + " region TEXT NOT NULL\n"
-                + ");";
-
-        try (Connection conn = conectar();
-             Statement stmt = conn.createStatement()) {
-            stmt.execute(sql);
-        } catch (SQLException e) {
-            System.out.println("Error al crear la tabla: " + e.getMessage());
-        }
-    }
-
-    private void cargarDatosPrueba(){
-        Persona p1 = new Persona("21.943.128-7", "Manuel", "Moreno");
-        Persona p2 = new Persona("22.023.557-2", "Hans", "Paz");
-        registrarNacimiento("Antofagasta", p1);
-        registrarNacimiento("Coquimbo", p2);
-    }
-
-    public void registrarNacimiento(String nombreRegion, Persona p) {
-        String sql = "INSERT INTO personas(rut, nombre, apellido, estado_civil, rut_conyuge, region) VALUES(?,?,?,?,?,?)";
-
-        try (Connection conn = conectar();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            
-            pstmt.setString(1, p.getRut());
-            pstmt.setString(2, p.getNombre()); 
-            pstmt.setString(3, p.getApellido()); 
-            pstmt.setString(4, p.getEstadoCivil());
-            
-            if (p.getConyuge() != null) {
-                pstmt.setString(5, p.getConyuge().getRut());
-            } else {
-                pstmt.setString(5, null);
-            }
-            
-            pstmt.setString(6, nombreRegion);
-            
-            pstmt.executeUpdate();
-            System.out.println("Registro guardado con éxito en la Base de Datos: " + p.getNombre());
-            
-        } catch (SQLException e) {
-            System.out.println("Error al registrar (¿El RUT ya existe?): " + e.getMessage());
-        }
-    }
-
-    public Persona buscarPorPersonaEnRegion(String nombreRegion, String rut) {
-        String sql = "SELECT * FROM personas WHERE region = ? AND rut = ?";
-        Persona personaEncontrada = null;
-
-        try (Connection conn = conectar();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            
-            pstmt.setString(1, nombreRegion);
-            pstmt.setString(2, rut);
-            ResultSet rs = pstmt.executeQuery();
-
-            if (rs.next()) {
-                personaEncontrada = new Persona(
-                        rs.getString("rut"),
-                        rs.getString("nombre"),
-                        rs.getString("apellido")
-                );
-                personaEncontrada.setEstadoCivil(rs.getString("estado_civil"));
-            }
-        } catch (SQLException e) {
-            System.out.println("Error al buscar en la Base de Datos: " + e.getMessage());
-        }
-        
-        return personaEncontrada;
-    }
-
-    public String[] getNombreRegiones() {
-        return new String[]{
-            "Arica y Parinacota", "Tarapaca", "Antofagasta", "Atacama", "Coquimbo", 
+    
+    private void inicializarRegiones(){
+        String[] nombresRegiones = {"Arica y Parinacota", "Tarapaca", "Antofagasta", "Atacama", "Coquimbo", 
             "Valparaiso", "Metropolitana de Santiago", "Bernardo O'Higgins", 
             "Maule", "Ñuble", "Biobio", "La Araucania", "Los Rios", "Los Lagos", 
-            "Aysen", "Magallanes"
-        };
+            "Aysen", "Magallanes"}; 
+        
+        for (String nombre: nombresRegiones){
+            regiones.put(nombre, new Region(nombre)); 
+        }
     }
+    
+    private void cargarDatosPrueba(){
+        registrarNacimiento("Antofagasta", "21.943.128-7", "Manuel", "Sebastian", "Moreno","Galleguillos", "Masculino", 30,9,2005);
+        registrarNacimiento("Coquimbo","22.023.557-2", "Hans", "Paulo", "Paz", "Bonilla", "Masculino", 17, 1, 2006); 
+    }
+    
+    public HashMap<String, Region> getRegiones(){
+        return regiones; 
+    }
+    
+    public boolean registrarNacimiento(String nombreRegion, String rut, String primerNombre, String segundoNombre, String primerApellido, String segundoApellido,
+                                  String sexo, int diaNac, int mesNac, int añoNac){
+        if(regiones.containsKey(nombreRegion)){
+            Persona nuevaPersona = new Persona(rut, primerNombre, segundoNombre, primerApellido, segundoApellido, sexo, diaNac, mesNac, añoNac); 
+            regiones.get(nombreRegion).getCiudadanos().add(nuevaPersona);
+            return true; 
+        }
+        return false; 
+    }
+    
+    public boolean editarPersona(String nombreRegion, String rut, String nuevoPrimerNombre, String nuevoSegundoNombre, String nuevoPrimerApellido, String nuevoSegundoApellido, String nuevoSexo, int nuevoDia, int nuevoMes, int nuevoAñoNac) {
+        Persona personaAEditar = buscarPersona(nombreRegion, rut);
+        
+        if(personaAEditar != null){
+            personaAEditar.setPrimerNombre(nuevoPrimerNombre);
+            personaAEditar.setSegundoNombre(nuevoSegundoNombre);
+            personaAEditar.setPrimerApellido(nuevoPrimerApellido);
+            personaAEditar.setSegundoApellido(nuevoSegundoApellido);
+            personaAEditar.setSexo(nuevoSexo);
+            personaAEditar.setDiaNacimiento(nuevoDia);
+            personaAEditar.setMesNacimiento(nuevoMes);
+            personaAEditar.setAñoNacimiento(nuevoAñoNac);
+            return true;
+        }
+        return false;
+    }
+    
+    public boolean eliminarPersona(String nombreRegion, String rut) {
+        Persona personaAEliminar = buscarPersona(nombreRegion, rut);
+        if(personaAEliminar != null){
+            regiones.get(nombreRegion).getCiudadanos().remove(personaAEliminar);
+            return true;
+        }
+        return false;
+    }
+    
+    // Primera busqueda de persona por Rut 
+    public Persona buscarPersona(String nombreRegion, String rut) {
+        if(regiones.containsKey(nombreRegion)){
+            for(Persona p : regiones.get(nombreRegion).getCiudadanos()){
+                if(p.getRut().equals(rut)){
+                    return p;
+                }
+            }
+        }
+        return null; 
+    }
+    // Segunda busqueda de persona por Nombre y Apellidos 
+    public Persona buscarPersona(String nombreRegion, String primerNombre, String primerApellido) {
+        if(regiones.containsKey(nombreRegion)){
+            for(Persona p : regiones.get(nombreRegion).getCiudadanos()){
+                if(p.getPrimerNombre().equalsIgnoreCase(primerNombre) && p.getPrimerApellido().equalsIgnoreCase(primerApellido)){
+                    return p;
+                }
+            }
+        }
+        return null;
+    }
+    
+    
 }
