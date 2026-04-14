@@ -230,15 +230,15 @@ public class GestorConsolaCiudadano {
                 
                     if(persona.getPadre() != null){
                         System.out.println("\n---------------------------------------------------------");
-                        System.out.println("RUT             : " + persona.getPadre().getRut());
-                        System.out.println("NOMBRES         : " + persona.getPadre().getPrimerNombre() + " " + persona.getPadre().getSegundoNombre());
-                        System.out.println("APELLIDOS       : " + persona.getPadre().getPrimerApellido() + " " + persona.getPadre().getSegundoApellido());
+                        System.out.println("RUT DEL PADRE           : " + persona.getPadre().getRut());
+                        System.out.println("NOMBRES DEL PADRE         : " + persona.getPadre().getPrimerNombre() + " " + persona.getPadre().getSegundoNombre());
+                        System.out.println("APELLIDOS DEL PADRE       : " + persona.getPadre().getPrimerApellido() + " " + persona.getPadre().getSegundoApellido());
                     }
                     if(persona.getMadre() != null){
                         System.out.println("\n---------------------------------------------------------");
-                        System.out.println("RUT             : " + persona.getMadre().getRut());
-                        System.out.println("NOMBRES         : " + persona.getMadre().getPrimerNombre() + " " + persona.getMadre().getSegundoNombre());
-                        System.out.println("APELLIDOS       : " + persona.getMadre().getPrimerApellido() + " " + persona.getMadre().getSegundoApellido()); 
+                        System.out.println("RUT DE LA MADRE            : " + persona.getMadre().getRut());
+                        System.out.println("NOMBRES DE LA MADRE         : " + persona.getMadre().getPrimerNombre() + " " + persona.getMadre().getSegundoNombre());
+                        System.out.println("APELLIDOS DE LA MADRE       : " + persona.getMadre().getPrimerApellido() + " " + persona.getMadre().getSegundoApellido()); 
                     }
                 
                 } else if(opcion.equals("2")){

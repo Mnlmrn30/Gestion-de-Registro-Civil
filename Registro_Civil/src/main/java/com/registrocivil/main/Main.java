@@ -12,6 +12,9 @@ public class Main {
         
         BufferedReader lector = new BufferedReader(new InputStreamReader(System.in));
         
+        System.out.println("--- CARGANDO DATOS INICIALES ---"); 
+        sistemaTotal.cargarDatosDesdeBD();
+        
         System.out.println("===============================");
         System.out.println("   SISTEMA DE REGISTRO CIVIL   ");
         System.out.println("===============================");
@@ -27,6 +30,8 @@ public class Main {
                 System.out.println("\nIniciando modo consola...");
                 MenuConsola consola = new MenuConsola(sistemaTotal); 
                 consola.iniciar();
+                System.out.println("\n[SISTEMA] GUARDANDO DATOS EN EL SISTEMA. ");
+                sistemaTotal.guardarDatosEnBD();
             }
             else if (opcion.equals("2")) {
                 System.out.println("\nIniciando modo ventana...");
