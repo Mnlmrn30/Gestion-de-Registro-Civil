@@ -15,12 +15,11 @@ public class GestorConsolaCiudadano1 {
     
     public void inscribirNacimiento(){
         try{
-            System.out.println("=== 2. INSCRIBIR NACIMIENTO ===");
-            System.out.print("Ingrese la Región: ");
+            System.out.println("=== 2. INSCRIBIR NACIMIENTO (RECIÉN NACIDO) ===");
+            System.out.print("Ingrese la Región de nacimiento: ");
             String region = lector.readLine();
-            System.out.print("Ingrese RUT del recién nacido (Ej: 24.123.456-7): ");
-            String rut = lector.readLine();
-            System.out.print("Ingrese Primer Nombre: ");
+            
+            System.out.print("Ingrese Primer Nombre del recién nacido: ");
             String pNombre = lector.readLine();
             System.out.print("Ingrese Segundo Nombre (Deje en blanco si no tiene): ");
             String sNombre = lector.readLine();
@@ -37,10 +36,19 @@ public class GestorConsolaCiudadano1 {
             int mes = Integer.parseInt(lector.readLine());
             System.out.println("Año de Nacimiento: ");
             int año = Integer.parseInt(lector.readLine());
+            
+            System.out.println("\n--- Datos de los Progenitores ---");
+            System.out.print("Ingrese RUT del Padre (Deje en blanco si no aplica): ");
+            String rutPadre = lector.readLine();
+            System.out.print("Ingrese RUT de la Madre (Deje en blanco si no aplica): ");
+            String rutMadre = lector.readLine();
         
-            boolean exito = sistema.registrarPersona(region, rut, pNombre, sNombre, pApellido, sApellido, sexo, dia, mes, año); 
-            if(exito){
-                System.out.println("-> ¡Nacimiento registrado exitosamente en " + region + "!"); 
+            String rutGenerado = sistema.registrarNacimiento(region, pNombre, sNombre, pApellido, sApellido, sexo, dia, mes, año, rutPadre, rutMadre); 
+            
+            if(rutGenerado != null){
+                System.out.println("-> ¡Nacimiento registrado exitosamente"); 
+                System.out.println("-> *** RUT ASIGNADO AL RECIÉN NACIDO: " + rutGenerado + " ***");
+                
             }
             else{
                 System.out.println("-> Error: No se pudo registrar. Verifique los datos ingresados"); 

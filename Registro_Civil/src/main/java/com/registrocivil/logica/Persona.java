@@ -12,6 +12,8 @@ public class Persona {
     private int añoNac; 
     private String estadoCivil; 
     private Persona conyuge; 
+    private Persona padre; 
+    private Persona madre; 
     
     public Persona(String rut, String primerNombre, String segundoNombre, String primerApellido, String segundoApellido, String sexo, int dia, int mes, int añoNac) {
         this.rut = rut;
@@ -26,6 +28,9 @@ public class Persona {
        
         estadoCivil = "Soltero/a"; 
         conyuge = null; 
+        
+        padre = null; 
+        madre = null;
     }
     
     public String getRut() { return rut; }
@@ -56,10 +61,16 @@ public class Persona {
     public void setAñoNacimiento(int añoNac){this.añoNac = añoNac;}
     
     public String getEstadoCivil(){ return estadoCivil;}
-    public void setEstadoCvil(String estadoCivil){ this.estadoCivil = estadoCivil;} 
+    public void setEstadoCivil(String estadoCivil){ this.estadoCivil = estadoCivil;} 
     
     public Persona getConyuge(){ return conyuge;}
     public void setConyuge(Persona p){this.conyuge = p;} 
+    
+    public Persona getPadre(){ return padre;}
+    public void setPadre(Persona p){this.padre = p;} 
+    
+    public Persona getMadre(){ return madre;}
+    public void setMadre(Persona p){this.madre = p;} 
     
     
 }
