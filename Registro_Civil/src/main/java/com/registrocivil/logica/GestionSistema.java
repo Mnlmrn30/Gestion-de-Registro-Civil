@@ -12,6 +12,7 @@ public class GestionSistema{
     public GestionSistema(){
         regiones = new HashMap<>(); 
         inicializarRegiones(); 
+        crearTabla();
         cargarDatosPrueba();
     }
     
@@ -157,6 +158,30 @@ public class GestionSistema{
         return true; 
     }
     
+    private void crearTabla(){
+        String sql = "CREATE TABLE IF NOT EXISTS Persona (\n" +
+                     " rut TEXT PRIMARY KEY,\n" +
+                     " region TEXT NOT NULL,\n" +
+                     " primer_nombre TEXT,\n" +
+                     " segundo_nombre TEXT,\n" +
+                     " primer_apellido TEXT,\n" +
+                     " segundo_apellido TEXT,\n" +
+                     " sexo TEXT,\n" +
+                     " dia INTEGER,\n" +
+                     " mes INTEGER,\n" +
+                     " anio INTEGER,\n" +
+                     " estado_civil TEXT\n" +
+                     ");";
+        try(Connection conn = DriverManager.getConnection(URL_BD);
+            Statement stmt = conn.createStatement()) {
+            stmt.execute(sql);
+        } catch (SQLException e) {
+            System.out.println("Error al crear la tabla: " + e.getMessage());
+        }
+    }
+   
+    
+    
     public void cargarDatosDesdeBD(){
         String sql = "SELECT * FROM Persona";
         try(Connection conn = DriverManager.getConnection(URL_BD);
@@ -170,7 +195,15 @@ public class GestionSistema{
                 String pApellido = rs.getString("primer_apellido");
                 String sApellido = rs.getString("segundo_apellido");
                 String sexo = rs.getString("sexo");
-                this.registrarPersona(region, rut, pNombre, sNombre, pApellido, sApellido, sexo, 1, 1, 2000);
+                int dia = rs.getInt("dia");
+                int mes = rs.getInt("mes");
+                int anio = rs.getInt("anio");
+                this.registrarPersona(region, rut, pNombre, sNombre, pApellido, sApellido, sexo, dia, mes, anio);
+                
+                Persona p = buscarPersona(region, rut);
+                if(p!=null){
+                    p.setEstadoCivil(rs.getString("estado_civil")); 
+                }
             }
             System.out.println("DATOS CARGADOS CORRECTAMENTE DESDE SQLITE");
         } catch (SQLException e){
@@ -196,6 +229,11 @@ public class GestionSistema{
                     pstmt.setString(5, p.getPrimerApellido());
                     pstmt.setString(6, p.getSegundoApellido());
                     pstmt.setString(7, p.getSexo());
+                    pstmt.setInt(8, p.getDiaNacimiento());
+                    pstmt.setInt(9, p.getMesNacimiento());
+                    pstmt.setInt(10, p.getAñoNacimiento());
+                    pstmt.setString(11, p.getEstadoCivil());
+                    
                     pstmt.addBatch(); 
                 }
             }
