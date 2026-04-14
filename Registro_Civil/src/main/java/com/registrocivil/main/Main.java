@@ -6,10 +6,10 @@ import java.io.*;
 
 public class Main {
     public static void main(String[] arr) throws IOException {
-        // 1. Iniciamos tu súper base de datos SQLite
+        
         GestionSistema sistemaTotal = new GestionSistema();
         
-        // 2. Lector para elegir el modo
+        
         BufferedReader lector = new BufferedReader(new InputStreamReader(System.in));
         
         System.out.println("===============================");
