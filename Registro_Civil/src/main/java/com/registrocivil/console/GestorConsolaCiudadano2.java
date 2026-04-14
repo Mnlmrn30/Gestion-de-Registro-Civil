@@ -4,6 +4,7 @@ package com.registrocivil.console;
 import com.registrocivil.logica.GestionSistema;
 import com.registrocivil.logica.Persona;
 import java.io.BufferedReader;
+import java.io.IOException;
 // MANUEL MORENO GALLEGUILLOS --- REGISTRO GENERAL Y REGISTRAR DEFUNCION
 
 public class GestorConsolaCiudadano2 {
@@ -41,7 +42,7 @@ public class GestorConsolaCiudadano2 {
             }
         } catch (NumberFormatException e) {
             System.out.println("Error: Por favor, ingrese números válidos para la fecha de nacimiento.");
-        } catch (Exception e) {
+        } catch (IOException e) {
             System.out.println("Error al ingresar los datos: " + e.getMessage());
         }
     }
@@ -74,7 +75,7 @@ public class GestorConsolaCiudadano2 {
             } else {
                 System.out.println("Error: No se encontro ningun ciudadano con el RUT " + rut + " en la region de " + region + ".");
             }
-        } catch (Exception e){
+        } catch (IOException e){
             System.out.println("Error al registrar la defuncion: " + e.getMessage());
         }
     }

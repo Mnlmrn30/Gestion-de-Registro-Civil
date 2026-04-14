@@ -24,18 +24,20 @@ public class SubMenuCiudadanos extends MenuBase{
             System.out.println("Seleccione Opción: "); 
             
             String op = lector.readLine(); 
+            GestorConsolaCiudadano gestor = new GestorConsolaCiudadano();
+            
             switch(op){
                 case "1":
-                    System.out.println("=== PROCESO === ");
+                    gestor.registroGeneral();
                     break; 
                 case "2":
-                    System.out.println("=== PROCESO === ");
+                    gestor.inscribirNacimiento();
                     break; 
                 case "3": 
                     System.out.println("=== PROCESO === ");
                     break;
                 case "4":
-                    System.out.println("=== PROCESO === ");
+                    gestor.RegistrarDefuncion();
                     break; 
                 case "5":
                     System.out.println("=== PROCESO === ");
