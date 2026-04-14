@@ -24,16 +24,14 @@ public class Main {
             
             if(opcion.equals("1")) {
                 System.out.println("\nIniciando modo consola...");
-                // Instanciamos el menu de consola conectándolo a SQLite
                 MenuConsola consola = new MenuConsola(sistemaTotal); 
                 consola.iniciar();
             }
             else if (opcion.equals("2")) {
                 System.out.println("\nIniciando modo ventana...");
-                // Forma profesional y segura (Thread-Safe) de iniciar ventanas en Java
                 java.awt.EventQueue.invokeLater(new Runnable() {
                     public void run() {
-                        new VentanaMenu(sistemaTotal).setVisible(true);
+                        // new VentanaMenu(sistemaTotal).setVisible(true);
                     }
                 });
             }
