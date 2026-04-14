@@ -23,15 +23,15 @@ public class GestionSistema{
     }
     
     private void cargarDatosPrueba(){
-        registrarNacimiento("Antofagasta", "21.943.128-7", "Manuel", "Sebastian", "Moreno","Galleguillos", "Masculino", 30,9,2005);
-        registrarNacimiento("Coquimbo","22.023.557-2", "Hans", "Paulo", "Paz", "Bonilla", "Masculino", 17, 1, 2006); 
+        registrarPersona("Antofagasta", "21.943.128-7", "Manuel", "Sebastian", "Moreno","Galleguillos", "Masculino", 30,9,2005);
+        registrarPersona("Coquimbo","22.023.557-2", "Hans", "Paulo", "Paz", "Bonilla", "Masculino", 17, 1, 2006); 
     }
     
     public HashMap<String, Region> getRegiones(){
         return regiones; 
     }
     
-    public boolean registrarNacimiento(String nombreRegion, String rut, String primerNombre, String segundoNombre, String primerApellido, String segundoApellido,
+    public boolean registrarPersona(String nombreRegion, String rut, String primerNombre, String segundoNombre, String primerApellido, String segundoApellido,
                                   String sexo, int diaNac, int mesNac, int añoNac){
         if(regiones.containsKey(nombreRegion)){
             Persona nuevaPersona = new Persona(rut, primerNombre, segundoNombre, primerApellido, segundoApellido, sexo, diaNac, mesNac, añoNac); 
