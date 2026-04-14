@@ -128,5 +128,31 @@ public class GestionSistema{
         return null;
     }
     
+    public boolean registrarMatrimonio(String rut1, String rut2){
+        Persona p1 = busquedaGlobalPersona(rut1); 
+        Persona p2 = busquedaGlobalPersona(rut2);
+        
+        if(p1 == null || p2==null){
+            return false; 
+        }
+        if(p1.getRut().equals(p2.getRut())){
+            return false;
+        }
+        if (!p1.getEstadoCivil().equals("Soltero/a") && !p1.getEstadoCivil().equals("Viudo/a")) {
+        return false;
+        }
+        if (!p2.getEstadoCivil().equals("Soltero/a") && !p2.getEstadoCivil().equals("Viudo/a")) {
+            return false;
+        }
+        
+        p1.setEstadoCivil("Casado/a");
+        p2.setEstadoCivil("Casado/a");
+        
+        p1.setConyuge(p2);
+        p2.setConyuge(p1);
+        
+        return true; 
+    }
+    
     
 }

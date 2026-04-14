@@ -1,11 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package com.registrocivil.console;
 
-// uniremos todo aqui luego de cada uno terminar su parte
 
 import com.registrocivil.logica.GestionSistema;
 import com.registrocivil.logica.Persona;
@@ -99,23 +94,42 @@ public class GestorConsolaCiudadano {
             
             if(rutGenerado != null){
                 System.out.println("Nacimiento registrado exitosamente"); 
-                System.out.println("-> *** RUT ASIGNADO AL RECIÉN NACIDO: " + rutGenerado + " ***");
+                System.out.println("*** RUT ASIGNADO AL RECIÉN NACIDO: " + rutGenerado + " ***");
                 
             }
             else{
-                System.out.println("-> Error: No se pudo registrar. Verifique los datos ingresados"); 
+                System.out.println("Error: No se pudo registrar. Verifique los datos ingresados"); 
             }
         }catch(NumberFormatException e){
-            System.out.println("-> Error: Debe ingresar números válidos para la fecha.");
+            System.out.println("Error: Debe ingresar números válidos para la fecha.");
         }catch(IOException e){
-            System.out.println("-> Ocurrió un error en la lectura de datos: " + e.getMessage());
+            System.out.println("Ocurrió un error en la lectura de datos: " + e.getMessage());
         }
     }
     
-    /*
-    AQUI PONER METODO DE MATRIMONIO
-    
-    */
+    public void inscribirMatrimonio(){
+        try{
+            System.out.println("\n=== 3. INSCRIBIR MATRIMONIO ===");
+            System.out.println("Nota: Ambos ciudadanos deben estar previamente registrados y ser solteros/viudos.");
+        
+            System.out.println("Ingrese RUT del primer contrayente: ");
+            String rut1 = lector.readLine();
+            System.out.println("Ingrese RUT del segundo contrayente: ");
+            String rut2 = lector.readLine();
+            
+            boolean exito = sistema.registrarMatrimonio(rut1, rut2); 
+            if(exito){
+                System.out.println("\n¡ÉXITO! El matrimonio se ha registrado en el sistema.");
+                System.out.println("*** El estado civil de ambos ciudadanos ha cambiado a 'Casado/a'. *** ");
+        } else {
+                System.out.println("\nERROR: No se pudo registrar el matrimonio.");
+                System.out.println("Posibles causas: Uno de los RUT no existe, ingresó el mismo RUT dos veces, o uno de los ciudadanos ya está casado.");
+            }
+        }
+        catch(Exception e){
+            System.out.println("Error inesperado al procesar el matrimonio: "+ e.getMessage());
+        }
+    }
     
     public void RegistrarDefuncion(){
         try {
