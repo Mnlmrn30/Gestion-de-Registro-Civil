@@ -15,12 +15,12 @@ public class SubMenuCiudadanos extends MenuBase{
         boolean volver = false; 
         while(!volver){
             System.out.println("==== GESTIÓN DE CIUDADANOS ==== "); 
-            System.out.println("1. Inscribir Ciudadano"); 
-            System.out.println("2. Mostrar Ciudadanos por Region"); 
-            System.out.println("3. Editar Registro Ciudadano"); 
-            System.out.println("4. Eliminar Registro Ciudadano"); 
-            System.out.println("5. Buscar ciudadano");
-            System.out.println("6. Volver Menu Principal");
+            System.out.println("1. Inscribir Ciudadano"); //Registro General 
+            System.out.println("2. Inscribir Nacimiento"); //Registro nacimiento 
+            System.out.println("3. Inscribir Matrimonio"); //Registro Matrimonio
+            System.out.println("4. Registrar Defuncion"); //Registro Defuncion 
+            System.out.println("5. Buscar ciudadano"); //Buscar Ciudadano
+            System.out.println("6. Emitir Certificados"); //Emitir Certificados 
             System.out.println("Seleccione Opción: "); 
             
             String op = lector.readLine(); 

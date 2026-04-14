@@ -1,8 +1,6 @@
 package com.registrocivil.main;
 
 import com.registrocivil.logica.GestionSistema;
-import com.registrocivil.window.*;
-import com.registrocivil.console.*;
 import java.io.*;
 
 public class Main {
