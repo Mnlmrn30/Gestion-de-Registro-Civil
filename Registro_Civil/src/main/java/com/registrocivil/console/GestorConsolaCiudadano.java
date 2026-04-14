@@ -30,25 +30,25 @@ public class GestorConsolaCiudadano {
     public void registroGeneral(){
         try{
             System.out.println("\n 1. INSCRIBIR CIUDADANO (REGISTRO GENERAL)");
-            System.out.print("Ingrese la Región (ej: Coquimbo): ");
+            System.out.println("Ingrese la Región: ");
             String region = lector.readLine();
-            System.out.print("Ingrese RUT (ej: 12.345.678-9): ");
+            System.out.println("Ingrese RUT (ej: 12.345.678-9): ");
             String rut = lector.readLine();
-            System.out.print("Ingrese Primer Nombre: ");
+            System.out.println("Ingrese Primer Nombre: ");
             String primerNombre = lector.readLine();
-            System.out.print("Ingrese Segundo Nombre: ");
+            System.out.println("Ingrese Segundo Nombre: ");
             String segundoNombre = lector.readLine();
-            System.out.print("Ingrese Primer Apellido: ");
+            System.out.println("Ingrese Primer Apellido: ");
             String primerApellido = lector.readLine();
-            System.out.print("Ingrese Segundo Apellido: ");
+            System.out.println("Ingrese Segundo Apellido: ");
             String segundoApellido = lector.readLine();
-            System.out.print("Ingrese Sexo (Masculino/Femenino/Otro): ");
+            System.out.println("Ingrese Sexo (Masculino/Femenino): ");
             String sexo = lector.readLine();
-            System.out.print("Ingrese Día de Nacimiento (número): ");
+            System.out.println("Ingrese Día de Nacimiento: ");
             int dia = Integer.parseInt(lector.readLine());
-            System.out.print("Ingrese Mes de Nacimiento (número): ");
+            System.out.println("Ingrese Mes de Nacimiento: ");
             int mes = Integer.parseInt(lector.readLine());
-            System.out.print("Ingrese Año de Nacimiento (número): ");
+            System.out.println("Ingrese Año de Nacimientos: ");
             int anyo = Integer.parseInt(lector.readLine());
             
             boolean exito = sistema.registrarPersona(region, rut, primerNombre, segundoNombre, primerApellido, segundoApellido, sexo, dia, mes, anyo);
@@ -68,18 +68,18 @@ public class GestorConsolaCiudadano {
     public void inscribirNacimiento(){
         try{
             System.out.println("=== 2. INSCRIBIR NACIMIENTO (RECIÉN NACIDO) ===");
-            System.out.print("Ingrese la Región de nacimiento: ");
+            System.out.println("Ingrese la Región de nacimiento: ");
             String region = lector.readLine();
             
-            System.out.print("Ingrese Primer Nombre del recién nacido: ");
+            System.out.println("Ingrese Primer Nombre del recién nacido: ");
             String pNombre = lector.readLine();
-            System.out.print("Ingrese Segundo Nombre (Deje en blanco si no tiene): ");
+            System.out.println("Ingrese Segundo Nombre (Deje en blanco si no tiene): ");
             String sNombre = lector.readLine();
-            System.out.print("Ingrese Primer Apellido: ");
+            System.out.println("Ingrese Primer Apellido: ");
             String pApellido = lector.readLine();
-            System.out.print("Ingrese Segundo Apellido: ");
+            System.out.println("Ingrese Segundo Apellido: ");
             String sApellido = lector.readLine();
-            System.out.print("Ingrese Sexo (Masculino/Femenino): ");
+            System.out.println("Ingrese Sexo (Masculino/Femenino): ");
             String sexo = lector.readLine();
     
             System.out.println("Día de Nacimiento: ");
@@ -90,9 +90,9 @@ public class GestorConsolaCiudadano {
             int año = Integer.parseInt(lector.readLine());
             
             System.out.println("\n--- Datos de los Progenitores ---");
-            System.out.print("Ingrese RUT del Padre (Deje en blanco si no aplica): ");
+            System.out.println("Ingrese RUT del Padre (Deje en blanco si no aplica): ");
             String rutPadre = lector.readLine();
-            System.out.print("Ingrese RUT de la Madre (Deje en blanco si no aplica): ");
+            System.out.println("Ingrese RUT de la Madre (Deje en blanco si no aplica): ");
             String rutMadre = lector.readLine();
         
             String rutGenerado = sistema.registrarNacimiento(region, pNombre, sNombre, pApellido, sApellido, sexo, dia, mes, año, rutPadre, rutMadre); 
@@ -120,10 +120,10 @@ public class GestorConsolaCiudadano {
     public void RegistrarDefuncion(){
         try {
             System.out.println("\n--- 4. REGISTRAR DEFUNCIÓN ---");
-            System.out.print("Ingrese la Región en la que está inscrito el ciudadano: ");
+            System.out.println("Ingrese la Región en la que está inscrito el ciudadano: ");
             String region = lector.readLine();
             
-            System.out.print("Ingrese el RUT del fallecido: ");
+            System.out.println("Ingrese el RUT del fallecido: ");
             String rut = lector.readLine();
 
             Persona fallecido = sistema.buscarPersona(region, rut);

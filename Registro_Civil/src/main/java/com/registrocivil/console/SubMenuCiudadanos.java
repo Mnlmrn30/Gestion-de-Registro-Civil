@@ -24,7 +24,7 @@ public class SubMenuCiudadanos extends MenuBase{
             System.out.println("Seleccione Opción: "); 
             
             String op = lector.readLine(); 
-            GestorConsolaCiudadano gestor = new GestorConsolaCiudadano();
+            GestorConsolaCiudadano gestor = new GestorConsolaCiudadano(sistema, lector);
             
             switch(op){
                 case "1":
