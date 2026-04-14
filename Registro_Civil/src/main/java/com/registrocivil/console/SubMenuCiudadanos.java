@@ -34,7 +34,7 @@ public class SubMenuCiudadanos extends MenuBase{
                     gestor.inscribirNacimiento();
                     break; 
                 case "3": 
-                    System.out.println("=== PROCESO === ");
+                    gestor.inscribirMatrimonio();
                     break;
                 case "4":
                     gestor.RegistrarDefuncion();

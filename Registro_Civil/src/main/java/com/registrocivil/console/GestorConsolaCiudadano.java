@@ -43,7 +43,7 @@ public class GestorConsolaCiudadano {
             int dia = Integer.parseInt(lector.readLine());
             System.out.println("Ingrese Mes de Nacimiento: ");
             int mes = Integer.parseInt(lector.readLine());
-            System.out.println("Ingrese Año de Nacimientos: ");
+            System.out.println("Ingrese Año de Nacimiento: ");
             int anyo = Integer.parseInt(lector.readLine());
             
             boolean exito = sistema.registrarPersona(region, rut, primerNombre, segundoNombre, primerApellido, segundoApellido, sexo, dia, mes, anyo);
