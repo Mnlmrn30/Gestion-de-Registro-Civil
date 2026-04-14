@@ -3,9 +3,12 @@ package com.registrocivil.logica;
 import java.util.HashMap;
 import java.util.ArrayList; 
 import java.util.Random; 
+import java.sql.*;
 
 public class GestionSistema{
     private HashMap<String, Region> regiones; 
+    private static final String URL_BD = "jdbc:sqlite:registrocivil.db";
+    
     public GestionSistema(){
         regiones = new HashMap<>(); 
         inicializarRegiones(); 
@@ -154,5 +157,53 @@ public class GestionSistema{
         return true; 
     }
     
+    public void cargarDatosDesdeBD(){
+        String sql = "SELECT * FROM Persona";
+        try(Connection conn = DriverManager.getConnection(URL_BD);
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(sql)){
+            while(rs.next()){
+                String region = rs.getString("region");
+                String rut = rs.getString("rut");
+                String pNombre = rs.getString("primer_nombre");
+                String sNombre = rs.getString("segundo_nombre");
+                String pApellido = rs.getString("primer_apellido");
+                String sApellido = rs.getString("segundo_apellido");
+                String sexo = rs.getString("sexo");
+                this.registrarPersona(region, rut, pNombre, sNombre, pApellido, sApellido, sexo, 1, 1, 2000);
+            }
+            System.out.println("DATOS CARGADOS CORRECTAMENTE DESDE SQLITE");
+        } catch (SQLException e){
+            System.out.println("No se pudo cargar la BD");
+        }
+    }
     
+    public void guardarDatosEnBD() {
+    String deleteSql = "DELETE FROM Persona";
+    String insertSql = "INSERT INTO Persona (region, rut, primer_nombre, segundo_nombre, primer_apellido, segundo_apellido, sexo)";
+
+    try (Connection conn = DriverManager.getConnection(URL_BD)) {
+        Statement st = conn.createStatement();
+        st.executeUpdate(deleteSql);
+
+        try (PreparedStatement pstmt = conn.prepareStatement(insertSql)) {
+            for (Region r : regiones.values()) {
+                for (Persona p : r.getCiudadanos()) {
+                    pstmt.setString(1, r.getNombre());
+                    pstmt.setString(2, p.getRut());
+                    pstmt.setString(3, p.getPrimerNombre());
+                    pstmt.setString(4, p.getSegundoNombre());
+                    pstmt.setString(5, p.getPrimerApellido());
+                    pstmt.setString(6, p.getSegundoApellido());
+                    pstmt.setString(7, p.getSexo());
+                    pstmt.addBatch(); 
+                }
+            }
+            pstmt.executeBatch();
+        }
+        System.out.println("Base de datos actualizada con éxito antes de salir");
+    } catch (SQLException e) {
+        System.out.println("Error crítico al guardar: " + e.getMessage());
+    }
+  }
 }
