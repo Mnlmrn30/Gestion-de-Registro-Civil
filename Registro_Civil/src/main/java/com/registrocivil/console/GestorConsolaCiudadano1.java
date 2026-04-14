@@ -46,7 +46,7 @@ public class GestorConsolaCiudadano1 {
             String rutGenerado = sistema.registrarNacimiento(region, pNombre, sNombre, pApellido, sApellido, sexo, dia, mes, año, rutPadre, rutMadre); 
             
             if(rutGenerado != null){
-                System.out.println("-> ¡Nacimiento registrado exitosamente"); 
+                System.out.println("Nacimiento registrado exitosamente"); 
                 System.out.println("-> *** RUT ASIGNADO AL RECIÉN NACIDO: " + rutGenerado + " ***");
                 
             }
