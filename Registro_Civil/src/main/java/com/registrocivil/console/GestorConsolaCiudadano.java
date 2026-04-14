@@ -19,7 +19,7 @@ public class GestorConsolaCiudadano {
     }
 
     GestorConsolaCiudadano() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet."); 
     }
     
     public void registroGeneral(){
@@ -164,13 +164,106 @@ public class GestorConsolaCiudadano {
         }
     }
     
-    /*
-    AQUI PONER METODO DE BUSCAR CIUDADANO
+    public void buscarCiudadano(){
+        try{
+            System.out.println("\n=== 5. BUSCAR CIUDADANO (BÚSQUEDA GLOBAL) ===");
+            System.out.println("Ingrese el RUT a buscar (ej: 12.345.678-9): ");
+            String rut = lector.readLine();
+            
+            Persona personaEncontrada = sistema.busquedaGlobalPersona(rut); 
+            
+            if(personaEncontrada != null){
+                System.out.println("\n--- RESULTADO DE LA BÚSQUEDA ---");
+                System.out.println("RUT: " + personaEncontrada.getRut());
+                System.out.println("Nombre Completo: " + personaEncontrada.getPrimerNombre() + " " + 
+                                   personaEncontrada.getSegundoNombre() + " " + 
+                                   personaEncontrada.getPrimerApellido() + " " + 
+                                   personaEncontrada.getSegundoApellido());
+                System.out.println("Sexo: " + personaEncontrada.getSexo());
+                System.out.println("Fecha de Nacimiento: " + personaEncontrada.getDiaNacimiento() + "/" + 
+                                   personaEncontrada.getMesNacimiento() + "/" + 
+                                   personaEncontrada.getAñoNacimiento());
+                System.out.println("Estado Civil: " + personaEncontrada.getEstadoCivil());
+     
+                if(personaEncontrada.getConyuge() != null){
+                System.out.println("Cónyuge: " + personaEncontrada.getConyuge().getPrimerNombre() + " " + 
+                                       personaEncontrada.getConyuge().getPrimerApellido() + 
+                                       " (RUT: " + personaEncontrada.getConyuge().getRut() + ")");
+                }
+            System.out.println("------------------------------------");            
+            }else{
+                System.out.println("Error: No se ha encontrado a ningún ciudadano con el RUT "+ rut+ "a nivel nacional."); 
+            }    
+        } catch (IOException e){
+            System.out.println("Ocurrió un error en la lectura de los datos: " + e.getMessage()); 
+        }
+    }
     
-    */
+    public void emitirCertificado(){
+        try{
+            System.out.println("\n=== 6. EMITIR CERTIFICADOS ===");
+            System.out.println("Ingrese el RUT del ciudadano para emitir el documento: ");
+            String rut = lector.readLine();
+            Persona persona = sistema.busquedaGlobalPersona(rut); 
+            
+            if(persona != null){
+                System.out.println("Seleccione el certificado que desea emitir:");
+                System.out.println("1. Certificado de Nacimiento / Antecedentes Básicos");
+                System.out.println("2. Certificado de Matrimonio");
+                System.out.print("Opción: ");
+                String opcion = lector.readLine();
+            
+            
+                System.out.println("\n=======================================================");
+                System.out.println("=================REPÚBLICA DE CHILE===================");
+                System.out.println("=====SERVICIO DE REGISTRO CIVIL E IDENTIFICACIÓN=====");
+                System.out.println("=======================================================");
+            
+                if(opcion.equals("1")){
+                    System.out.println("               CERTIFICADO DE NACIMIENTO");
+                    System.out.println("-------------------------------------------------------");
+                    System.out.println("RUT             : " + persona.getRut());
+                    System.out.println("NOMBRES         : " + persona.getPrimerNombre() + " " + persona.getSegundoNombre());
+                    System.out.println("APELLIDOS       : " + persona.getPrimerApellido() + " " + persona.getSegundoApellido());
+                    System.out.println("FECHA NACIMIENTO: " + persona.getDiaNacimiento() + "/" + persona.getMesNacimiento() + "/" + persona.getAñoNacimiento());
+                    System.out.println("SEXO            : " + persona.getSexo());
+                
+                    if(persona.getPadre() != null){
+                        System.out.println("\n---------------------------------------------------------");
+                        System.out.println("RUT             : " + persona.getPadre().getRut());
+                        System.out.println("NOMBRES         : " + persona.getPadre().getPrimerNombre() + " " + persona.getPadre().getSegundoNombre());
+                        System.out.println("APELLIDOS       : " + persona.getPadre().getPrimerApellido() + " " + persona.getPadre().getSegundoApellido());
+                    }
+                    if(persona.getMadre() != null){
+                        System.out.println("\n---------------------------------------------------------");
+                        System.out.println("RUT             : " + persona.getMadre().getRut());
+                        System.out.println("NOMBRES         : " + persona.getMadre().getPrimerNombre() + " " + persona.getMadre().getSegundoNombre());
+                        System.out.println("APELLIDOS       : " + persona.getMadre().getPrimerApellido() + " " + persona.getMadre().getSegundoApellido()); 
+                    }
+                
+                } else if(opcion.equals("2")){
+                    System.out.println("               CERTIFICADO DE MATRIMONIO               ");
+                    System.out.println("-------------------------------------------------------");
+                    if (persona.getEstadoCivil().equals("Casado/a") && persona.getConyuge() != null) {
+                        System.out.println("RUT CONTRAYENTE 1   : " + persona.getRut());
+                        System.out.println("NOMBRE CONTRAYENTE 1: " + persona.getPrimerNombre() + " " + persona.getPrimerApellido());
+                        System.out.println("\nRUT CONTRAYENTE 2   : " + persona.getConyuge().getRut());
+                        System.out.println("NOMBRE CONTRAYENTE 2: " + persona.getConyuge().getPrimerNombre() + " " + persona.getConyuge().getPrimerApellido());
+                        System.out.println("\nESTADO DEL VÍNCULO  : VIGENTE");
+                    } else {
+                        System.out.println("\n *** El ciudadano consultado no registra un matrimonio vigente. *** ");
+                    }
+                } else{
+                    System.out.println("Opción inválida. Transacción anulada.");
+                }
+                System.out.println("======================================================="); 
+            } else{
+                System.out.println("Error: No se encontró al ciudadano. No es posible emitir certificado"); 
+            }
+        }catch (IOException e){
+            System.out.println("Error al procesar la solicitud: " + e.getMessage());
+        }
+    }
     
-    /*
-    AQUI PONER METODO DE EMITIR CERTIFICADOS
     
-    */
 }

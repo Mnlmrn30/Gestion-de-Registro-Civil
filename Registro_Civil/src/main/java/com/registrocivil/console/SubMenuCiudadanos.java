@@ -21,6 +21,7 @@ public class SubMenuCiudadanos extends MenuBase{
             System.out.println("4. Registrar Defuncion"); //Registro Defuncion 
             System.out.println("5. Buscar ciudadano"); //Buscar Ciudadano
             System.out.println("6. Emitir Certificados"); //Emitir Certificados 
+            System.out.println("7. Volver Menú Principal");
             System.out.println("Seleccione Opción: "); 
             
             String op = lector.readLine(); 
@@ -40,11 +41,14 @@ public class SubMenuCiudadanos extends MenuBase{
                     gestor.RegistrarDefuncion();
                     break; 
                 case "5":
-                    System.out.println("=== PROCESO === ");
+                    gestor.buscarCiudadano();
                     break; 
                 case "6":
-                    volver = true; 
+                    gestor.emitirCertificado(); 
                     break; 
+                case "7": 
+                    volver = true; 
+                    break;
                 default:
                     System.out.println("Opción Invalida");
             }
