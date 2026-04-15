@@ -6,7 +6,7 @@
 package com.registrocivil.console;
 
 import com.registrocivil.logica.*;
-import java.io.BufferedReader;
+import java.io.*;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -15,10 +15,12 @@ public class GestorConsolaRegiones {
     
     private GestionSistema sistema;
     private HashMap<String, Region> regiones;
+    private BufferedReader lector; 
 
     public GestorConsolaRegiones(GestionSistema sistema, BufferedReader lector) {
         this.sistema = sistema; 
         this.regiones = sistema.getRegiones();
+        this.lector = lector; 
     }
     
     public void mostrarInformacionRegiones(){
@@ -39,41 +41,26 @@ public class GestorConsolaRegiones {
         try{
             System.out.println("\n LISTADO DETALLADO DE CIUDADANOS ");
             System.out.println("Ingrese el nombre de la region a consultar: ");
-            String nombreRegion = lector.readLine();
             
-            Region regionEncontrada = null;
-            
-            for(Region r : regiones.values()){
-                if(r.getNombre().equalsIgnoreCase(nombreRegion)){
-                    regionEncontrada = r;
-                    break;
-                }
-            }
+            String nombreRegion = seleccionarRegion(); 
+            Region regionEncontrada = regiones.get(nombreRegion);
             
             if(regionEncontrada != null){
-                System.out.println("Registro de ciudadanos en " + regionEncontrada.getNombre() + ":");
+                System.out.println("\nRegistro de ciudadanos en " + regionEncontrada.getNombre() + ":");
                 System.out.println("-----------------------------------------------------------------");
-                System.out.printf("%-15s | %-30s | %-10s%n", "RUT", "NOMBRE COMPLETO", "SEXO");
                 
                 boolean hayCiudadanos = false;
                 
                 for(Persona p : regionEncontrada.getCiudadanos()){
                     hayCiudadanos = true;
-                    String nombreCompleto = p.getPrimerNombre() + " " + p.getPrimerApellido();
-                    
-                    if(p.getSegundoApellido() != null && !p.getSegundoApellido().isEmpty()){
-                        nombreCompleto += " " + p.getSegundoApellido();
-                    }
-                    
-                    System.out.printf("%-15s | %-30s | %-10s%n", p.getRut(), nombreCompleto, p.getSexo());
+                    System.out.println(p.toString()); 
                 }
                 
                 if(!hayCiudadanos){
-                    System.out.println("No hay ciudadanos registrados en esta region.");
+                    System.out.println("No hay ciudadanos registrados en esta región.");
                 }
             } else {
-                System.out.println("ERROR: No se encontro la region " + nombreRegion + ".");
-            }
+                System.out.println("Error: No se encontró la región en el sistema.");}
         } catch (Exception e){
             System.out.println("Error al leer la entrada: " + e.getMessage());
         }
@@ -82,19 +69,11 @@ public class GestorConsolaRegiones {
     public void verListadoMatrimonio(BufferedReader lector){
         try {
             System.out.println("\n LISTADO DE MATRIMONIOS POR REGION ");
-            System.out.println("Ingrese el nombre de la region a consultar: ");
-            String nombreRegion = lector.readLine();
+            String nombreRegion = seleccionarRegion();
             
-            Region regionEncontrada = null;
-            for(Region r : regiones.values()){
-                if(r.getNombre().equalsIgnoreCase(nombreRegion)){
-                    regionEncontrada = r;
-                    break;
-                }
-            }
-            
+            Region regionEncontrada = regiones.get(nombreRegion);
             if(regionEncontrada != null){
-                System.out.println("Matrimonios registrados en " + regionEncontrada.getNombre() + ":");
+                System.out.println("\nMatrimonios registrados en " + regionEncontrada.getNombre() + ":");
                 boolean hayMatrimonios = false;
                 
                 HashSet<String> rutsProcesados = new HashSet<>();
@@ -104,20 +83,20 @@ public class GestorConsolaRegiones {
                     
                     if(conyuge != null && !rutsProcesados.contains(p.getRut())){
                         hayMatrimonios = true;
-                        String nombreP1 = p.getPrimerNombre() + " " + p.getPrimerApellido();
-                        String nombreP2 = conyuge.getPrimerNombre() + " " + conyuge.getPrimerApellido();
-                        
-                        System.out.println("- " + nombreP1 + "(RUT: " + p.getRut() + ") esta casado/a con " + nombreP2 + " (RUT: " + conyuge.getRut() + ")");
+                        System.out.println(" MATRIMONIO:");
+                        System.out.println("   " + p.toString());
+                        System.out.println("   " + conyuge.toString());
+                        System.out.println("------------------------------------------------");
                         rutsProcesados.add(p.getRut());
                         rutsProcesados.add(conyuge.getRut());
                     }
                 }
                 
                 if(!hayMatrimonios){
-                    System.out.println("No hay matrimonios activos registrados en esta region");
+                    System.out.println("No hay matrimonios activos registrados en esta región.");
                 }
             } else {
-                System.out.println("ERROR: No se encontro la region " + nombreRegion + ".");
+                System.out.println("Error: No se encontró la región en el sistema.");
             }
         } catch (Exception e){
             System.out.println("Error al leer la entrada: " + e.getMessage());
@@ -125,7 +104,7 @@ public class GestorConsolaRegiones {
     }
     
     public void verEstadisticasGenerales(){
-        System.out.println("\n ESTADISTICAS GENERALES TOTAL");
+        System.out.println("\n ==== ESTADISTICAS GENERALES TOTAL ==== ");
         
         int totalNacional = 0; 
         int totalFallecidosNacional = 0; 
@@ -172,6 +151,37 @@ public class GestorConsolaRegiones {
         System.out.println("Total Mujeres " + totalMujeres);
         System.out.println("Total Otros " + otros);
         System.out.println(" ==============================================");
+    }
+    
+    private String seleccionarRegion() {
+        String[] regiones = {
+            "Arica y Parinacota", "Tarapaca", "Antofagasta", "Atacama",
+            "Coquimbo", "Valparaiso", "Región Metropolitana", "O'Higgins",
+            "Maule", "Ñuble", "Biobio", "La Araucania", "Los Rios",
+            "Los Lagos", "Aysen", "Magallanes"
+        };
+
+        while (true) {
+            try {
+                System.out.println("\n--- SELECCIONE LA REGIÓN ---");
+                for (int i = 0; i < regiones.length; i++) {              
+                    System.out.println((i + 1) + ". " + regiones[i]); 
+                }
+                System.out.println("Ingrese el número de la región (1-16): ");
+                int opcion = Integer.parseInt(lector.readLine());
+
+                if (opcion >= 1 && opcion <= regiones.length) {
+                    return regiones[opcion - 1]; 
+                } else {
+                    System.out.println("Error: Ingrese un número válido.");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Error: Debe ingresar un número, no letras.");
+            }
+            catch (Exception e){
+                System.out.println("Error de lectura en la consola.");
+            }
+        }
     }
     
 }
