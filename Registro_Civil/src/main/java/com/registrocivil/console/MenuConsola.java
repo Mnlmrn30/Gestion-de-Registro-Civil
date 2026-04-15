@@ -18,7 +18,7 @@ public class MenuConsola extends MenuBase{
             System.out.println("=== SISTEMA REGISTRO CIVIL ===");
             System.out.println("1. Gestionar Regiones");
             System.out.println("2. Gestionar Ciudadanos"); 
-            System.out.println("3. Salir Menu Interfaz"); 
+            System.out.println("3. Salir (Cerrar Programa)"); 
             System.out.println("Seleccione una opción: ");
             
             try {
