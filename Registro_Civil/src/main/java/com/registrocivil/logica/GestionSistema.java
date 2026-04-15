@@ -17,7 +17,7 @@ public class GestionSistema{
     
     private void inicializarRegiones(){
         String[] nombresRegiones = {"Arica y Parinacota", "Tarapaca", "Antofagasta", "Atacama", "Coquimbo", 
-            "Valparaiso", "Metropolitana de Santiago", "Bernardo O'Higgins", 
+            "Valparaiso", "Región Metropolitana", "O'Higgins", 
             "Maule", "Ñuble", "Biobio", "La Araucania", "Los Rios", "Los Lagos", 
             "Aysen", "Magallanes"}; 
         
@@ -74,6 +74,17 @@ public class GestionSistema{
             }
         }
         return null; 
+    }
+    
+    public String obtenerRegionDePersona(String rut){
+        for(Region r: regiones.values()){
+            for(Persona p: r.getCiudadanos()){
+                if(p.getRut().equals(rut)){
+                    return r.getNombre(); 
+                }
+            }
+        }
+        return "Desconocida"; 
     }
     
     
