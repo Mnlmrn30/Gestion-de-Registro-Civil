@@ -13,7 +13,6 @@ public class GestionSistema{
         regiones = new HashMap<>(); 
         inicializarRegiones(); 
         crearTabla();
-        cargarDatosPrueba();
     }
     
     private void inicializarRegiones(){
@@ -25,11 +24,6 @@ public class GestionSistema{
         for (String nombre: nombresRegiones){
             regiones.put(nombre, new Region(nombre)); 
         }
-    }
-    
-    private void cargarDatosPrueba(){
-        registrarPersona("Antofagasta", "21.943.128-7", "Manuel", "Sebastian", "Moreno","Galleguillos", "Masculino", 30,9,2005);
-        registrarPersona("Coquimbo","22.023.557-2", "Hans", "Paulo", "Paz", "Bonilla", "Masculino", 17, 1, 2006); 
     }
     
     public HashMap<String, Region> getRegiones(){
@@ -213,7 +207,7 @@ public class GestionSistema{
     
     public void guardarDatosEnBD() {
     String deleteSql = "DELETE FROM Persona";
-    String insertSql = "INSERT INTO Persona (region, rut, primer_nombre, segundo_nombre, primer_apellido, segundo_apellido, sexo)";
+    String insertSql = "INSERT INTO Persona (region, rut, primer_nombre, segundo_nombre, primer_apellido, segundo_apellido, sexo, dia, mes, anio, estado_civil) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     try (Connection conn = DriverManager.getConnection(URL_BD)) {
         Statement st = conn.createStatement();

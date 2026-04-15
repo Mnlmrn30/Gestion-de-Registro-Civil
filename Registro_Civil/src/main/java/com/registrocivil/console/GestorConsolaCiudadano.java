@@ -192,7 +192,7 @@ public class GestorConsolaCiudadano {
                 }
             System.out.println("------------------------------------");            
             }else{
-                System.out.println("Error: No se ha encontrado a ningún ciudadano con el RUT "+ rut+ "a nivel nacional."); 
+                System.out.println("Error: No se ha encontrado a ningún ciudadano con el RUT "+ rut+ " a nivel nacional."); 
             }    
         } catch (IOException e){
             System.out.println("Ocurrió un error en la lectura de los datos: " + e.getMessage()); 
