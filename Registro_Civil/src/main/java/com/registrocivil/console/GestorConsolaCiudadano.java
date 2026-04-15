@@ -134,31 +134,29 @@ public class GestorConsolaCiudadano {
     public void RegistrarDefuncion(){
         try {
             System.out.println("\n--- 4. REGISTRAR DEFUNCIÓN ---");
-            System.out.println("Ingrese la Región en la que está inscrito el ciudadano: ");
-            String region = lector.readLine();
-            
             System.out.println("Ingrese el RUT del fallecido: ");
             String rut = lector.readLine();
 
-            Persona fallecido = sistema.buscarPersona(region, rut);
-            
-            if (fallecido != null){
-                Persona conyuge = fallecido.getConyuge();
-                if(conyuge != null){
-                    conyuge.setEstadoCivil("Viudo/a");
-                    conyuge.setConyuge(null);
-                    System.out.println("Notificacion: El estado civil de " + conyuge.getPrimerNombre() + " " + conyuge.getPrimerApellido() + " ha sido actualizado a viudo/a");
-                }
-                
-                boolean exito = sistema.eliminarPersona(region, rut);
-                if (exito){
-                    System.out.println("Defuncion registrada correctamente");                    
-                } else {
-                    System.out.println("Error al intentar remover al ciudadano");
-                }
-            } else {
-                System.out.println("Error: No se encontro ningun ciudadano con el RUT " + rut + " en la region de " + region + ".");
+            Persona fallecido = sistema.busquedaGlobalPersona(rut);
+            if(fallecido == null) {
+                System.out.println("Error: No se encontró ningún ciudadano con el RUT ingresado: " + rut);
+                return; 
             }
+            
+            if("Fallecido".equalsIgnoreCase(fallecido.getEstadoVital())){
+                System.out.println("Aviso: Este ciudadano ya se encuentra registrado como fallecido"); 
+                return; 
+            }
+            
+            fallecido.setEstadoVital("Fallecido");
+            
+            Persona conyuge = fallecido.getConyuge();
+            if(conyuge != null){
+                conyuge.setEstadoCivil("Viudo/a");
+                conyuge.setConyuge(null);
+                System.out.println("Notificacion: El estado civil de " + conyuge.getPrimerNombre() + " " + conyuge.getPrimerApellido() + " ha sido actualizado a viudo/a");
+            }
+            System.out.println("Defuncion registrada correctamente");                    
         } catch (IOException e){
             System.out.println("Error al registrar la defuncion: " + e.getMessage());
         }
@@ -183,7 +181,10 @@ public class GestorConsolaCiudadano {
                 System.out.println("Fecha de Nacimiento: " + personaEncontrada.getDiaNacimiento() + "/" + 
                                    personaEncontrada.getMesNacimiento() + "/" + 
                                    personaEncontrada.getAñoNacimiento());
-                System.out.println("Estado Civil: " + personaEncontrada.getEstadoCivil());
+                if(!personaEncontrada.getEstadoVital().equals("Fallecido")){
+                    System.out.println("Estado Civil: " + personaEncontrada.getEstadoCivil());
+                }
+                System.out.println("Estado Vital: " + personaEncontrada.getEstadoVital());
      
                 if(personaEncontrada.getConyuge() != null){
                 System.out.println("Cónyuge: " + personaEncontrada.getConyuge().getPrimerNombre() + " " + 
@@ -210,7 +211,7 @@ public class GestorConsolaCiudadano {
                 System.out.println("Seleccione el certificado que desea emitir:");
                 System.out.println("1. Certificado de Nacimiento / Antecedentes Básicos");
                 System.out.println("2. Certificado de Matrimonio");
-                System.out.print("Opción: ");
+                System.out.println("Opción: ");
                 String opcion = lector.readLine();
             
             
@@ -262,6 +263,132 @@ public class GestorConsolaCiudadano {
             }
         }catch (IOException e){
             System.out.println("Error al procesar la solicitud: " + e.getMessage());
+        }
+    }
+    
+    public void editarCiudadano() throws Exception{
+        System.out.println("\n--- EDITAR CIUDADANO ---");
+        System.out.println("Ingrese el RUT del ciudadano a editar: ");
+        String rut = lector.readLine();
+        
+        Persona p = sistema.busquedaGlobalPersona(rut); 
+        if(p == null) {
+            System.out.println("Error: No se encontró ningún ciudadano con el RUT ingresado."); 
+            return; 
+        }
+        System.out.println("Ciudadano encontrado: " + p.getPrimerNombre() + " " + p.getPrimerApellido());
+        System.out.println("(Presione 'Enter' sin escribir nada si NO desea modificar un campo)");
+        
+        System.out.println("Nuevo Primer Nombre [" + p.getPrimerNombre() + "]: ");
+        String pNombre = lector.readLine();
+        if (pNombre.trim().isEmpty()) pNombre = p.getPrimerNombre();
+
+        System.out.println("Nuevo Segundo Nombre [" + p.getSegundoNombre() + "]: ");
+        String sNombre = lector.readLine();
+        if (sNombre.trim().isEmpty()) sNombre = p.getSegundoNombre();
+
+        System.out.println("Nuevo Primer Apellido [" + p.getPrimerApellido() + "]: ");
+        String pApellido = lector.readLine();
+        if (pApellido.trim().isEmpty()) pApellido = p.getPrimerApellido();
+
+        System.out.println("Nuevo Segundo Apellido [" + p.getSegundoApellido() + "]: ");
+        String sApellido = lector.readLine();
+        if (sApellido.trim().isEmpty()) sApellido = p.getSegundoApellido();
+
+        System.out.println("Nuevo Sexo [" + p.getSexo() + "]: ");
+        String sexo = lector.readLine();
+        if (sexo.trim().isEmpty()) sexo = p.getSexo();
+
+        System.out.println("Nuevo Día Nac. [" + p.getDiaNacimiento() + "]: ");
+        String diaStr = lector.readLine();
+        int dia = diaStr.trim().isEmpty() ? p.getDiaNacimiento() : Integer.parseInt(diaStr);
+
+        System.out.println("Nuevo Mes Nac. [" + p.getMesNacimiento() + "]: ");
+        String mesStr = lector.readLine();
+        int mes = mesStr.trim().isEmpty() ? p.getMesNacimiento() : Integer.parseInt(mesStr);
+
+        System.out.println("Nuevo Año Nac. [" + p.getAñoNacimiento() + "]: ");
+        String anioStr = lector.readLine();
+        int anio = anioStr.trim().isEmpty() ? p.getAñoNacimiento() : Integer.parseInt(anioStr);
+        
+        sistema.editarPersona(rut, pNombre, sNombre, pApellido, sApellido, sexo, dia, mes, anio); 
+
+        System.out.println("\n-- ASIGNACIÓN DE PADRES --");
+        System.out.println("RUT del Padre (deje en blanco para no cambiar): ");
+        String rutPadre = lector.readLine();
+        // Preguntará si se desea agregar a la persona padres, para que personas ingresadas por registro general puedan vincularse a otro objeto Persona 
+        // padre o madre. 
+        // Se revisa si el padre existe en los datos para poder asignarselo a la persona en edición (hijo) 
+        if (!rutPadre.trim().isEmpty()) {
+            Persona padre = sistema.busquedaGlobalPersona(rutPadre);
+            if (padre != null) {
+                p.setPadre(padre);
+                System.out.println("Padre asignado: " + padre.getPrimerNombre());
+            } else {
+                System.out.println("No se encontró padre con ese RUT en el sistema.");
+            }
+        }
+        // Se realizo lo mismo que lo anterior solo que en este caso se pregunta por la madre. 
+        System.out.println("RUT de la Madre (deje en blanco para no cambiar): ");
+        String rutMadre = lector.readLine();
+        if (!rutMadre.trim().isEmpty()) {
+            Persona madre = sistema.busquedaGlobalPersona(rutMadre);
+            if (madre != null) {
+                p.setMadre(madre);
+                System.out.println("Madre asignada: " + madre.getPrimerNombre());
+            } else {
+                System.out.println("No se encontró madre con ese RUT en el sistema.");
+            }
+        }
+
+        System.out.println("\n¡Ciudadano actualizado con éxito!");
+    }
+    
+    public void eliminarCiudadano(){
+        try {
+            System.out.println("\n--- 8. ELIMINAR REGISTRO ---");
+            System.out.println("Ingrese el RUT del ciudadano a eliminar: ");
+            String rut = lector.readLine();
+
+            Persona p = sistema.busquedaGlobalPersona(rut);
+
+            if (p == null) {
+                System.out.println("Error: No se encontró ningún ciudadano con el RUT " + rut);
+                return;
+            }
+
+    
+            System.out.println("Ciudadano encontrado: " + p.getPrimerNombre() + " " + p.getPrimerApellido() + " | RUT: " + p.getRut());
+            System.out.println("¡ADVERTENCIA! Esta acción borrará el registro del sistema.");
+            System.out.println("¿Está seguro que desea eliminar a este ciudadano? (S/N): ");
+            String confirmacion = lector.readLine();
+
+            if (confirmacion.equalsIgnoreCase("S")) {
+                
+                // buscamos la region del ciudadano a eliminar de forma automatica. 
+                String nombreRegion = "";
+               
+                for (com.registrocivil.logica.Region r : sistema.getRegiones().values()) {
+                    if (r.getCiudadanos().contains(p)) {
+                        nombreRegion = r.getNombre();
+                        break;
+                    }
+                }
+                if (!nombreRegion.isEmpty()) {
+                    boolean exito = sistema.eliminarPersona(nombreRegion, rut);
+                    if (exito) {
+                        System.out.println("Registro eliminado exitosamente del sistema.");
+                    } else {
+                        System.out.println("Ocurrió un error al intentar eliminar el registro.");
+                    }
+                }
+                
+            } else {
+                System.out.println("Operación cancelada. El registro está a salvo.");
+            }
+
+        } catch (Exception e) {
+            System.out.println("Error al intentar eliminar: " + e.getMessage());
         }
     }
     

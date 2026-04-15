@@ -14,6 +14,7 @@ public class Persona {
     private Persona conyuge; 
     private Persona padre; 
     private Persona madre; 
+    private String estadoVital; 
     
     public Persona(String rut, String primerNombre, String segundoNombre, String primerApellido, String segundoApellido, String sexo, int dia, int mes, int añoNac) {
         this.rut = rut;
@@ -25,6 +26,7 @@ public class Persona {
         this.mes = mes; 
         this.añoNac = añoNac; 
         this.sexo = sexo; 
+        this.estadoVital = "Vivo"; 
        
         estadoCivil = "Soltero/a"; 
         conyuge = null; 
@@ -71,6 +73,9 @@ public class Persona {
     
     public Persona getMadre(){ return madre;}
     public void setMadre(Persona p){this.madre = p;} 
+    
+    public String getEstadoVital(){ return estadoVital;}
+    public void setEstadoVital(String est){this.estadoVital = est;} 
     
     
 }

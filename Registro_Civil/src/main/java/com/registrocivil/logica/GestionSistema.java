@@ -77,8 +77,8 @@ public class GestionSistema{
     }
     
     
-    public boolean editarPersona(String nombreRegion, String rut, String nuevoPrimerNombre, String nuevoSegundoNombre, String nuevoPrimerApellido, String nuevoSegundoApellido, String nuevoSexo, int nuevoDia, int nuevoMes, int nuevoAñoNac) {
-        Persona personaAEditar = buscarPersona(nombreRegion, rut);
+    public boolean editarPersona(String rut, String nuevoPrimerNombre, String nuevoSegundoNombre, String nuevoPrimerApellido, String nuevoSegundoApellido, String nuevoSexo, int nuevoDia, int nuevoMes, int nuevoAñoNac) {
+        Persona personaAEditar = busquedaGlobalPersona(rut);
         
         if(personaAEditar != null){
             personaAEditar.setPrimerNombre(nuevoPrimerNombre);
@@ -164,7 +164,8 @@ public class GestionSistema{
                      " dia INTEGER,\n" +
                      " mes INTEGER,\n" +
                      " anio INTEGER,\n" +
-                     " estado_civil TEXT\n" +
+                     " estado_civil TEXT,\n" +
+                     " estado_vital TEXT\n" +
                      ");";
         try(Connection conn = DriverManager.getConnection(URL_BD);
             Statement stmt = conn.createStatement()) {
@@ -196,7 +197,11 @@ public class GestionSistema{
                 
                 Persona p = buscarPersona(region, rut);
                 if(p!=null){
-                    p.setEstadoCivil(rs.getString("estado_civil")); 
+                    p.setEstadoCivil(rs.getString("estado_civil"));
+                    String estVital = rs.getString("estado_vital"); 
+                    if(estVital != null){
+                        p.setEstadoVital(estVital);
+                    }
                 }
             }
             System.out.println("DATOS CARGADOS CORRECTAMENTE DESDE SQLITE");
@@ -207,7 +212,7 @@ public class GestionSistema{
     
     public void guardarDatosEnBD() {
     String deleteSql = "DELETE FROM Persona";
-    String insertSql = "INSERT INTO Persona (region, rut, primer_nombre, segundo_nombre, primer_apellido, segundo_apellido, sexo, dia, mes, anio, estado_civil) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    String insertSql = "INSERT INTO Persona (region, rut, primer_nombre, segundo_nombre, primer_apellido, segundo_apellido, sexo, dia, mes, anio, estado_civil, estado_vital) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     try (Connection conn = DriverManager.getConnection(URL_BD)) {
         Statement st = conn.createStatement();
@@ -227,6 +232,8 @@ public class GestionSistema{
                     pstmt.setInt(9, p.getMesNacimiento());
                     pstmt.setInt(10, p.getAñoNacimiento());
                     pstmt.setString(11, p.getEstadoCivil());
+                    
+                    pstmt.setString(12, p.getEstadoVital());
                     
                     pstmt.addBatch(); 
                 }
