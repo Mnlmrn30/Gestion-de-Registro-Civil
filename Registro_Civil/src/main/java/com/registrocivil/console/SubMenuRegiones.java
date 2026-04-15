@@ -1,6 +1,7 @@
 package com.registrocivil.console;
 
 import com.registrocivil.logica.*;
+import com.registrocivil.console.*; 
 import java.io.*; 
 
 public class SubMenuRegiones extends MenuBase{
@@ -13,26 +14,28 @@ public class SubMenuRegiones extends MenuBase{
         boolean volver = false; 
         while(!volver){
             System.out.println("=== ESTADISTICAS POR REGION === ");
-            System.out.println("1. Mostrar todas las regiones y su informarcion ");
-            System.out.println("2. Consultar poblacion total de una region ");
+            System.out.println("1. Mostrar todas las regiones y su informacion ");
+            System.out.println("2. Consultar listado de Ciudadanos ");
             System.out.println("3. Ver listado de matrimonios de una region ");
             System.out.println("4. Ver estadisticas generales "); 
             System.out.println("5. Volver Menú Principal ");
             System.out.println("Selecione opción: ");
             
-            String op = lector.readLine(); 
+            String op = lector.readLine();
+            GestorConsolaRegiones gestor = new GestorConsolaRegiones(sistema, lector);
+            
             switch(op){
                 case "1":
-                    System.out.println("=== PROCESO === ");
+                    gestor.mostrarInformacionRegiones();
                     break; 
                 case "2":
-                    System.out.println("=== PROCESO === ");
+                    gestor.verListadoCiudadanosPorRegion(lector);
                     break; 
                 case "3":
-                    System.out.println("=== PROCESO === ");
+                    gestor.verListadoMatrimonio(lector);
                     break; 
                 case "4":
-                    System.out.println("=== PROCESO === ");
+                    gestor.verEstadisticasGenerales();
                     break; 
                 case "5": 
                     volver = true; 
