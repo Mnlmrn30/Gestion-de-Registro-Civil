@@ -1,7 +1,6 @@
 package com.registrocivil.console;
 
 import com.registrocivil.logica.*;
-import com.registrocivil.console.*; 
 import java.io.*; 
 
 public class SubMenuRegiones extends MenuBase{
@@ -15,7 +14,7 @@ public class SubMenuRegiones extends MenuBase{
         while(!volver){
             System.out.println("=== ESTADISTICAS POR REGION === ");
             System.out.println("1. Mostrar todas las regiones y su informacion ");
-            System.out.println("2. Consultar listado de Ciudadanos ");
+            System.out.println("2. Consultar listado de Ciudadanos por region ");
             System.out.println("3. Ver listado de matrimonios de una region ");
             System.out.println("4. Ver estadisticas generales "); 
             System.out.println("5. Volver Menú Principal ");

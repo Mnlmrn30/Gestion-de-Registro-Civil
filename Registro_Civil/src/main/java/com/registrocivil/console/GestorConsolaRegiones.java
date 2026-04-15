@@ -14,10 +14,11 @@ import java.util.HashSet;
 public class GestorConsolaRegiones {
     
     private GestionSistema sistema;
-    HashMap<String, Region> regiones = sistema.getRegiones();
+    private HashMap<String, Region> regiones;
 
-    GestorConsolaRegiones(GestionSistema sistema, BufferedReader lector) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public GestorConsolaRegiones(GestionSistema sistema, BufferedReader lector) {
+        this.sistema = sistema; 
+        this.regiones = sistema.getRegiones();
     }
     
     public void mostrarInformacionRegiones(){
