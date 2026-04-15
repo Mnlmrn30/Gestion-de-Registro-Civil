@@ -13,6 +13,7 @@ public class GestionSistema{
         regiones = new HashMap<>(); 
         inicializarRegiones(); 
         crearTabla();
+        cargarDatosPrueba(); 
     }
     
     private void inicializarRegiones(){
@@ -28,6 +29,29 @@ public class GestionSistema{
     
     public HashMap<String, Region> getRegiones(){
         return regiones; 
+    }
+    
+    public void cargarDatosPrueba(){
+        int totalCiudadanos = 0;
+        for (Region r : regiones.values()) {
+            totalCiudadanos += r.getCiudadanos().size();
+        }
+
+        if (totalCiudadanos == 0) {
+            System.out.println("[SISTEMA] Base de datos vacía. Inyectando ciudadanos de prueba...");
+            
+            this.registrarPersona("Coquimbo", "11111111-1", "Juan", "Carlos", "Perez", "Gomez", "Masculino", 15, 4, 1980);
+            this.registrarPersona("Valparaiso", "22222222-2", "Maria", "Jose", "Silva", "Rojas", "Femenino", 10, 10, 1990);
+            this.registrarPersona("Arica y Parinacota", "33333333-3", "Pedro", "Antonio", "Tapia", "Soto", "Masculino", 5, 5, 2000);
+
+            Persona p = this.busquedaGlobalPersona("33333333-3");
+            if (p != null) {
+                p.setEstadoVital("Fallecido");
+            }
+            this.registrarMatrimonio("11111111-1", "22222222-2");
+
+            System.out.println("[SISTEMA] Ciudadanos de prueba cargados exitosamente.");
+        }
     }
     
     private String generarRutAleatorio(){
