@@ -256,4 +256,26 @@ public class GestionSistema{
         System.out.println("Error crítico al guardar: " + e.getMessage());
     }
   }
+  
+  public int obtenerFallecidosPorRegion(String nombreRegion){
+      int contador = 0; 
+      Region r = regiones.get(nombreRegion);
+      if(r != null){
+          for(Persona p : r.getCiudadanos()){
+              if("Fallecido".equalsIgnoreCase(p.getEstadoVital())){
+                  contador++; 
+              }
+          }
+      }
+      return contador; 
+  }
+ 
+  public int obtenerVivosPorRegion(String nombreRegion){
+      Region r = regiones.get(nombreRegion); 
+      if(r!=null){
+          return r.getCiudadanos().size() - obtenerFallecidosPorRegion(nombreRegion);
+      }
+      return 0; 
+  }
+  
 }

@@ -127,28 +127,51 @@ public class GestorConsolaRegiones {
     public void verEstadisticasGenerales(){
         System.out.println("\n ESTADISTICAS GENERALES TOTAL");
         
-        int poblacionTotal = 0;
-        int totalHombres = 0;
+        int totalNacional = 0; 
+        int totalFallecidosNacional = 0; 
+        int totalVivosNacional = 0; 
+        
+        int totalHombres = 0; 
         int totalMujeres = 0;
         int otros = 0;
         
-        for (Region r : regiones.values()){
+        for(Region r : regiones.values()){
+            int totalRegion = r.getCiudadanos().size();
+            int fallecidosRegion = sistema.obtenerFallecidosPorRegion(r.getNombre());
+            int vivosRegion = sistema.obtenerVivosPorRegion(r.getNombre()); 
+            
+            totalNacional += totalRegion; 
+            totalFallecidosNacional += fallecidosRegion;
+            totalVivosNacional += vivosRegion; 
+            
             for(Persona p : r.getCiudadanos()){
-                poblacionTotal++;
-                
-                if(p.getSexo().equalsIgnoreCase("Masculino")){
+                String sexo = p.getSexo().toLowerCase();
+                if(sexo.equals("masculino") || sexo.equals("M") || sexo.equals("MASCULINO")){
                     totalHombres++;
-                } else if (p.getSexo().equalsIgnoreCase("Femenino")){
-                    totalMujeres++;
-                } else {
-                    otros++;
                 }
-            }        
+                else if(sexo.equals("femenino") || sexo.equals("F") || sexo.equals("FEMENINO")){
+                    totalMujeres++; 
+                } else{
+                    otros++; 
+                }
+            }
+            if(totalRegion > 0){
+                System.out.println("\n REGIÓN: " + r.getNombre().toUpperCase());
+                System.out.println("        Total Histórico Inscritos: " + totalRegion);
+                System.out.println("        Ciudadanos Vivos: " + vivosRegion);
+                System.out.println("        Defunciones Registradas: " + fallecidosRegion);
+            }
         }
-        System.out.println("Poblacion Total: " + poblacionTotal);
+        
+        System.out.println(" === RESUMEN NIVEL NACIONAL === ");
+        System.out.println("Poblacion Total: " + totalNacional);
+        System.out.println("Total Vivos Actuales: " + totalVivosNacional);
+        System.out.println("Total Fallecidos: " + totalFallecidosNacional);
+        System.out.println("-----------------------------------------------");
         System.out.println("Total Hombres: " + totalHombres);
         System.out.println("Total Mujeres " + totalMujeres);
         System.out.println("Total Otros " + otros);
+        System.out.println(" ==============================================");
     }
     
 }

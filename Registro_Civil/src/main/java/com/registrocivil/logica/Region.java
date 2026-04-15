@@ -27,4 +27,9 @@ public class Region {
     public int getNumeroHabitantes(){
         return ciudadanos.size(); 
     }
+    @Override
+    public String toString(){
+        return "Region: " + this.nombre + " | Total Ciudadanos Inscritos: " + this.ciudadanos.size(); 
+    }
+       
 }

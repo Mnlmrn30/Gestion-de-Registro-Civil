@@ -77,5 +77,11 @@ public class Persona {
     public String getEstadoVital(){ return estadoVital;}
     public void setEstadoVital(String est){this.estadoVital = est;} 
     
+    @Override
+    public String toString(){
+        return String.format("RUT: %s | NOMBRE: %s %s | ESTADO CIVIL: %s | VITAL %s", this.rut, this.primerNombre, this.primerApellido, this.estadoCivil, this.estadoVital); 
+    }
+    
+    
     
 }
