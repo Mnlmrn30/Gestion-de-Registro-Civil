@@ -2,13 +2,13 @@ package com.registrocivil.main;
 
 import com.registrocivil.logica.GestionSistema;
 import com.registrocivil.console.*;
+import com.registrocivil.ventanas.VentanaMenu;
 import java.io.*;
 
 public class Main {
     public static void main(String[] arr) throws IOException {
         
         GestionSistema sistemaTotal = new GestionSistema();
-        
         
         BufferedReader lector = new BufferedReader(new InputStreamReader(System.in));
         
@@ -26,7 +26,7 @@ public class Main {
         try {
             String opcion = lector.readLine();
             
-            if(opcion.equals("1")) {
+            if (opcion.equals("1")) {
                 System.out.println("\nIniciando modo consola...");
                 MenuConsola consola = new MenuConsola(sistemaTotal); 
                 consola.iniciar();
@@ -37,7 +37,7 @@ public class Main {
                 System.out.println("\nIniciando modo ventana...");
                 java.awt.EventQueue.invokeLater(new Runnable() {
                     public void run() {
-                        // new VentanaMenu(sistemaTotal).setVisible(true);
+                        new VentanaMenu(sistemaTotal).setVisible(true);  // <- ACTIVADO
                     }
                 });
             }
