@@ -89,7 +89,7 @@ public class VentanaMenu extends JFrame {
         JButton btn = new JButton(texto);
         btn.setFont(new Font("Arial", Font.BOLD, 13));
         btn.setBackground(COLOR_BOTON);
-        btn.setForeground(Color.BLACK);
+        btn.setForeground(Color.WHITE);
         btn.setFocusPainted(false);
         btn.setBorderPainted(false);
         btn.setOpaque(true);
@@ -103,7 +103,7 @@ public class VentanaMenu extends JFrame {
         JButton btn = new JButton(texto);
         btn.setFont(new Font("Arial", Font.BOLD, 12));
         btn.setBackground(COLOR_BOTON_VOLVER);
-        btn.setForeground(Color.BLACK);
+        btn.setForeground(Color.WHITE);
         btn.setFocusPainted(false);
         btn.setBorderPainted(false);
         btn.setOpaque(true);
