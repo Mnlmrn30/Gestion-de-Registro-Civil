@@ -4,97 +4,109 @@ import com.registrocivil.logica.*;
 import javax.swing.*;
 import java.awt.*;
 
-/**
- * Ventana para registrar la defunción de un ciudadano.
- */
 public class VentanaDefuncion extends JFrame {
 
     private GestionSistema sistema;
+    private JFrame ventanaAnterior;
     private JTextField txtRut;
 
-    public VentanaDefuncion(GestionSistema sistema) {
+    public VentanaDefuncion(GestionSistema sistema, JFrame ventanaAnterior) {
         this.sistema = sistema;
+        this.ventanaAnterior = ventanaAnterior;
         initComponents();
     }
 
     private void initComponents() {
-        setTitle("Registrar Defunción");
-        setSize(400, 220);
+        setTitle("Registrar Defuncion");
+        setSize(420, 270);
         setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         setResizable(false);
 
-        JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBorder(BorderFactory.createEmptyBorder(20, 25, 20, 25));
-        panel.setBackground(Color.WHITE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override public void windowClosing(java.awt.event.WindowEvent e) { volver(); }
+        });
+
+        JPanel panelPrincipal = new JPanel(new BorderLayout());
+        panelPrincipal.setBackground(VentanaMenu.COLOR_FONDO);
+        panelPrincipal.add(VentanaMenu.crearHeader("REGISTRAR DEFUNCION"), BorderLayout.NORTH);
+
+        JPanel form = new JPanel(new GridBagLayout());
+        form.setBackground(Color.WHITE);
+        form.setBorder(BorderFactory.createEmptyBorder(30, 30, 20, 30));
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(8, 5, 8, 5);
 
-        JLabel titulo = new JLabel("REGISTRAR DEFUNCIÓN", SwingConstants.CENTER);
-        titulo.setFont(new Font("Arial", Font.BOLD, 15));
-        titulo.setForeground(new Color(150, 30, 30));
-        gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 2;
-        panel.add(titulo, gbc);
-        gbc.gridwidth = 1;
-
         txtRut = new JTextField();
-        gbc.gridx = 0; gbc.gridy = 1; gbc.weightx = 0.4;
-        panel.add(new JLabel("RUT del fallecido:"), gbc);
+
+        gbc.gridx = 0; gbc.gridy = 0; gbc.weightx = 0.4;
+        form.add(new JLabel("RUT del fallecido:"), gbc);
         gbc.gridx = 1; gbc.weightx = 0.6;
-        panel.add(txtRut, gbc);
+        form.add(txtRut, gbc);
 
-        JButton btnRegistrar = new JButton("Registrar Defunción");
-        btnRegistrar.setBackground(new Color(180, 70, 70));
-        btnRegistrar.setForeground(Color.WHITE);
-        btnRegistrar.setFont(new Font("Arial", Font.BOLD, 13));
-        btnRegistrar.setFocusPainted(false);
-        btnRegistrar.setBorderPainted(false);
-        gbc.gridx = 0; gbc.gridy = 2; gbc.gridwidth = 2;
-        gbc.insets = new Insets(15, 5, 5, 5);
-        panel.add(btnRegistrar, gbc);
+        JLabel nota = new JLabel("Formato RUT: 12345678-9");
+        nota.setFont(new Font("Arial", Font.ITALIC, 11));
+        nota.setForeground(Color.GRAY);
+        gbc.gridx = 0; gbc.gridy = 1; gbc.gridwidth = 2;
+        form.add(nota, gbc);
 
+        JLabel advertencia = new JLabel("Esta accion marca al ciudadano como Fallecido.");
+        advertencia.setFont(new Font("Arial", Font.PLAIN, 11));
+        advertencia.setForeground(new Color(150, 50, 50));
+        gbc.gridy = 2;
+        form.add(advertencia, gbc);
+
+        JPanel footer = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 8));
+        footer.setBackground(VentanaMenu.COLOR_FONDO);
+        footer.setBorder(BorderFactory.createEmptyBorder(0, 15, 5, 15));
+        JButton btnVolver    = VentanaMenu.crearBotonVolver("Volver");
+        JButton btnRegistrar = VentanaMenu.crearBoton("Registrar Defuncion");
+        btnVolver.addActionListener(e -> volver());
         btnRegistrar.addActionListener(e -> registrar());
-        add(panel);
+        footer.add(btnVolver);
+        footer.add(btnRegistrar);
+
+        panelPrincipal.add(form, BorderLayout.CENTER);
+        panelPrincipal.add(footer, BorderLayout.SOUTH);
+        add(panelPrincipal);
+    }
+
+    private void volver() {
+        if (ventanaAnterior != null) ventanaAnterior.setVisible(true);
+        dispose();
     }
 
     private void registrar() {
         String rut = txtRut.getText().trim();
-
         if (!rut.matches("^[0-9]{7,8}-[0-9Kk]{1}$")) {
-            JOptionPane.showMessageDialog(this, "Formato de RUT incorrecto. Ejemplo: 12345678-9", "Error RUT", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Formato de RUT incorrecto.\nEjemplo: 12345678-9", "Error RUT", JOptionPane.ERROR_MESSAGE);
             return;
         }
-
         Persona fallecido = sistema.busquedaGlobalPersona(rut);
         if (fallecido == null) {
-            JOptionPane.showMessageDialog(this, "No se encontró ningún ciudadano con RUT: " + rut, "No encontrado", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "No se encontro ningun ciudadano con RUT: " + rut, "No encontrado", JOptionPane.WARNING_MESSAGE);
             return;
         }
-
         if ("Fallecido".equalsIgnoreCase(fallecido.getEstadoVital())) {
-            JOptionPane.showMessageDialog(this, "Este ciudadano ya está registrado como fallecido.", "Aviso", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Este ciudadano ya esta registrado como fallecido.", "Aviso", JOptionPane.WARNING_MESSAGE);
             return;
         }
-
         int confirmar = JOptionPane.showConfirmDialog(this,
-            "¿Confirmar defunción de:\n" + fallecido.getPrimerNombre() + " " + fallecido.getPrimerApellido() + " (RUT: " + rut + ")?",
+            "Confirmar defuncion de:\n" + fallecido.getPrimerNombre() + " " + fallecido.getPrimerApellido() + "\nRUT: " + rut,
             "Confirmar", JOptionPane.YES_NO_OPTION);
-
         if (confirmar == JOptionPane.YES_OPTION) {
             fallecido.setEstadoVital("Fallecido");
-            StringBuilder msg = new StringBuilder("Defunción registrada correctamente.");
-
+            StringBuilder msg = new StringBuilder("Defuncion registrada correctamente.");
             Persona conyuge = fallecido.getConyuge();
             if (conyuge != null) {
                 conyuge.setEstadoCivil("Viudo/a");
                 conyuge.setConyuge(null);
-                msg.append("\nSe actualizó el estado civil de ").append(conyuge.getPrimerNombre())
-                   .append(" ").append(conyuge.getPrimerApellido()).append(" a Viudo/a.");
+                msg.append("\nEl estado civil de ").append(conyuge.getPrimerNombre())
+                   .append(" ").append(conyuge.getPrimerApellido()).append(" fue actualizado a Viudo/a.");
             }
-
-            JOptionPane.showMessageDialog(this, msg.toString(), "Éxito", JOptionPane.INFORMATION_MESSAGE);
-            dispose();
+            JOptionPane.showMessageDialog(this, msg.toString(), "Exito", JOptionPane.INFORMATION_MESSAGE);
+            volver();
         }
     }
 }

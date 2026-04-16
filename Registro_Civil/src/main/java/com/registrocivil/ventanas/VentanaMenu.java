@@ -4,18 +4,17 @@ import com.registrocivil.logica.GestionSistema;
 import javax.swing.*;
 import java.awt.*;
 
-/**
- * Ventana principal del Sistema de Registro Civil.
- * Muestra el menu inicial con acceso a Regiones y Ciudadanos.
- */
 public class VentanaMenu extends JFrame {
 
-    private GestionSistema sistema;
+    // ===== PALETA DE COLORES UNIFICADA =====
+    public static final Color COLOR_PRIMARIO     = new Color(31, 56, 100);   // azul oscuro - headers
+    public static final Color COLOR_BOTON        = new Color(46, 90, 160);   // azul medio  - botones de accion
+    public static final Color COLOR_BOTON_VOLVER = new Color(90, 110, 145);  // azul grisaceo - boton volver
+    public static final Color COLOR_FONDO        = new Color(235, 240, 250); // fondo general
+    public static final Color COLOR_TEXTO_HEADER = Color.WHITE;
+    public static final Color COLOR_TEXTO_SUB    = new Color(220, 230, 245); // blanco suave - subtitulo en header oscuro
 
-    
-    static final Color COLOR_PRIMARIO   = new Color(46, 117, 182);
-    static final Color COLOR_FONDO      = new Color(240, 245, 255);
-    static final Color COLOR_TITULO     = new Color(30, 60, 120);
+    private GestionSistema sistema;
 
     public VentanaMenu(GestionSistema sistema) {
         this.sistema = sistema;
@@ -25,17 +24,16 @@ public class VentanaMenu extends JFrame {
     private void initComponents() {
         setTitle("Sistema de Registro Civil - Chile");
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        setSize(500, 350);
+        setSize(480, 340);
         setLocationRelativeTo(null);
         setResizable(false);
 
-        // Al cerrar la ventana se guardan los datos en la BD
         addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent e) {
                 int confirm = JOptionPane.showConfirmDialog(
                     VentanaMenu.this,
-                    "¿Desea salir? Los datos serán guardados.",
+                    "Desea salir? Los datos seran guardados.",
                     "Confirmar salida",
                     JOptionPane.YES_NO_OPTION
                 );
@@ -46,79 +44,99 @@ public class VentanaMenu extends JFrame {
             }
         });
 
-        // Panel principal
         JPanel panelPrincipal = new JPanel(new BorderLayout(10, 10));
-        panelPrincipal.setBorder(BorderFactory.createEmptyBorder(20, 30, 20, 30));
         panelPrincipal.setBackground(COLOR_FONDO);
 
-       
-        JLabel titulo = new JLabel("SISTEMA DE REGISTRO CIVIL", SwingConstants.CENTER);
-        titulo.setFont(new Font("Arial", Font.BOLD, 20));
-        titulo.setForeground(COLOR_TITULO);
-        titulo.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
+        // Header azul
+        panelPrincipal.add(crearHeader("SISTEMA DE REGISTRO CIVIL", "Republica de Chile"), BorderLayout.NORTH);
 
-        JLabel subtitulo = new JLabel("República de Chile", SwingConstants.CENTER);
-        subtitulo.setFont(new Font("Arial", Font.ITALIC, 13));
-        subtitulo.setForeground(new Color(100, 100, 100));
-
-        JPanel panelTitulo = new JPanel(new GridLayout(2, 1));
-        panelTitulo.setBackground(COLOR_FONDO);
-        panelTitulo.add(titulo);
-        panelTitulo.add(subtitulo);
-
-        
-        JPanel panelBotones = new JPanel(new GridLayout(2, 1, 10, 15));
+        // Botones centrales
+        JPanel panelBotones = new JPanel(new GridLayout(2, 1, 10, 14));
         panelBotones.setBackground(COLOR_FONDO);
-        panelBotones.setBorder(BorderFactory.createEmptyBorder(20, 40, 10, 40));
+        panelBotones.setBorder(BorderFactory.createEmptyBorder(25, 50, 15, 50));
 
-        JButton btnRegiones    = crearBoton("Gestionar Regiones");
-        JButton btnCiudadanos  = crearBoton("Gestionar Ciudadanos");
+        JButton btnRegiones   = crearBoton("Gestionar Regiones");
+        JButton btnCiudadanos = crearBoton("Gestionar Ciudadanos");
 
         btnRegiones.addActionListener(e -> {
-            new VentanaRegiones(sistema).setVisible(true);
+            new VentanaRegiones(sistema, VentanaMenu.this).setVisible(true);
+            setVisible(false);
         });
-
         btnCiudadanos.addActionListener(e -> {
-            new VentanaCiudadanos(sistema).setVisible(true);
+            new VentanaCiudadanos(sistema, VentanaMenu.this).setVisible(true);
+            setVisible(false);
         });
 
         panelBotones.add(btnRegiones);
         panelBotones.add(btnCiudadanos);
 
-       
-        JLabel footer = new JLabel("Seleccione una opción para continuar", SwingConstants.CENTER);
+        JLabel footer = new JLabel("Seleccione una opcion para continuar", SwingConstants.CENTER);
         footer.setFont(new Font("Arial", Font.PLAIN, 11));
-        footer.setForeground(Color.GRAY);
+        footer.setForeground(Color.DARK_GRAY);
+        footer.setBorder(BorderFactory.createEmptyBorder(0, 0, 12, 0));
 
-        panelPrincipal.add(panelTitulo, BorderLayout.NORTH);
         panelPrincipal.add(panelBotones, BorderLayout.CENTER);
         panelPrincipal.add(footer, BorderLayout.SOUTH);
-
         add(panelPrincipal);
     }
 
-    static JButton crearBoton(String texto) {
+    // ============================================================
+    // METODOS ESTATICOS COMPARTIDOS - usados por todas las ventanas
+    // ============================================================
+
+    /** Boton de accion principal (azul medio) */
+    public static JButton crearBoton(String texto) {
         JButton btn = new JButton(texto);
-        btn.setFont(new Font("Arial", Font.BOLD, 14));
-        btn.setBackground(COLOR_PRIMARIO);
-        btn.setForeground(Color.WHITE);
+        btn.setFont(new Font("Arial", Font.BOLD, 13));
+        btn.setBackground(COLOR_BOTON);
+        btn.setForeground(Color.BLACK);
         btn.setFocusPainted(false);
         btn.setBorderPainted(false);
-        btn.setPreferredSize(new Dimension(0, 50));
+        btn.setOpaque(true);
         btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btn.setPreferredSize(new Dimension(0, 46));
         return btn;
     }
 
-    static JButton crearBotonVolver(JFrame ventana) {
-        JButton btn = new JButton("← Volver");
+    /** Boton de volver / cancelar (azul grisaceo) */
+    public static JButton crearBotonVolver(String texto) {
+        JButton btn = new JButton(texto);
         btn.setFont(new Font("Arial", Font.BOLD, 12));
-        btn.setBackground(new Color(100, 100, 100));
-        btn.setForeground(Color.WHITE);
+        btn.setBackground(COLOR_BOTON_VOLVER);
+        btn.setForeground(Color.BLACK);
         btn.setFocusPainted(false);
         btn.setBorderPainted(false);
+        btn.setOpaque(true);
         btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        btn.addActionListener(e -> ventana.dispose());
+        btn.setPreferredSize(new Dimension(220, 38));
         return btn;
+    }
+
+    /** Header azul con titulo y subtitulo opcional */
+    public static JPanel crearHeader(String titulo, String subtitulo) {
+        JPanel header = new JPanel(new GridLayout(subtitulo != null ? 2 : 1, 1));
+        header.setBackground(COLOR_PRIMARIO);
+        header.setBorder(BorderFactory.createEmptyBorder(14, 20, 14, 20));
+        JLabel lblTitulo = new JLabel(titulo, SwingConstants.CENTER);
+        lblTitulo.setFont(new Font("Arial", Font.BOLD, 16));
+        lblTitulo.setForeground(COLOR_TEXTO_HEADER);
+        header.add(lblTitulo);
+        if (subtitulo != null) {
+            JLabel lblSub = new JLabel(subtitulo, SwingConstants.CENTER);
+            lblSub.setFont(new Font("Arial", Font.PLAIN, 12));
+            lblSub.setForeground(COLOR_TEXTO_SUB);
+            header.add(lblSub);
+        }
+        return header;
+    }
+
+    public static JPanel crearHeader(String titulo) {
+        return crearHeader(titulo, null);
+    }
+
+    public static JLabel crearLabel(String texto) {
+        JLabel lbl = new JLabel(texto);
+        lbl.setForeground(Color.BLACK);
+        return lbl;
     }
 }
-

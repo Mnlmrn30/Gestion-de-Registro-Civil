@@ -1,106 +1,111 @@
 package com.registrocivil.ventanas;
- 
+
 import com.registrocivil.logica.*;
 import javax.swing.*;
 import java.awt.*;
- 
-/**
- * Ventana para inscribir un ciudadano con RUT manual (Registro General).
- */
+
 public class VentanaInscribirCiudadano extends JFrame {
- 
+
     private GestionSistema sistema;
-    private String[] regiones;
- 
+    private JFrame ventanaAnterior;
+
     private JComboBox<String> cmbRegion;
     private JTextField txtRut, txtPrimerNombre, txtSegundoNombre;
     private JTextField txtPrimerApellido, txtSegundoApellido;
     private JComboBox<String> cmbSexo;
     private JSpinner spnDia, spnMes, spnAnio;
- 
-    public VentanaInscribirCiudadano(GestionSistema sistema, String[] regiones) {
+
+    public VentanaInscribirCiudadano(GestionSistema sistema, JFrame ventanaAnterior) {
         this.sistema = sistema;
-        this.regiones = regiones;
+        this.ventanaAnterior = ventanaAnterior;
         initComponents();
     }
- 
+
     private void initComponents() {
         setTitle("Inscribir Ciudadano");
-        setSize(450, 460);
+        setSize(460, 490);
         setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         setResizable(false);
- 
-        JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
-        panel.setBackground(Color.WHITE);
+
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override public void windowClosing(java.awt.event.WindowEvent e) { volver(); }
+        });
+
+        JPanel panelPrincipal = new JPanel(new BorderLayout(0, 0));
+        panelPrincipal.setBackground(VentanaMenu.COLOR_FONDO);
+        panelPrincipal.add(VentanaMenu.crearHeader("INSCRIBIR CIUDADANO", "Registro General"), BorderLayout.NORTH);
+
+        // Formulario
+        JPanel form = new JPanel(new GridBagLayout());
+        form.setBackground(Color.WHITE);
+        form.setBorder(BorderFactory.createEmptyBorder(15, 25, 10, 25));
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(5, 5, 5, 5);
- 
-        JLabel titulo = new JLabel("INSCRIBIR CIUDADANO (REGISTRO GENERAL)", SwingConstants.CENTER);
-        titulo.setFont(new Font("Arial", Font.BOLD, 13));
-        titulo.setForeground(new Color(30, 60, 120));
-        gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 2;
-        panel.add(titulo, gbc);
-        gbc.gridwidth = 1;
- 
-        // Campos
-        cmbRegion        = new JComboBox<>(regiones);
-        txtRut           = new JTextField();
-        txtPrimerNombre  = new JTextField();
-        txtSegundoNombre = new JTextField();
+
+        cmbRegion          = new JComboBox<>(VentanaCiudadanos.NOMBRES_REGIONES);
+        txtRut             = new JTextField();
+        txtPrimerNombre    = new JTextField();
+        txtSegundoNombre   = new JTextField();
         txtPrimerApellido  = new JTextField();
         txtSegundoApellido = new JTextField();
         cmbSexo = new JComboBox<>(new String[]{"Masculino", "Femenino"});
-        spnDia  = new JSpinner(new SpinnerNumberModel(1, 1, 31, 1));
-        spnMes  = new JSpinner(new SpinnerNumberModel(1, 1, 12, 1));
+        spnDia  = new JSpinner(new SpinnerNumberModel(1,    1, 31,   1));
+        spnMes  = new JSpinner(new SpinnerNumberModel(1,    1, 12,   1));
         spnAnio = new JSpinner(new SpinnerNumberModel(2000, 1900, 2026, 1));
- 
-        String[] etiquetas = {"Región:", "RUT (ej: 12345678-9):", "Primer Nombre:", "Segundo Nombre:",
-                              "Primer Apellido:", "Segundo Apellido:", "Sexo:", "Día Nac.:", "Mes Nac.:", "Año Nac.:"};
+
+        String[]    labels = {"Region:", "RUT (ej: 12345678-9):", "Primer Nombre:", "Segundo Nombre:",
+                              "Primer Apellido:", "Segundo Apellido:", "Sexo:",
+                              "Dia Nacimiento:", "Mes Nacimiento:", "Anio Nacimiento:"};
         Component[] campos = {cmbRegion, txtRut, txtPrimerNombre, txtSegundoNombre,
                               txtPrimerApellido, txtSegundoApellido, cmbSexo, spnDia, spnMes, spnAnio};
- 
-        for (int i = 0; i < etiquetas.length; i++) {
-            gbc.gridx = 0; gbc.gridy = i + 1; gbc.weightx = 0.3;
-            panel.add(new JLabel(etiquetas[i]), gbc);
-            gbc.gridx = 1; gbc.weightx = 0.7;
-            panel.add(campos[i], gbc);
+
+        for (int i = 0; i < labels.length; i++) {
+            gbc.gridx = 0; gbc.gridy = i; gbc.weightx = 0.38;
+            form.add(new JLabel(labels[i]), gbc);
+            gbc.gridx = 1; gbc.weightx = 0.62;
+            form.add(campos[i], gbc);
         }
- 
-        // Botón inscribir
-        JButton btnInscribir = new JButton("Inscribir Ciudadano");
-        btnInscribir.setBackground(new Color(46, 117, 182));
-        btnInscribir.setForeground(Color.WHITE);
-        btnInscribir.setFont(new Font("Arial", Font.BOLD, 13));
-        btnInscribir.setFocusPainted(false);
-        btnInscribir.setBorderPainted(false);
-        gbc.gridx = 0; gbc.gridy = etiquetas.length + 1; gbc.gridwidth = 2;
-        gbc.insets = new Insets(15, 5, 5, 5);
-        panel.add(btnInscribir, gbc);
- 
+
+        JScrollPane scrollForm = new JScrollPane(form);
+        scrollForm.setBorder(BorderFactory.createEmptyBorder());
+
+        // Footer con botones
+        JPanel footer = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 8));
+        footer.setBackground(VentanaMenu.COLOR_FONDO);
+        footer.setBorder(BorderFactory.createEmptyBorder(0, 15, 5, 15));
+        JButton btnVolver    = VentanaMenu.crearBotonVolver("Volver");
+        JButton btnInscribir = VentanaMenu.crearBoton("Inscribir Ciudadano");
+        btnVolver.addActionListener(e -> volver());
         btnInscribir.addActionListener(e -> inscribir());
- 
-        JScrollPane scroll = new JScrollPane(panel);
-        scroll.setBorder(null);
-        add(scroll);
+        footer.add(btnVolver);
+        footer.add(btnInscribir);
+
+        panelPrincipal.add(scrollForm, BorderLayout.CENTER);
+        panelPrincipal.add(footer, BorderLayout.SOUTH);
+        add(panelPrincipal);
     }
- 
+
+    private void volver() {
+        if (ventanaAnterior != null) ventanaAnterior.setVisible(true);
+        dispose();
+    }
+
     private void inscribir() {
         try {
             String region = (String) cmbRegion.getSelectedItem();
             String rut    = txtRut.getText().trim();
- 
+
             if (!rut.matches("^[0-9]{7,8}-[0-9Kk]{1}$")) {
-                JOptionPane.showMessageDialog(this, "Formato de RUT incorrecto.\nEjemplo correcto: 12345678-9", "Error RUT", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Formato de RUT incorrecto.\nEjemplo: 12345678-9", "Error RUT", JOptionPane.ERROR_MESSAGE);
                 return;
             }
             if (sistema.busquedaGlobalPersona(rut) != null) {
                 JOptionPane.showMessageDialog(this, "Ya existe un ciudadano con ese RUT.", "RUT Duplicado", JOptionPane.ERROR_MESSAGE);
                 return;
             }
- 
+
             String pNombre   = txtPrimerNombre.getText().trim();
             String sNombre   = txtSegundoNombre.getText().trim();
             String pApellido = txtPrimerApellido.getText().trim();
@@ -109,21 +114,21 @@ public class VentanaInscribirCiudadano extends JFrame {
             int dia  = (int) spnDia.getValue();
             int mes  = (int) spnMes.getValue();
             int anio = (int) spnAnio.getValue();
- 
+
             if (pNombre.isEmpty() || pApellido.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "El primer nombre y apellido son obligatorios.", "Campos vacíos", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, "El primer nombre y apellido son obligatorios.", "Campos vacios", JOptionPane.WARNING_MESSAGE);
                 return;
             }
- 
+
             boolean exito = sistema.registrarPersona(region, rut, pNombre, sNombre, pApellido, sApellido, sexo, dia, mes, anio);
             if (exito) {
-                JOptionPane.showMessageDialog(this, "¡Ciudadano registrado con éxito en " + region + "!", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-                dispose();
+                JOptionPane.showMessageDialog(this, "Ciudadano registrado con exito en " + region + ".", "Exito", JOptionPane.INFORMATION_MESSAGE);
+                volver();
             } else {
                 JOptionPane.showMessageDialog(this, "No se pudo registrar. Verifique los datos.", "Error", JOptionPane.ERROR_MESSAGE);
             }
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, "Error inesperado: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 }

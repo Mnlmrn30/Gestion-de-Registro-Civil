@@ -4,96 +4,93 @@ import com.registrocivil.logica.*;
 import javax.swing.*;
 import java.awt.*;
 
-/**
- * Ventana para inscribir un nacimiento (genera RUT automático y vincula progenitores).
- */
 public class VentanaInscribirNacimiento extends JFrame {
 
     private GestionSistema sistema;
-    private String[] regiones;
+    private JFrame ventanaAnterior;
 
-    private JComboBox<String> cmbRegion;
+    private JComboBox<String> cmbRegion, cmbSexo;
     private JTextField txtPrimerNombre, txtSegundoNombre;
     private JTextField txtPrimerApellido, txtSegundoApellido;
     private JTextField txtRutPadre, txtRutMadre;
-    private JComboBox<String> cmbSexo;
     private JSpinner spnDia, spnMes, spnAnio;
 
-    public VentanaInscribirNacimiento(GestionSistema sistema, String[] regiones) {
+    public VentanaInscribirNacimiento(GestionSistema sistema, JFrame ventanaAnterior) {
         this.sistema = sistema;
-        this.regiones = regiones;
+        this.ventanaAnterior = ventanaAnterior;
         initComponents();
     }
 
     private void initComponents() {
         setTitle("Inscribir Nacimiento");
-        setSize(450, 500);
+        setSize(460, 520);
         setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         setResizable(false);
 
-        JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
-        panel.setBackground(Color.WHITE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override public void windowClosing(java.awt.event.WindowEvent e) { volver(); }
+        });
+
+        JPanel panelPrincipal = new JPanel(new BorderLayout());
+        panelPrincipal.setBackground(VentanaMenu.COLOR_FONDO);
+        panelPrincipal.add(VentanaMenu.crearHeader("INSCRIBIR NACIMIENTO", "El RUT sera asignado automaticamente"), BorderLayout.NORTH);
+
+        JPanel form = new JPanel(new GridBagLayout());
+        form.setBackground(Color.WHITE);
+        form.setBorder(BorderFactory.createEmptyBorder(15, 25, 10, 25));
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(5, 5, 5, 5);
 
-        JLabel titulo = new JLabel("INSCRIBIR NACIMIENTO", SwingConstants.CENTER);
-        titulo.setFont(new Font("Arial", Font.BOLD, 14));
-        titulo.setForeground(new Color(30, 60, 120));
-        gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 2;
-        panel.add(titulo, gbc);
-
-        JLabel nota = new JLabel("(El RUT será asignado automáticamente)", SwingConstants.CENTER);
-        nota.setFont(new Font("Arial", Font.ITALIC, 11));
-        nota.setForeground(Color.GRAY);
-        gbc.gridy = 1;
-        panel.add(nota, gbc);
-        gbc.gridwidth = 1;
-
-        cmbRegion        = new JComboBox<>(regiones);
-        txtPrimerNombre  = new JTextField();
-        txtSegundoNombre = new JTextField();
+        cmbRegion          = new JComboBox<>(VentanaCiudadanos.NOMBRES_REGIONES);
+        txtPrimerNombre    = new JTextField();
+        txtSegundoNombre   = new JTextField();
         txtPrimerApellido  = new JTextField();
         txtSegundoApellido = new JTextField();
         cmbSexo = new JComboBox<>(new String[]{"Masculino", "Femenino"});
-        spnDia  = new JSpinner(new SpinnerNumberModel(1, 1, 31, 1));
-        spnMes  = new JSpinner(new SpinnerNumberModel(1, 1, 12, 1));
+        spnDia  = new JSpinner(new SpinnerNumberModel(1,    1,    31,   1));
+        spnMes  = new JSpinner(new SpinnerNumberModel(1,    1,    12,   1));
         spnAnio = new JSpinner(new SpinnerNumberModel(2025, 1900, 2026, 1));
         txtRutPadre = new JTextField();
         txtRutMadre = new JTextField();
 
-        String[] etiquetas = {"Región de Nacimiento:", "Primer Nombre:", "Segundo Nombre:",
+        String[]    labels = {"Region de nacimiento:", "Primer Nombre:", "Segundo Nombre:",
                               "Primer Apellido:", "Segundo Apellido:", "Sexo:",
-                              "Día Nac.:", "Mes Nac.:", "Año Nac.:",
+                              "Dia Nacimiento:", "Mes Nacimiento:", "Anio Nacimiento:",
                               "RUT Padre (opcional):", "RUT Madre (opcional):"};
         Component[] campos = {cmbRegion, txtPrimerNombre, txtSegundoNombre,
                               txtPrimerApellido, txtSegundoApellido, cmbSexo,
                               spnDia, spnMes, spnAnio, txtRutPadre, txtRutMadre};
 
-        for (int i = 0; i < etiquetas.length; i++) {
-            gbc.gridx = 0; gbc.gridy = i + 2; gbc.weightx = 0.35;
-            panel.add(new JLabel(etiquetas[i]), gbc);
-            gbc.gridx = 1; gbc.weightx = 0.65;
-            panel.add(campos[i], gbc);
+        for (int i = 0; i < labels.length; i++) {
+            gbc.gridx = 0; gbc.gridy = i; gbc.weightx = 0.4;
+            form.add(new JLabel(labels[i]), gbc);
+            gbc.gridx = 1; gbc.weightx = 0.6;
+            form.add(campos[i], gbc);
         }
 
-        JButton btnRegistrar = new JButton("Registrar Nacimiento");
-        btnRegistrar.setBackground(new Color(46, 117, 182));
-        btnRegistrar.setForeground(Color.WHITE);
-        btnRegistrar.setFont(new Font("Arial", Font.BOLD, 13));
-        btnRegistrar.setFocusPainted(false);
-        btnRegistrar.setBorderPainted(false);
-        gbc.gridx = 0; gbc.gridy = etiquetas.length + 2; gbc.gridwidth = 2;
-        gbc.insets = new Insets(15, 5, 5, 5);
-        panel.add(btnRegistrar, gbc);
+        JScrollPane scrollForm = new JScrollPane(form);
+        scrollForm.setBorder(BorderFactory.createEmptyBorder());
 
+        JPanel footer = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 8));
+        footer.setBackground(VentanaMenu.COLOR_FONDO);
+        footer.setBorder(BorderFactory.createEmptyBorder(0, 15, 5, 15));
+        JButton btnVolver    = VentanaMenu.crearBotonVolver("Volver");
+        JButton btnRegistrar = VentanaMenu.crearBoton("Registrar Nacimiento");
+        btnVolver.addActionListener(e -> volver());
         btnRegistrar.addActionListener(e -> registrar());
+        footer.add(btnVolver);
+        footer.add(btnRegistrar);
 
-        JScrollPane scroll = new JScrollPane(panel);
-        scroll.setBorder(null);
-        add(scroll);
+        panelPrincipal.add(scrollForm, BorderLayout.CENTER);
+        panelPrincipal.add(footer, BorderLayout.SOUTH);
+        add(panelPrincipal);
+    }
+
+    private void volver() {
+        if (ventanaAnterior != null) ventanaAnterior.setVisible(true);
+        dispose();
     }
 
     private void registrar() {
@@ -107,15 +104,13 @@ public class VentanaInscribirNacimiento extends JFrame {
             int dia  = (int) spnDia.getValue();
             int mes  = (int) spnMes.getValue();
             int anio = (int) spnAnio.getValue();
-            String rutPadre = txtRutPadre.getText().trim();
-            String rutMadre = txtRutMadre.getText().trim();
+            String rutPadre  = txtRutPadre.getText().trim();
+            String rutMadre  = txtRutMadre.getText().trim();
 
             if (pNombre.isEmpty() || pApellido.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "El primer nombre y apellido son obligatorios.", "Campos vacíos", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, "El primer nombre y apellido son obligatorios.", "Campos vacios", JOptionPane.WARNING_MESSAGE);
                 return;
             }
-
-            // Validar RUTs de padres si fueron ingresados
             if (!rutPadre.isEmpty() && !rutPadre.matches("^[0-9]{7,8}-[0-9Kk]{1}$")) {
                 JOptionPane.showMessageDialog(this, "Formato de RUT del padre incorrecto.", "Error RUT", JOptionPane.ERROR_MESSAGE);
                 return;
@@ -131,14 +126,15 @@ public class VentanaInscribirNacimiento extends JFrame {
 
             if (rutGenerado != null) {
                 JOptionPane.showMessageDialog(this,
-                    "¡Nacimiento registrado exitosamente!\n\nRUT asignado al recién nacido:\n" + rutGenerado,
-                    "Éxito", JOptionPane.INFORMATION_MESSAGE);
-                dispose();
+                    "Nacimiento registrado exitosamente.\n\nRUT asignado al recien nacido:\n" + rutGenerado,
+                    "Exito", JOptionPane.INFORMATION_MESSAGE);
+                volver();
             } else {
-                JOptionPane.showMessageDialog(this, "No se pudo registrar. Verifique la región.", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "No se pudo registrar. Verifique los datos.", "Error", JOptionPane.ERROR_MESSAGE);
             }
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 }
+
