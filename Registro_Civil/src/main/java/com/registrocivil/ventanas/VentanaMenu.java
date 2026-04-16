@@ -12,7 +12,7 @@ public class VentanaMenu extends JFrame {
 
     private GestionSistema sistema;
 
-    // Color primario unificado para todo el sistema
+    
     static final Color COLOR_PRIMARIO   = new Color(46, 117, 182);
     static final Color COLOR_FONDO      = new Color(240, 245, 255);
     static final Color COLOR_TITULO     = new Color(30, 60, 120);
@@ -51,7 +51,7 @@ public class VentanaMenu extends JFrame {
         panelPrincipal.setBorder(BorderFactory.createEmptyBorder(20, 30, 20, 30));
         panelPrincipal.setBackground(COLOR_FONDO);
 
-        // Titulo
+       
         JLabel titulo = new JLabel("SISTEMA DE REGISTRO CIVIL", SwingConstants.CENTER);
         titulo.setFont(new Font("Arial", Font.BOLD, 20));
         titulo.setForeground(COLOR_TITULO);
@@ -66,7 +66,7 @@ public class VentanaMenu extends JFrame {
         panelTitulo.add(titulo);
         panelTitulo.add(subtitulo);
 
-        // Botones (sin emojis, color unificado)
+        
         JPanel panelBotones = new JPanel(new GridLayout(2, 1, 10, 15));
         panelBotones.setBackground(COLOR_FONDO);
         panelBotones.setBorder(BorderFactory.createEmptyBorder(20, 40, 10, 40));
@@ -85,7 +85,7 @@ public class VentanaMenu extends JFrame {
         panelBotones.add(btnRegiones);
         panelBotones.add(btnCiudadanos);
 
-        // Footer
+       
         JLabel footer = new JLabel("Seleccione una opción para continuar", SwingConstants.CENTER);
         footer.setFont(new Font("Arial", Font.PLAIN, 11));
         footer.setForeground(Color.GRAY);
