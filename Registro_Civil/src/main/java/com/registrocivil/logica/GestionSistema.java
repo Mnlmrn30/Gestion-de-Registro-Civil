@@ -13,6 +13,7 @@ public class GestionSistema{
         regiones = new HashMap<>(); 
         inicializarRegiones(); 
         crearTabla();
+        cargarDatosDesdeBD();
         cargarDatosPrueba(); 
     }
     
@@ -64,6 +65,11 @@ public class GestionSistema{
     
     public boolean registrarPersona(String nombreRegion, String rut, String primerNombre, String segundoNombre, String primerApellido, String segundoApellido,
                                   String sexo, int diaNac, int mesNac, int añoNac){
+        
+        if (busquedaGlobalPersona(rut) != null) {
+            return false; 
+        }
+        
         if(regiones.containsKey(nombreRegion)){
             Persona nuevaPersona = new Persona(rut, primerNombre, segundoNombre, primerApellido, segundoApellido, sexo, diaNac, mesNac, añoNac); 
             regiones.get(nombreRegion).getCiudadanos().add(nuevaPersona);

@@ -13,7 +13,6 @@ public class Main {
         BufferedReader lector = new BufferedReader(new InputStreamReader(System.in));
         
         System.out.println("--- CARGANDO DATOS INICIALES ---"); 
-        sistemaTotal.cargarDatosDesdeBD();
         
         System.out.println("===============================");
         System.out.println("   SISTEMA DE REGISTRO CIVIL   ");

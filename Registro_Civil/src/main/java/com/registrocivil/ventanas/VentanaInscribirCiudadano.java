@@ -81,7 +81,7 @@ public class VentanaInscribirCiudadano extends JFrame {
         btnInscribir.addActionListener(e -> inscribir());
         footer.add(btnVolver);
         footer.add(btnInscribir);
-
+        this.getRootPane().setDefaultButton(btnInscribir);
         panelPrincipal.add(scrollForm, BorderLayout.CENTER);
         panelPrincipal.add(footer, BorderLayout.SOUTH);
         add(panelPrincipal);
