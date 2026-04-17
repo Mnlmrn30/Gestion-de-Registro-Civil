@@ -189,12 +189,14 @@ public class GestorConsolaCiudadano {
     
     public void buscarCiudadano(){
         try {
-            System.out.println("\n--- BUSCAR CIUDADANO ---");
+            System.out.println("--- BUSCAR CIUDADANO ---");
             System.out.println("1. Buscar por RUT");
             System.out.println("2. Buscar por Nombre y Apellido");
-            System.out.print("Seleccione una opcion: ");
+            System.out.println("Seleccione una opcion: ");
             
             int opcBusqueda = Integer.parseInt(lector.readLine());
+            
+            java.util.List<Persona> resultadosParaImprimir = new java.util.ArrayList<>();
             
             if (opcBusqueda == 1) {
                 System.out.println("Ingrese el RUT a buscar: ");
@@ -202,7 +204,7 @@ public class GestorConsolaCiudadano {
                 Persona p = sistema.busquedaGlobalPersona(rutBuscado);
                 
                 if (p != null) {
-                    System.out.println("Ciudadano encontrado: " + p.getPrimerNombre() + " " + p.getPrimerApellido() + " (RUT: " + p.getRut() + ")");
+                    resultadosParaImprimir.add(p); // Agregamos a la única persona encontrada
                 } else {
                     System.out.println("No se encontro a nadie con el RUT: " + rutBuscado);
                 }
@@ -216,16 +218,41 @@ public class GestorConsolaCiudadano {
                 java.util.List<Persona> encontrados = sistema.busquedaGlobalPersona(nombreBusq, apellidoBusq);
                 
                 if (!encontrados.isEmpty()) {
-                    System.out.println("\n[!] Se encontraron " + encontrados.size() + " coincidencia(s):");
-                    for (Persona persona : encontrados) {
-                        System.out.println("RUT: " + persona.getRut() + " | Nombre: " + persona.getPrimerNombre() + " " + persona.getPrimerApellido());
-                    }
+                    resultadosParaImprimir.addAll(encontrados); // Agregamos a todos los encontrados
+                    System.out.println("Se encontraron " + resultadosParaImprimir.size() + " coincidencia(s):");
                 } else {
                     System.out.println("No hay registros para el nombre: " + nombreBusq + " " + apellidoBusq);
                 }
             } else {
                 System.out.println("Opcion invalida.");
+                return; 
             }
+
+            for (Persona personaEncontrada : resultadosParaImprimir) {
+                System.out.println("--- RESULTADO DE LA BÚSQUEDA ---");
+                System.out.println("RUT: " + personaEncontrada.getRut());
+                System.out.println("Nombre Completo: " + personaEncontrada.getPrimerNombre() + " " + 
+                                   personaEncontrada.getSegundoNombre() + " " + 
+                                   personaEncontrada.getPrimerApellido() + " " + 
+                                   personaEncontrada.getSegundoApellido());
+                System.out.println("Sexo: " + personaEncontrada.getSexo());
+                System.out.println("Fecha de Nacimiento: " + personaEncontrada.getDiaNacimiento() + "/" + 
+                                   personaEncontrada.getMesNacimiento() + "/" + 
+                                   personaEncontrada.getAñoNacimiento());
+                
+                if (!"Fallecido".equals(personaEncontrada.getEstadoVital())) {
+                    System.out.println("Estado Civil: " + personaEncontrada.getEstadoCivil());
+                }
+                
+                System.out.println("Estado Vital: " + personaEncontrada.getEstadoVital());
+                
+                if (personaEncontrada.getConyuge() != null) {
+                    System.out.println("Cónyuge: " + personaEncontrada.getConyuge().getPrimerNombre() + " " + 
+                                       personaEncontrada.getConyuge().getPrimerApellido() + 
+                                       " (RUT: " + personaEncontrada.getConyuge().getRut() + ")");
+                }
+            }
+            
         } catch (Exception e) {
             System.out.println("Error al procesar la busqueda: " + e.getMessage());
         }
