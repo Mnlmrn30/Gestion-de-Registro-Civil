@@ -32,7 +32,7 @@ public class VentanaInscribirCiudadano extends JFrame {
             @Override public void windowClosing(java.awt.event.WindowEvent e) { volver(); }
         });
 
-        JPanel panelPrincipal = new JPanel(new BorderLayout(0, 0));
+        JPanel panelPrincipal = new JPanel(new BorderLayout());
         panelPrincipal.setBackground(VentanaMenu.COLOR_FONDO);
         panelPrincipal.add(VentanaMenu.crearHeader("INSCRIBIR CIUDADANO", "Registro General"), BorderLayout.NORTH);
 
