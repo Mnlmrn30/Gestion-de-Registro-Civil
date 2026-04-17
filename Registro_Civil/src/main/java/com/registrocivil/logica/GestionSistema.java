@@ -17,6 +17,10 @@ public class GestionSistema{
         cargarDatosPrueba(); 
     }
     
+    /*
+    Creamos el mapa base del sistema que contiene las 16 regiones de chile en un HashMap, para que organizemos
+    a los ciudadanos por zona
+    */
     private void inicializarRegiones(){
         String[] nombresRegiones = {"Arica y Parinacota", "Tarapaca", "Antofagasta", "Atacama", "Coquimbo", 
             "Valparaiso", "Región Metropolitana", "O'Higgins", 
@@ -32,6 +36,9 @@ public class GestionSistema{
         return regiones; 
     }
     
+    /*
+    Casos de prueba que se piden en la SIA-11.
+    */
     public void cargarDatosPrueba(){
         int totalCiudadanos = 0;
         for (Region r : regiones.values()) {
@@ -49,12 +56,14 @@ public class GestionSistema{
             if (p != null) {
                 p.setEstadoVital("Fallecido");
             }
-            this.registrarMatrimonio("11111111-1", "22222222-2");
+            this.registrarMatrimonio("11111111-1", "22222222-2"); // Caso prueba
 
             System.out.println("[SISTEMA] Ciudadanos de prueba cargados exitosamente.");
         }
     }
-    
+     /*
+    Se crea esta funcion para darles un nuevo Rut a los ingresados recien nacidos.
+    */
     private String generarRutAleatorio(){
         Random rnd = new Random(); 
         int numero = 25000000 + rnd.nextInt(5000000);
@@ -62,7 +71,9 @@ public class GestionSistema{
         String digito = dv[rnd.nextInt(11)]; 
         return String.format("%,d", numero).replace(",",".") + "-" + digito;
     }
-    
+     /*
+    Toma todos los datos mas importantess de un ciudadano y crea un objeto Persona, ahi los guarda segun la region correspondiente 
+    */
     public boolean registrarPersona(String nombreRegion, String rut, String primerNombre, String segundoNombre, String primerApellido, String segundoApellido,
                                   String sexo, int diaNac, int mesNac, int añoNac){
         
@@ -77,7 +88,9 @@ public class GestionSistema{
         }
         return false; 
     }
-    
+     /*
+    registra a todos los recien nacidos, aqui se utiliza el rut aleatorizado.
+    */
     public String registrarNacimiento(String nombreRegion, String pNombre, String sNombre, String pApellido, String sApellido, String sexo, int d, int m, int a, 
             String rutPadre, String rutMadre){
         if(!regiones.containsKey(nombreRegion)){
@@ -94,7 +107,9 @@ public class GestionSistema{
         return nuevoRut; 
         
     }
-    
+    /*
+    Es el buscador Principal va recorriendo todas las regiones una por una hasta que encuentra al ciudadano.
+    */
     public Persona busquedaGlobalPersona(String rut){
         for(Region r : regiones.values()){
             for(Persona p: r.getCiudadanos()){
@@ -117,7 +132,10 @@ public class GestionSistema{
         return "Desconocida"; 
     }
     
-    
+    /*
+    Edita personas en caso de que haya un error al ingresarlos, y ayuda tambien para inscribir a los padres de los
+    agregados en general para sacar asi certificados en el que pide a ambos.
+    */
     public boolean editarPersona(String rut, String nuevoPrimerNombre, String nuevoSegundoNombre, String nuevoPrimerApellido, String nuevoSegundoApellido, String nuevoSexo, int nuevoDia, int nuevoMes, int nuevoAñoNac) {
         Persona personaAEditar = busquedaGlobalPersona(rut);
         
@@ -135,6 +153,7 @@ public class GestionSistema{
         return false;
     }
     
+    // Elimina persona con el rut.
     public boolean eliminarPersona(String nombreRegion, String rut) {
         Persona personaAEliminar = buscarPersona(nombreRegion, rut);
         if(personaAEliminar != null){
@@ -167,6 +186,9 @@ public class GestionSistema{
         return null;
     }
     
+    /*
+    Pide el rut de ambas personas para poder registrar en el matrimonio y asi cambiar su estado civil
+    */
     public boolean registrarMatrimonio(String rut1, String rut2){
         Persona p1 = busquedaGlobalPersona(rut1); 
         Persona p2 = busquedaGlobalPersona(rut2);
@@ -193,6 +215,9 @@ public class GestionSistema{
         return true; 
     }
     
+    /*
+    Encargada de la base de datos, donde aqui se ejecuta el codigo SQL.
+    */
     private void crearTabla(){
         String sql = "CREATE TABLE IF NOT EXISTS Persona (\n" +
                      " rut TEXT PRIMARY KEY,\n" +
@@ -216,7 +241,10 @@ public class GestionSistema{
         }
     }
    
-    
+    /*
+    Toma a los ciudadanos guardados en la base de datos, y los vuelve a llenar en lista de las regiones con los ciudadanos
+    guardados.
+    */
     
     public void cargarDatosDesdeBD(){
         String sql = "SELECT * FROM Persona";
@@ -251,6 +279,9 @@ public class GestionSistema{
         }
     }
     
+    /*
+    Toma a todos los ciudadanos que se encuentran en la memoria del programa y los inserta en el archivo de la base de datos.
+    */
     public void guardarDatosEnBD() {
     String deleteSql = "DELETE FROM Persona";
     String insertSql = "INSERT INTO Persona (region, rut, primer_nombre, segundo_nombre, primer_apellido, segundo_apellido, sexo, dia, mes, anio, estado_civil, estado_vital) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";

@@ -16,6 +16,7 @@ public class Persona {
     private Persona madre; 
     private String estadoVital; 
     
+    //atributos de una persona general, Soltero y vivo por defecto
     public Persona(String rut, String primerNombre, String segundoNombre, String primerApellido, String segundoApellido, String sexo, int dia, int mes, int añoNac) {
         this.rut = rut;
         this.primerNombre = primerNombre;
@@ -34,7 +35,7 @@ public class Persona {
         padre = null; 
         madre = null;
     }
-    
+    // GETTERS Y SETTERS
     public String getRut() { return rut; }
     public void setRut(String rut){ this.rut = rut;}
   

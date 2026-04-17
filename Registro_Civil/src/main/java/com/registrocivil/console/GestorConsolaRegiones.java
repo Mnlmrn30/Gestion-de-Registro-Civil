@@ -10,7 +10,10 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.HashSet;
 
-
+/*
+Las funciones necesarias para que subMenuRegiones funcione correctamente, cada metodo corresponde a un case
+para que a la hora de ingresar el numero nos arroje el metodo correspondiente.
+*/
 public class GestorConsolaRegiones {
     
     private GestionSistema sistema;

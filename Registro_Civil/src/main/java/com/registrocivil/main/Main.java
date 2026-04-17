@@ -5,6 +5,10 @@ import com.registrocivil.console.*;
 import com.registrocivil.ventanas.VentanaMenu;
 import java.io.*;
 
+/*
+Importante para que el codigo compile de la mejor manera y que todo funcione con exito, el encargado de darle vida a todas las clases
+aqui escogeremos si deseamos entrar a modo Consola o Ventana, tambien se extraen y suben datos a SQLite.
+*/
 public class Main {
     public static void main(String[] arr) throws IOException {
         

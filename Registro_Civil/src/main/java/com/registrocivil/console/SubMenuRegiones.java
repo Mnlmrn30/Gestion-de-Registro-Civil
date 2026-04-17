@@ -7,7 +7,10 @@ public class SubMenuRegiones extends MenuBase{
     public SubMenuRegiones(GestionSistema sistema, BufferedReader lector){
         super(sistema, lector); 
     }
-    
+    /*
+    Menu Consola para las estadisticas de la region, basicamente este apartado es unicamente para mostrar
+    estadisticas y cantidades.
+    */
     @Override
     public void iniciar() throws Exception{
         boolean volver = false; 

@@ -7,7 +7,10 @@ import com.registrocivil.logica.Persona;
 import java.io.BufferedReader;
 import java.io.IOException;
 
-
+/*
+Las funciones necesarias para que subMenuCiudadanos funcione correctamente, cada metodo corresponde a un case
+para que a la hora de ingresar el numero nos arroje el metodo correspondiente.
+*/
 
 public class GestorConsolaCiudadano {
     private GestionSistema sistema; 

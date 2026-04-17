@@ -10,7 +10,9 @@ public class MenuConsola extends MenuBase{
         super(sistema, new BufferedReader(new InputStreamReader(System.in)));
     }
     
-    // Sobreescritura de metodo de la superclase 
+    /* Apartado que nos hacer escoger que actividad queremos realizar, si gestionar ciudadanos o las regiones, de no escoger ninguna
+    se puede salir del programa utilizando el numero 3.
+    */
     @Override
     public void iniciar(){
         boolean salir = false; 

@@ -9,7 +9,10 @@ public class SubMenuCiudadanos extends MenuBase{
     public SubMenuCiudadanos(GestionSistema sistema, BufferedReader lector){
         super(sistema, lector); 
     }
-    
+    /*
+    Menu para el gestion de ciudadanos, aqui se desarolla todo lo importante del codigo, donde se registran las personas,
+    se editan, se elimina, se vinculan, entre otras funcionalidades.
+    */
     @Override
     public void iniciar() throws Exception{
         boolean volver = false; 
