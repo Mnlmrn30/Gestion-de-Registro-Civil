@@ -13,7 +13,7 @@ public class VentanaInscribirNacimiento extends JFrame {
     private JTextField txtPrimerNombre, txtSegundoNombre;
     private JTextField txtPrimerApellido, txtSegundoApellido;
     private JTextField txtRutPadre, txtRutMadre;
-    private JSpinner spnDia, spnMes, spnAnio;
+    private JTextField spnDia, spnMes, spnAnio;
 
     public VentanaInscribirNacimiento(GestionSistema sistema, JFrame ventanaAnterior) {
         this.sistema = sistema;
@@ -49,19 +49,33 @@ public class VentanaInscribirNacimiento extends JFrame {
         txtPrimerApellido  = new JTextField();
         txtSegundoApellido = new JTextField();
         cmbSexo = new JComboBox<>(new String[]{"Masculino", "Femenino"});
-        spnDia  = new JSpinner(new SpinnerNumberModel(1,    1,    31,   1));
-        spnMes  = new JSpinner(new SpinnerNumberModel(1,    1,    12,   1));
-        spnAnio = new JSpinner(new SpinnerNumberModel(2025, 1900, 2026, 1));
+        spnDia = new JTextField(3);
+        spnMes = new JTextField(3);
+        spnAnio = new JTextField(3);
+        
+        JPanel panelFecha = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
+        panelFecha.setOpaque(false);
+        panelFecha.add(spnDia);
+        panelFecha.add(new JLabel("/"));
+        panelFecha.add(spnMes);
+        panelFecha.add(new JLabel("/"));
+        panelFecha.add(spnAnio);
+    
         txtRutPadre = new JTextField();
         txtRutMadre = new JTextField();
 
-        String[]    labels = {"Region de nacimiento:", "Primer Nombre:", "Segundo Nombre:",
-                              "Primer Apellido:", "Segundo Apellido:", "Sexo:",
-                              "Dia Nacimiento:", "Mes Nacimiento:", "Anio Nacimiento:",
-                              "RUT Padre (opcional):", "RUT Madre (opcional):"};
-        Component[] campos = {cmbRegion, txtPrimerNombre, txtSegundoNombre,
-                              txtPrimerApellido, txtSegundoApellido, cmbSexo,
-                              spnDia, spnMes, spnAnio, txtRutPadre, txtRutMadre};
+        String[] labels = {
+            "Región de nacimiento:", "Primer Nombre:", "Segundo Nombre:",
+            "Primer Apellido:", "Segundo Apellido:", "Sexo:",
+            "Fecha Nacimiento:",
+            "RUT Padre (opcional):", "RUT Madre (opcional):"
+        };
+        Component[] campos = {
+            cmbRegion, txtPrimerNombre, txtSegundoNombre,
+            txtPrimerApellido, txtSegundoApellido, cmbSexo,
+            panelFecha, // ¡Aquí metemos el panel que creaste arriba!
+            txtRutPadre, txtRutMadre
+        };
 
         for (int i = 0; i < labels.length; i++) {
             gbc.gridx = 0; gbc.gridy = i; gbc.weightx = 0.4;
@@ -101,9 +115,9 @@ public class VentanaInscribirNacimiento extends JFrame {
             String pApellido = txtPrimerApellido.getText().trim();
             String sApellido = txtSegundoApellido.getText().trim();
             String sexo      = (String) cmbSexo.getSelectedItem();
-            int dia  = (int) spnDia.getValue();
-            int mes  = (int) spnMes.getValue();
-            int anio = (int) spnAnio.getValue();
+            int dia = Integer.parseInt(spnDia.getText().trim());
+            int mes = Integer.parseInt(spnMes.getText().trim());
+            int anio = Integer.parseInt(spnAnio.getText().trim());;
             String rutPadre  = txtRutPadre.getText().trim();
             String rutMadre  = txtRutMadre.getText().trim();
 
