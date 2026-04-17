@@ -1,7 +1,8 @@
 package com.registrocivil.logica; 
 
 import java.util.HashMap;
-import java.util.ArrayList; 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random; 
 import java.sql.*;
 
@@ -119,6 +120,19 @@ public class GestionSistema{
             }
         }
         return null; 
+    }
+    
+    public List<Persona> busquedaGlobalPersona(String primerNombre, String primerApellido){
+        List<Persona> coincidencias = new ArrayList<>();
+        for (Region r : regiones.values()) {
+            for (Persona p : r.getCiudadanos()) {
+                if (p.getPrimerNombre().equalsIgnoreCase(primerNombre) && 
+                    p.getPrimerApellido().equalsIgnoreCase(primerApellido)) {
+                    coincidencias.add(p);
+                }
+            }
+        }
+        return coincidencias;
     }
     
     public String obtenerRegionDePersona(String rut){

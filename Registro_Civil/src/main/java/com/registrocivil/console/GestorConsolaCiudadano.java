@@ -188,49 +188,49 @@ public class GestorConsolaCiudadano {
     }
     
     public void buscarCiudadano(){
-        try{
-            System.out.println("\n=== 5. BUSCAR CIUDADANO (BÚSQUEDA GLOBAL) ===");
-            System.out.println("Ingrese el RUT a buscar (ej: 12345678-9): ");
-            String rut = lector.readLine();
-            validarFormatoRut(rut);
+        try {
+            System.out.println("\n--- BUSCAR CIUDADANO ---");
+            System.out.println("1. Buscar por RUT");
+            System.out.println("2. Buscar por Nombre y Apellido");
+            System.out.print("Seleccione una opcion: ");
             
-            Persona personaEncontrada = sistema.busquedaGlobalPersona(rut);
+            int opcBusqueda = Integer.parseInt(lector.readLine());
             
-            String regionRegistro = sistema.obtenerRegionDePersona(rut);
-            
-            if(personaEncontrada != null){
-                System.out.println("\n--- RESULTADO DE LA BÚSQUEDA ---");
-                System.out.println("RUT: " + personaEncontrada.getRut());
-                System.out.println("Nombre Completo: " + personaEncontrada.getPrimerNombre() + " " + 
-                                   personaEncontrada.getSegundoNombre() + " " + 
-                                   personaEncontrada.getPrimerApellido() + " " + 
-                                   personaEncontrada.getSegundoApellido());
-                System.out.println("Sexo: " + personaEncontrada.getSexo());
-                System.out.println("Fecha de Nacimiento: " + personaEncontrada.getDiaNacimiento() + "/" + 
-                                   personaEncontrada.getMesNacimiento() + "/" + 
-                                   personaEncontrada.getAñoNacimiento());
-                System.out.println("Región de Registro: " + regionRegistro); 
-                if(!personaEncontrada.getEstadoVital().equals("Fallecido")){
-                    System.out.println("Estado Civil: " + personaEncontrada.getEstadoCivil());
+            if (opcBusqueda == 1) {
+                System.out.print("Ingrese el RUT a buscar: ");
+                String rutBuscado = lector.readLine();
+                Persona p = sistema.busquedaGlobalPersona(rutBuscado);
+                
+                if (p != null) {
+                    System.out.println("\n[!] Ciudadano encontrado: " + p.getPrimerNombre() + " " + p.getPrimerApellido() + " (RUT: " + p.getRut() + ")");
+                } else {
+                    System.out.println("\n[X] No se encontro a nadie con el RUT: " + rutBuscado);
                 }
-                System.out.println("Estado Vital: " + personaEncontrada.getEstadoVital());
-     
-                if(personaEncontrada.getConyuge() != null){
-                System.out.println("Cónyuge: " + personaEncontrada.getConyuge().getPrimerNombre() + " " + 
-                                       personaEncontrada.getConyuge().getPrimerApellido() + 
-                                       " (RUT: " + personaEncontrada.getConyuge().getRut() + ")");
+                
+            } else if (opcBusqueda == 2) {
+                System.out.print("Ingrese el Primer Nombre: ");
+                String nombreBusq = lector.readLine();
+                System.out.print("Ingrese el Primer Apellido: ");
+                String apellidoBusq = lector.readLine();
+                
+                java.util.List<Persona> encontrados = sistema.busquedaGlobalPersona(nombreBusq, apellidoBusq);
+                
+                if (!encontrados.isEmpty()) {
+                    System.out.println("\n[!] Se encontraron " + encontrados.size() + " coincidencia(s):");
+                    for (Persona persona : encontrados) {
+                        System.out.println("- RUT: " + persona.getRut() + " | Nombre: " + persona.getPrimerNombre() + " " + persona.getPrimerApellido());
+                    }
+                } else {
+                    System.out.println("\n[X] No hay registros para el nombre: " + nombreBusq + " " + apellidoBusq);
                 }
-            System.out.println("------------------------------------");            
-            }else{
-                System.out.println("Error: No se ha encontrado a ningún ciudadano con el RUT "+ rut+ " a nivel nacional."); 
-            }    
-        } catch(com.registrocivil.logica.RutInvalidoException e){
-            System.out.println("Error de validación: "+ e.getMessage());
-        } 
-        catch (IOException e){
-            System.out.println("Ocurrió un error en la lectura de los datos: " + e.getMessage()); 
+            } else {
+                System.out.println("\n[X] Opcion invalida.");
+            }
+        } catch (Exception e) {
+            System.out.println("\n[X] Error al procesar la busqueda: " + e.getMessage());
         }
-    }
+    }        
+     
     
     public void emitirCertificado(){
         try{
