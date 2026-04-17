@@ -96,7 +96,7 @@ public class VentanaInscribirNacimiento extends JFrame {
         btnRegistrar.addActionListener(e -> registrar());
         footer.add(btnVolver);
         footer.add(btnRegistrar);
-
+        this.getRootPane().setDefaultButton(btnRegistrar);
         panelPrincipal.add(scrollForm, BorderLayout.CENTER);
         panelPrincipal.add(footer, BorderLayout.SOUTH);
         add(panelPrincipal);

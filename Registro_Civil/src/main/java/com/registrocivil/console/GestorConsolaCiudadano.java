@@ -195,6 +195,7 @@ public class GestorConsolaCiudadano {
             validarFormatoRut(rut);
             
             Persona personaEncontrada = sistema.busquedaGlobalPersona(rut);
+            
             String regionRegistro = sistema.obtenerRegionDePersona(rut);
             
             if(personaEncontrada != null){

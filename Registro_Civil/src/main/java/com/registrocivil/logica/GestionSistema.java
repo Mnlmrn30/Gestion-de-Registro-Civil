@@ -174,17 +174,6 @@ public class GestionSistema{
         }
         return null; 
     }
-    // Segunda busqueda de persona por Nombre y Apellidos 
-    public Persona buscarPersona(String nombreRegion, String primerNombre, String primerApellido) {
-        if(regiones.containsKey(nombreRegion)){
-            for(Persona p : regiones.get(nombreRegion).getCiudadanos()){
-                if(p.getPrimerNombre().equalsIgnoreCase(primerNombre) && p.getPrimerApellido().equalsIgnoreCase(primerApellido)){
-                    return p;
-                }
-            }
-        }
-        return null;
-    }
     
     /*
     Pide el rut de ambas personas para poder registrar en el matrimonio y asi cambiar su estado civil

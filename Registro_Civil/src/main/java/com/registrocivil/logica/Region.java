@@ -1,9 +1,10 @@
 package com.registrocivil.logica;
 import java.util.ArrayList; 
+import java.util.List;
 
 public class Region {
     private String nombre;
-    private ArrayList<Persona> ciudadanos; 
+    private List<Persona> ciudadanos; 
     
     public Region(String nombre){
         this.nombre = nombre; 
@@ -18,7 +19,7 @@ public class Region {
         this.nombre = nombre;
     }
     
-    public ArrayList<Persona> getCiudadanos(){
+    public List<Persona> getCiudadanos(){
         return ciudadanos; 
     }
     public void setCiudadanos(ArrayList<Persona> ciudadanos){
