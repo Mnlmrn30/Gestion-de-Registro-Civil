@@ -23,7 +23,7 @@ public class VentanaInscribirCiudadano extends JFrame {
 
     private void initComponents() {
         setTitle("Inscribir Ciudadano");
-        setSize(480, 520);
+        setSize(460, 490);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         setResizable(false);
@@ -53,7 +53,7 @@ public class VentanaInscribirCiudadano extends JFrame {
         cmbSexo = new JComboBox<>(new String[]{"Masculino", "Femenino"});
         spnDia = new JTextField(3);  
         spnMes = new JTextField(3);
-        spnAnio = new JTextField(4);
+        spnAnio = new JTextField(3);
         
         JPanel panelFecha = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
         panelFecha.setOpaque(false);
@@ -70,9 +70,9 @@ public class VentanaInscribirCiudadano extends JFrame {
                               txtPrimerApellido, txtSegundoApellido, cmbSexo, panelFecha};
 
         for (int i = 0; i < labels.length; i++) {
-            gbc.gridx = 0; gbc.gridy = i; gbc.weightx = 0.38;
+            gbc.gridx = 0; gbc.gridy = i; gbc.weightx = 0.35;
             form.add(new JLabel(labels[i]), gbc);
-            gbc.gridx = 1; gbc.weightx = 0.62;
+            gbc.gridx = 1; gbc.weightx = 0.65;
             form.add(campos[i], gbc);
         }
 
@@ -80,22 +80,22 @@ public class VentanaInscribirCiudadano extends JFrame {
         scrollForm.setBorder(BorderFactory.createEmptyBorder());
 
         // Footer con botones
-        JPanel footer = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 8));
+        JPanel footer = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 12));
         footer.setBackground(VentanaMenu.COLOR_FONDO);
         footer.setBorder(BorderFactory.createEmptyBorder(0, 15, 5, 15));
         
-        JButton btnVolver    = VentanaMenu.crearBotonVolver("Volver");
         JButton btnInscribir = VentanaMenu.crearBoton("Inscribir Ciudadano");
+        JButton btnVolver    = VentanaMenu.crearBotonVolver("Volver");
         
-        btnVolver.addActionListener(e -> volver());
         btnInscribir.addActionListener(e -> inscribir());
+        btnVolver.addActionListener(e -> volver());
         
-        footer.add(btnVolver);
         footer.add(btnInscribir);
+        footer.add(btnVolver);
         
         panelPrincipal.add(scrollForm, BorderLayout.CENTER);
         panelPrincipal.add(footer, BorderLayout.SOUTH);
-        
+        this.getRootPane().setDefaultButton(btnInscribir);
         add(panelPrincipal);
     }
 
