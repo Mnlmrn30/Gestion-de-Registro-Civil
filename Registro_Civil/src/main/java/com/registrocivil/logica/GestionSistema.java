@@ -46,20 +46,80 @@ public class GestionSistema{
             totalCiudadanos += r.getCiudadanos().size();
         }
 
-        if (totalCiudadanos == 0) {
-            System.out.println("[SISTEMA] Base de datos vacía. Inyectando ciudadanos de prueba...");
-            
-            this.registrarPersona("Coquimbo", "11111111-1", "Juan", "Carlos", "Perez", "Gomez", "Masculino", 15, 4, 1980);
-            this.registrarPersona("Valparaiso", "22222222-2", "Maria", "Jose", "Silva", "Rojas", "Femenino", 10, 10, 1990);
-            this.registrarPersona("Arica y Parinacota", "33333333-3", "Pedro", "Antonio", "Tapia", "Soto", "Masculino", 5, 5, 2000);
+        if (totalCiudadanos == 0) {          
+            // --- REGION METROPOLITANA ---
+            this.registrarPersona("Metropolitana", "15111222-3", "Andres", "Felipe", "Munoz", "Soto", "Masculino", 12, 5, 1985);
+            this.registrarPersona("Metropolitana", "16222333-4", "Camila", "Ignacia", "Rojas", "Diaz", "Femenino", 24, 8, 1988);
+            this.registrarPersona("Metropolitana", "17333444-5", "Matias", "Alejandro", "Perez", "Gonzalez", "Masculino", 3, 11, 1990);
+            this.registrarPersona("Metropolitana", "18444555-6", "Valentina", "Paz", "Silva", "Martinez", "Femenino", 17, 2, 1992);
+            this.registrarPersona("Metropolitana", "19555666-7", "Diego", "Esteban", "Contreras", "Sepulveda", "Masculino", 9, 7, 1995);
+            this.registrarPersona("Metropolitana", "20666777-8", "Javiera", "Belen", "Morales", "Fuentes", "Femenino", 21, 1, 1998);
+            this.registrarPersona("Metropolitana", "21777888-9", "Nicolas", "Eduardo", "Lopez", "Cabrera", "Masculino", 5, 6, 2001);
+            this.registrarPersona("Metropolitana", "22888999-0", "Fernanda", "Andrea", "Gomez", "Rios", "Femenino", 30, 9, 2003);
+            this.registrarPersona("Metropolitana", "12999000-1", "Carlos", "Alberto", "Herrera", "Vidal", "Masculino", 14, 12, 1975);
+            this.registrarPersona("Metropolitana", "13123456-2", "Ana", "Maria", "Castro", "Poblete", "Femenino", 2, 4, 1978);
 
-            Persona p = this.busquedaGlobalPersona("33333333-3");
-            if (p != null) {
-                p.setEstadoVital("Fallecido");
+            // --- VALPARAISO ---
+            this.registrarPersona("Valparaiso", "14234567-3", "Luis", "Patricio", "Tapia", "Guzman", "Masculino", 18, 10, 1982);
+            this.registrarPersona("Valparaiso", "15345678-4", "Carolina", "Andrea", "Navarro", "Araya", "Femenino", 7, 3, 1986);
+            this.registrarPersona("Valparaiso", "16456789-5", "Joaquin", "Alonso", "Cortes", "Vergara", "Masculino", 25, 11, 1991);
+            this.registrarPersona("Valparaiso", "17567890-6", "Daniela", "Alejandra", "Orellana", "Carrasco", "Femenino", 11, 5, 1994);
+            this.registrarPersona("Valparaiso", "18678901-7", "Sebastian", "Andres", "Moya", "Salazar", "Masculino", 29, 8, 1997);
+            this.registrarPersona("Valparaiso", "19789012-8", "Martina", "Ignacia", "Bravo", "Valdes", "Femenino", 4, 2, 2000);
+            this.registrarPersona("Valparaiso", "20890123-9", "Tomas", "Agustin", "Zuniga", "Pino", "Masculino", 16, 7, 2002);
+            this.registrarPersona("Valparaiso", "11901234-K", "Hector", "Manuel", "Figueroa", "Olivares", "Masculino", 22, 12, 1970);
+
+            // --- BIOBIO ---
+            this.registrarPersona("Biobio", "12012345-0", "Jose", "Miguel", "Caceres", "Mendez", "Masculino", 8, 1, 1972);
+            this.registrarPersona("Biobio", "13123456-1", "Rosa", "Elena", "Vega", "Gallardo", "Femenino", 19, 6, 1976);
+            this.registrarPersona("Biobio", "14234567-2", "Francisco", "Javier", "Pinto", "Saavedra", "Masculino", 3, 9, 1980);
+            this.registrarPersona("Biobio", "15345678-3", "Paulina", "Andrea", "Aguilar", "Donoso", "Femenino", 27, 4, 1984);
+            this.registrarPersona("Biobio", "16456789-4", "Cristian", "Mauricio", "Salinas", "Bustos", "Masculino", 15, 11, 1989);
+            this.registrarPersona("Biobio", "17567890-5", "Claudia", "Loreto", "Riquelme", "Parra", "Femenino", 1, 8, 1993);
+            this.registrarPersona("Biobio", "18678901-6", "Felipe", "Ignacio", "Valenzuela", "Alvarez", "Masculino", 20, 3, 1996);
+
+            // --- COQUIMBO ---
+            this.registrarPersona("Coquimbo", "10111222-1", "Manuel", "Antonio", "Carvajal", "Rivera", "Masculino", 14, 2, 1965);
+            this.registrarPersona("Coquimbo", "11222333-2", "Teresa", "Margarita", "Pizarro", "Escobar", "Femenino", 9, 7, 1968);
+            this.registrarPersona("Coquimbo", "19789012-7", "Benjamin", "Alonso", "Cortes", "Miranda", "Masculino", 28, 5, 1999);
+            this.registrarPersona("Coquimbo", "20890123-8", "Antonia", "Belen", "Aguirre", "Toro", "Femenino", 12, 10, 2004);
+            this.registrarPersona("Coquimbo", "21901234-9", "Vicente", "Tomas", "Godoy", "Sanhueza", "Masculino", 6, 12, 2005);
+
+            // --- ARAUCANIA ---
+            this.registrarPersona("Araucania", "09888777-6", "Pedro", "Pablo", "Melinao", "Curaqueo", "Masculino", 25, 12, 1960);
+            this.registrarPersona("Araucania", "10999888-7", "Carmen", "Gloria", "Huenchuman", "Catrileo", "Femenino", 17, 4, 1963);
+            this.registrarPersona("Araucania", "18111222-8", "Rodrigo", "Alejandro", "Soto", "Jara", "Masculino", 2, 9, 1991);
+            this.registrarPersona("Araucania", "19222333-9", "Macarena", "Paz", "Garrido", "Lagos", "Femenino", 11, 1, 1995);
+
+            // --- ANTOFAGASTA ---
+            this.registrarPersona("Antofagasta", "14555666-0", "Jorge", "Luis", "Pena", "Guzman", "Masculino", 8, 8, 1981);
+            this.registrarPersona("Antofagasta", "15666777-1", "Natalia", "Andrea", "Maldonado", "Cornejo", "Femenino", 23, 11, 1985);
+            this.registrarPersona("Antofagasta", "22333444-2", "Lucas", "Mateo", "Vargas", "Cardenas", "Masculino", 19, 6, 2006);
+            this.registrarPersona("Antofagasta", "23444555-3", "Sofia", "Isidora", "Farias", "Navarrete", "Femenino", 5, 2, 2008);
+
+            // --- ARICA Y PARINACOTA ---
+            this.registrarPersona("Arica y Parinacota", "08777666-4", "Raul", "Ernesto", "Mamani", "Choque", "Masculino", 30, 1, 1955);
+            this.registrarPersona("Arica y Parinacota", "09888999-5", "Silvia", "Ines", "Condori", "Vilca", "Femenino", 14, 5, 1958);
+
+
+            String[] rutsFallecidos = {"12999000-1", "11901234-K", "12012345-0", "10111222-1", "09888777-6", "08777666-4"};
+            for (String rutF : rutsFallecidos) {
+                Persona pFallecida = this.busquedaGlobalPersona(rutF);
+                if (pFallecida != null) {
+                    pFallecida.setEstadoVital("Fallecido");
+                }
             }
-            this.registrarMatrimonio("11111111-1", "22222222-2"); // Caso prueba
+            
+            //8 Parejas casadas
+            this.registrarMatrimonio("15111222-3", "16222333-4"); // Andres y Camila (RM)
+            this.registrarMatrimonio("17333444-5", "18444555-6"); // Matias y Valentina (RM)
+            this.registrarMatrimonio("13123456-2", "12999000-1"); // Ana y Carlos (Carlos está fallecido - prueba viudez)
+            this.registrarMatrimonio("14234567-3", "15345678-4"); // Luis y Carolina (Valpo)
+            this.registrarMatrimonio("13123456-1", "14234567-2"); // Rosa y Francisco (Biobio)
+            this.registrarMatrimonio("11222333-2", "10111222-1"); // Teresa y Manuel (Manuel está fallecido)
+            this.registrarMatrimonio("18111222-8", "19222333-9"); // Rodrigo y Macarena (Araucania)
+            this.registrarMatrimonio("14555666-0", "15666777-1"); // Jorge y Natalia (Antofagasta)
 
-            System.out.println("[SISTEMA] Ciudadanos de prueba cargados exitosamente.");
         }
     }
      /*
