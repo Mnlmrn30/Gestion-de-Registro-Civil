@@ -13,7 +13,7 @@ public class VentanaInscribirCiudadano extends JFrame {
     private JTextField txtRut, txtPrimerNombre, txtSegundoNombre;
     private JTextField txtPrimerApellido, txtSegundoApellido;
     private JComboBox<String> cmbSexo;
-    private JSpinner spnDia, spnMes, spnAnio;
+    private JTextField spnDia, spnMes, spnAnio;
 
     public VentanaInscribirCiudadano(GestionSistema sistema, JFrame ventanaAnterior) {
         this.sistema = sistema;
@@ -51,9 +51,9 @@ public class VentanaInscribirCiudadano extends JFrame {
         txtPrimerApellido  = new JTextField();
         txtSegundoApellido = new JTextField();
         cmbSexo = new JComboBox<>(new String[]{"Masculino", "Femenino"});
-        spnDia  = new JSpinner(new SpinnerNumberModel(1,    1, 31,   1));
-        spnMes  = new JSpinner(new SpinnerNumberModel(1,    1, 12,   1));
-        spnAnio = new JSpinner(new SpinnerNumberModel(2000, 1900, 2026, 1));
+        spnDia = new JTextField(5);  // El 5 es el ancho sugerido
+        spnMes = new JTextField(5);
+        spnAnio = new JTextField(5);
 
         String[]    labels = {"Region:", "RUT (ej: 12345678-9):", "Primer Nombre:", "Segundo Nombre:",
                               "Primer Apellido:", "Segundo Apellido:", "Sexo:",
@@ -75,15 +75,19 @@ public class VentanaInscribirCiudadano extends JFrame {
         JPanel footer = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 8));
         footer.setBackground(VentanaMenu.COLOR_FONDO);
         footer.setBorder(BorderFactory.createEmptyBorder(0, 15, 5, 15));
+        
         JButton btnVolver    = VentanaMenu.crearBotonVolver("Volver");
         JButton btnInscribir = VentanaMenu.crearBoton("Inscribir Ciudadano");
+        
         btnVolver.addActionListener(e -> volver());
         btnInscribir.addActionListener(e -> inscribir());
+        
         footer.add(btnVolver);
         footer.add(btnInscribir);
-        this.getRootPane().setDefaultButton(btnInscribir);
+        
         panelPrincipal.add(scrollForm, BorderLayout.CENTER);
         panelPrincipal.add(footer, BorderLayout.SOUTH);
+        
         add(panelPrincipal);
     }
 
@@ -111,9 +115,10 @@ public class VentanaInscribirCiudadano extends JFrame {
             String pApellido = txtPrimerApellido.getText().trim();
             String sApellido = txtSegundoApellido.getText().trim();
             String sexo      = (String) cmbSexo.getSelectedItem();
-            int dia  = (int) spnDia.getValue();
-            int mes  = (int) spnMes.getValue();
-            int anio = (int) spnAnio.getValue();
+            
+            int dia = Integer.parseInt(spnDia.getText().trim());
+            int mes = Integer.parseInt(spnMes.getText().trim());
+            int anio = Integer.parseInt(spnAnio.getText().trim());
 
             if (pNombre.isEmpty() || pApellido.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "El primer nombre y apellido son obligatorios.", "Campos vacios", JOptionPane.WARNING_MESSAGE);
