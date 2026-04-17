@@ -66,7 +66,7 @@ public class VentanaEliminarCiudadano extends JFrame {
         btnEliminar.addActionListener(e -> eliminar());
         footer.add(btnVolver);
         footer.add(btnEliminar);
-
+        this.getRootPane().setDefaultButton(btnEliminar);
         panelPrincipal.add(form, BorderLayout.CENTER);
         panelPrincipal.add(footer, BorderLayout.SOUTH);
         add(panelPrincipal);

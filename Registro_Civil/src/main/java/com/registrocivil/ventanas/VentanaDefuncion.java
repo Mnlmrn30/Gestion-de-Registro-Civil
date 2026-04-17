@@ -64,6 +64,7 @@ public class VentanaDefuncion extends JFrame {
         JButton btnRegistrar = VentanaMenu.crearBoton("Registrar Defuncion");
         btnVolver.addActionListener(e -> volver());
         btnRegistrar.addActionListener(e -> registrar());
+        this.getRootPane().setDefaultButton(btnRegistrar);
         footer.add(btnVolver);
         footer.add(btnRegistrar);
 
