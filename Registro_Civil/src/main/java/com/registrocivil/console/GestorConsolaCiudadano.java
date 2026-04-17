@@ -197,20 +197,20 @@ public class GestorConsolaCiudadano {
             int opcBusqueda = Integer.parseInt(lector.readLine());
             
             if (opcBusqueda == 1) {
-                System.out.print("Ingrese el RUT a buscar: ");
+                System.out.println("Ingrese el RUT a buscar: ");
                 String rutBuscado = lector.readLine();
                 Persona p = sistema.busquedaGlobalPersona(rutBuscado);
                 
                 if (p != null) {
-                    System.out.println("\n[!] Ciudadano encontrado: " + p.getPrimerNombre() + " " + p.getPrimerApellido() + " (RUT: " + p.getRut() + ")");
+                    System.out.println("Ciudadano encontrado: " + p.getPrimerNombre() + " " + p.getPrimerApellido() + " (RUT: " + p.getRut() + ")");
                 } else {
-                    System.out.println("\n[X] No se encontro a nadie con el RUT: " + rutBuscado);
+                    System.out.println("No se encontro a nadie con el RUT: " + rutBuscado);
                 }
                 
             } else if (opcBusqueda == 2) {
-                System.out.print("Ingrese el Primer Nombre: ");
+                System.out.println("Ingrese el Primer Nombre: ");
                 String nombreBusq = lector.readLine();
-                System.out.print("Ingrese el Primer Apellido: ");
+                System.out.println("Ingrese el Primer Apellido: ");
                 String apellidoBusq = lector.readLine();
                 
                 java.util.List<Persona> encontrados = sistema.busquedaGlobalPersona(nombreBusq, apellidoBusq);
@@ -218,16 +218,16 @@ public class GestorConsolaCiudadano {
                 if (!encontrados.isEmpty()) {
                     System.out.println("\n[!] Se encontraron " + encontrados.size() + " coincidencia(s):");
                     for (Persona persona : encontrados) {
-                        System.out.println("- RUT: " + persona.getRut() + " | Nombre: " + persona.getPrimerNombre() + " " + persona.getPrimerApellido());
+                        System.out.println("RUT: " + persona.getRut() + " | Nombre: " + persona.getPrimerNombre() + " " + persona.getPrimerApellido());
                     }
                 } else {
-                    System.out.println("\n[X] No hay registros para el nombre: " + nombreBusq + " " + apellidoBusq);
+                    System.out.println("No hay registros para el nombre: " + nombreBusq + " " + apellidoBusq);
                 }
             } else {
-                System.out.println("\n[X] Opcion invalida.");
+                System.out.println("Opcion invalida.");
             }
         } catch (Exception e) {
-            System.out.println("\n[X] Error al procesar la busqueda: " + e.getMessage());
+            System.out.println("Error al procesar la busqueda: " + e.getMessage());
         }
     }        
      
