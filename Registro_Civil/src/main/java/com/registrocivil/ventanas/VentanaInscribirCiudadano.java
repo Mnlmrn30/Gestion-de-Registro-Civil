@@ -23,7 +23,7 @@ public class VentanaInscribirCiudadano extends JFrame {
 
     private void initComponents() {
         setTitle("Inscribir Ciudadano");
-        setSize(460, 490);
+        setSize(480, 520);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         setResizable(false);
@@ -51,15 +51,23 @@ public class VentanaInscribirCiudadano extends JFrame {
         txtPrimerApellido  = new JTextField();
         txtSegundoApellido = new JTextField();
         cmbSexo = new JComboBox<>(new String[]{"Masculino", "Femenino"});
-        spnDia = new JTextField(5);  // El 5 es el ancho sugerido
-        spnMes = new JTextField(5);
-        spnAnio = new JTextField(5);
+        spnDia = new JTextField(3);  
+        spnMes = new JTextField(3);
+        spnAnio = new JTextField(4);
+        
+        JPanel panelFecha = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
+        panelFecha.setOpaque(false);
+        panelFecha.add(spnDia);
+        panelFecha.add(new JLabel("/"));
+        panelFecha.add(spnMes);
+        panelFecha.add(new JLabel("/"));
+        panelFecha.add(spnAnio);
 
-        String[]    labels = {"Region:", "RUT (ej: 12345678-9):", "Primer Nombre:", "Segundo Nombre:",
-                              "Primer Apellido:", "Segundo Apellido:", "Sexo:",
-                              "Dia Nacimiento:", "Mes Nacimiento:", "Anio Nacimiento:"};
+        String[] labels = {"Región:", "RUT (ej: 12345678-9):", "Primer Nombre:", "Segundo Nombre:",
+                           "Primer Apellido:", "Segundo Apellido:", "Sexo:", "Fecha Nac. (DD/MM/AAAA):"};
+        
         Component[] campos = {cmbRegion, txtRut, txtPrimerNombre, txtSegundoNombre,
-                              txtPrimerApellido, txtSegundoApellido, cmbSexo, spnDia, spnMes, spnAnio};
+                              txtPrimerApellido, txtSegundoApellido, cmbSexo, panelFecha};
 
         for (int i = 0; i < labels.length; i++) {
             gbc.gridx = 0; gbc.gridy = i; gbc.weightx = 0.38;
