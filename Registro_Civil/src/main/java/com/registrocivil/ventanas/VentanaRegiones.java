@@ -139,27 +139,25 @@ public class VentanaRegiones extends JFrame {
         String sel = (String) JOptionPane.showInputDialog(
             this, "Seleccione la region:", "Matrimonios por Region",
             JOptionPane.PLAIN_MESSAGE, null, NOMBRES_REGIONES, NOMBRES_REGIONES[0]);
+    
         if (sel == null) return;
 
-        Region r = sistema.getRegiones().get(sel);
+        int cantidad = sistema.obtenerCantidadMatrimoniosPorRegion(sel);
+        java.util.List<String> parejas = sistema.obtenerActasMatrimonioPorRegion(sel);
+
         StringBuilder sb = new StringBuilder();
         sb.append("=== MATRIMONIOS EN ").append(sel.toUpperCase()).append(" ===\n\n");
-        if (r == null) { areaResultado.setText("Region no encontrada."); return; }
+        sb.append("Total de matrimonios registrados: ").append(cantidad).append("\n\n");
 
-        HashSet<String> procesados = new HashSet<>();
-        boolean hay = false;
-        for (Persona p : r.getCiudadanos()) {
-            Persona c = p.getConyuge();
-            if (c != null && !procesados.contains(p.getRut())) {
-                hay = true;
-                sb.append("MATRIMONIO:\n  ").append(p.toString())
-                  .append("\n  ").append(c.toString())
-                  .append("\n------------------------------------------------\n");
-                procesados.add(p.getRut());
-                procesados.add(c.getRut());
+        if (cantidad == 0 || parejas.isEmpty()) {
+            sb.append("No hay matrimonios registrados en esta region.");
+        } else {
+            sb.append("Parejas casadas:\n");
+            for (String pareja : parejas) {
+                sb.append("- ").append(pareja).append("\n");
             }
         }
-        if (!hay) sb.append("No hay matrimonios activos en esta region.");
+
         areaResultado.setText(sb.toString());
         areaResultado.setCaretPosition(0);
     }

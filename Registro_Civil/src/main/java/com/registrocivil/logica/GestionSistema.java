@@ -289,20 +289,19 @@ public class GestionSistema{
     if (regiones.containsKey(nombreRegion)) {
         return regiones.get(nombreRegion).getContadorMatrimonios();
     }
-        return 0; // Retorna 0 si la región no existe o no hay registros
+        return 0; 
     }
     
     public List<String> obtenerActasMatrimonioPorRegion(String nombreRegion) {
     if (regiones.containsKey(nombreRegion)) {
         return regiones.get(nombreRegion).getActasMatrimonio();
     }
-        return new ArrayList<>(); // Retorna una lista vacía para evitar errores de NullPointer
+        return new ArrayList<>(); 
     }
     /*
     Encargada de la base de datos, donde aqui se ejecuta el codigo SQL.
     */
     private void crearTabla() {
-    // Tabla existente de Persona
     String sqlPersona = "CREATE TABLE IF NOT EXISTS Persona (rut TEXT PRIMARY KEY, region TEXT, primer_nombre TEXT,"
             + " segundo_nombre TEXT, primer_apellido TEXT, segundo_apellido TEXT, sexo TEXT, dia INTEGER, "
             + "mes INTEGER, anio INTEGER, estado_civil TEXT, estado_vital TEXT);";
