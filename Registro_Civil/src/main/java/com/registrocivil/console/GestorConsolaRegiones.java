@@ -154,7 +154,7 @@ public class GestorConsolaRegiones {
         String[] regiones = {
             "Arica y Parinacota", "Tarapaca", "Antofagasta", "Atacama",
             "Coquimbo", "Valparaiso", "Metropolitana", "O'Higgins",
-            "Maule", "Ñuble", "Biobio", "La Araucania", "Los Rios",
+            "Maule", "Nuble", "Biobio", "La Araucania", "Los Rios",
             "Los Lagos", "Aysen", "Magallanes"
         };
 
