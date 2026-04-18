@@ -138,14 +138,17 @@ public class GestorConsolaCiudadano {
             System.out.println("Ingrese RUT del segundo contrayente: ");
             String rut2 = lector.readLine();
             validarFormatoRut(rut2);
+            System.out.println("Ingrese la región donde se realiza el matrimonio: ");
+            System.out.println("(Ej: Valparaiso, Metropolitana, Coquimbo...)");
+            String regionMatrimonio = lector.readLine();
             
-            boolean exito = sistema.registrarMatrimonio(rut1, rut2); 
+            boolean exito = sistema.registrarMatrimonio(rut1, rut2, regionMatrimonio); 
             if(exito){
                 System.out.println("\n¡ÉXITO! El matrimonio se ha registrado en el sistema.");
                 System.out.println("*** El estado civil de ambos ciudadanos ha cambiado a 'Casado/a'. *** ");
         } else {
                 System.out.println("\nERROR: No se pudo registrar el matrimonio.");
-                System.out.println("Posibles causas: Uno de los RUT no existe, ingresó el mismo RUT dos veces, o uno de los ciudadanos ya está casado.");
+                System.out.println("Posibles causas: Uno de los RUT no existe, La region no existe, o uno de los ciudadanos ya está casado.");
             }
         }catch(com.registrocivil.logica.RutInvalidoException e){
             System.out.println("Error de validación: " + e.getMessage());

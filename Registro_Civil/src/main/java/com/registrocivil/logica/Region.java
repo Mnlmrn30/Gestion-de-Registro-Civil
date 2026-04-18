@@ -5,6 +5,7 @@ import java.util.List;
 public class Region {
     private String nombre;
     private List<Persona> ciudadanos; 
+    private int matrimonios = 0;
     
     public Region(String nombre){
         this.nombre = nombre; 
@@ -31,6 +32,13 @@ public class Region {
     @Override
     public String toString(){
         return "Region: " + this.nombre + " | Total Ciudadanos Inscritos: " + this.ciudadanos.size(); 
+    }
+    
+    public void incrementarMatrimonios() {
+        this.matrimonios++;
+    }
+    public int getContadorMatrimonios() {
+        return matrimonios;
     }
        
 }

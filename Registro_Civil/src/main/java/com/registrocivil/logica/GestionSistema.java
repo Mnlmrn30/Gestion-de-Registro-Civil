@@ -25,7 +25,7 @@ public class GestionSistema{
     private void inicializarRegiones(){
         String[] nombresRegiones = {"Arica y Parinacota", "Tarapaca", "Antofagasta", "Atacama", "Coquimbo", 
             "Valparaiso", "Región Metropolitana", "O'Higgins", 
-            "Maule", "Ñuble", "Biobio", "La Araucania", "Los Rios", "Los Lagos", 
+            "Maule", "Nuble", "Biobio", "La Araucania", "Los Rios", "Los Lagos", 
             "Aysen", "Magallanes"}; 
         
         for (String nombre: nombresRegiones){
@@ -111,15 +111,14 @@ public class GestionSistema{
             }
             
             //8 Parejas casadas
-            this.registrarMatrimonio("15111222-3", "16222333-4"); // Andres y Camila (RM)
-            this.registrarMatrimonio("17333444-5", "18444555-6"); // Matias y Valentina (RM)
-            this.registrarMatrimonio("13123456-2", "12999000-1"); // Ana y Carlos (Carlos está fallecido - prueba viudez)
-            this.registrarMatrimonio("14234567-3", "15345678-4"); // Luis y Carolina (Valpo)
-            this.registrarMatrimonio("13123456-1", "14234567-2"); // Rosa y Francisco (Biobio)
-            this.registrarMatrimonio("11222333-2", "10111222-1"); // Teresa y Manuel (Manuel está fallecido)
-            this.registrarMatrimonio("18111222-8", "19222333-9"); // Rodrigo y Macarena (Araucania)
-            this.registrarMatrimonio("14555666-0", "15666777-1"); // Jorge y Natalia (Antofagasta)
-
+            this.registrarMatrimonio("15111222-3", "16222333-4", "Metropolitana"); 
+            this.registrarMatrimonio("17333444-5", "18444555-6", "Metropolitana"); 
+            this.registrarMatrimonio("13123456-2", "12999000-1", "Coquimbo"); 
+            this.registrarMatrimonio("14234567-3", "15345678-4", "Valparaiso"); 
+            this.registrarMatrimonio("13123456-1", "14234567-2", "Biobio"); 
+            this.registrarMatrimonio("11222333-2", "10111222-1", "Maule"); 
+            this.registrarMatrimonio("18111222-8", "19222333-9", "Araucania");
+            this.registrarMatrimonio("14555666-0", "15666777-1", "Antofagasta"); 
         }
     }
      /*
@@ -250,9 +249,10 @@ public class GestionSistema{
     }
     
     /*
-    Pide el rut de ambas personas para poder registrar en el matrimonio y asi cambiar su estado civil
+    Pide el rut de ambas personas para poder registrar en el matrimonio y asi cambiar su estado civil, tambien registrar donde
+    contraen matrimonios para soltar su informacion
     */
-    public boolean registrarMatrimonio(String rut1, String rut2){
+    public boolean registrarMatrimonio(String rut1, String rut2, String nombreRegion){
         Persona p1 = busquedaGlobalPersona(rut1); 
         Persona p2 = busquedaGlobalPersona(rut2);
         
@@ -271,10 +271,13 @@ public class GestionSistema{
         
         p1.setEstadoCivil("Casado/a");
         p2.setEstadoCivil("Casado/a");
-        
         p1.setConyuge(p2);
         p2.setConyuge(p1);
         
+        if(regiones.containsKey(nombreRegion)){
+            regiones.get(nombreRegion).incrementarMatrimonios(); 
+            return true; 
+        }
         return true; 
     }
     
