@@ -285,7 +285,19 @@ public class GestionSistema{
         return false;
     }
 
+    public int obtenerCantidadMatrimoniosPorRegion(String nombreRegion) {
+    if (regiones.containsKey(nombreRegion)) {
+        return regiones.get(nombreRegion).getContadorMatrimonios();
+    }
+        return 0; // Retorna 0 si la región no existe o no hay registros
+    }
     
+    public List<String> obtenerActasMatrimonioPorRegion(String nombreRegion) {
+    if (regiones.containsKey(nombreRegion)) {
+        return regiones.get(nombreRegion).getActasMatrimonio();
+    }
+        return new ArrayList<>(); // Retorna una lista vacía para evitar errores de NullPointer
+    }
     /*
     Encargada de la base de datos, donde aqui se ejecuta el codigo SQL.
     */
