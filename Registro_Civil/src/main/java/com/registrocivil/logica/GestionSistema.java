@@ -302,17 +302,16 @@ public class GestionSistema{
     Encargada de la base de datos, donde aqui se ejecuta el codigo SQL.
     */
     private void crearTabla() {
-    String sqlPersona = "CREATE TABLE IF NOT EXISTS Persona (rut TEXT PRIMARY KEY, region TEXT, primer_nombre TEXT,"
-            + " segundo_nombre TEXT, primer_apellido TEXT, segundo_apellido TEXT, sexo TEXT, dia INTEGER, "
-            + "mes INTEGER, anio INTEGER, estado_civil TEXT, estado_vital TEXT);";
-    
-    String sqlMatrimonio = "CREATE TABLE IF NOT EXISTS Matrimonio (region TEXT, acta TEXT);";
+        String sqlPersona = "CREATE TABLE IF NOT EXISTS Persona (rut TEXT PRIMARY KEY, region TEXT, primer_nombre TEXT,"
+                + " segundo_nombre TEXT, primer_apellido TEXT, segundo_apellido TEXT, sexo TEXT, dia INTEGER, "
+                + "mes INTEGER, anio INTEGER, estado_civil TEXT, estado_vital TEXT);";
+        String sqlMatrimonios = "CREATE TABLE IF NOT EXISTS Matrimonios (region_matrimonio TEXT, acta TEXT);";
 
-    try (Connection conn = DriverManager.getConnection(URL_BD); Statement stmt = conn.createStatement()) {
-        stmt.execute(sqlPersona);
-        stmt.execute(sqlMatrimonio);
-    } catch (SQLException e) {
-        System.out.println("Error al crear tablas: " + e.getMessage());
+        try (Connection conn = DriverManager.getConnection(URL_BD); Statement stmt = conn.createStatement()) {
+            stmt.execute(sqlPersona);
+            stmt.execute(sqlMatrimonios);
+        } catch (SQLException e) {
+            System.out.println("Error al crear tablas: " + e.getMessage());
         }
     }
    
@@ -321,45 +320,46 @@ public class GestionSistema{
     guardados.
     */
     public void cargarDatosDesdeBD() {
-    String sqlPersonas = "SELECT * FROM Persona";
-    String sqlMatrimonios = "SELECT * FROM Matrimonios";
+        String sqlPersonas = "SELECT * FROM Persona";
+        String sqlMatrimonios = "SELECT * FROM Matrimonios";
 
-    try (Connection conn = DriverManager.getConnection(URL_BD);
-         Statement stmt = conn.createStatement()) {
+        try (Connection conn = DriverManager.getConnection(URL_BD);
+            Statement stmt = conn.createStatement()) {
 
-        stmt.executeUpdate("CREATE TABLE IF NOT EXISTS Persona (rut TEXT PRIMARY KEY, region TEXT, primer_nombre TEXT, segundo_nombre TEXT, primer_apellido TEXT, segundo_apellido TEXT, sexo TEXT, dia INTEGER, mes INTEGER, anio INTEGER, estado_civil TEXT, estado_vital TEXT)");
-        stmt.executeUpdate("CREATE TABLE IF NOT EXISTS Matrimonios (region_matrimonio TEXT, rut1 TEXT, rut2 TEXT, acta TEXT)");
-        try (ResultSet rs = stmt.executeQuery(sqlPersonas)) {
-            while (rs.next()) {
-                String region = rs.getString("region");
-                String rut = rs.getString("rut");
-                this.registrarPersona(region, rut, rs.getString("primer_nombre"), rs.getString("segundo_nombre"), 
-                                     rs.getString("primer_apellido"), rs.getString("segundo_apellido"), 
-                                     rs.getString("sexo"), rs.getInt("dia"), rs.getInt("mes"), rs.getInt("anio"));
+            stmt.executeUpdate("CREATE TABLE IF NOT EXISTS Persona (rut TEXT PRIMARY KEY, region TEXT, primer_nombre TEXT, segundo_nombre TEXT, primer_apellido TEXT, segundo_apellido TEXT, sexo TEXT, dia INTEGER, mes INTEGER, anio INTEGER, estado_civil TEXT, estado_vital TEXT)");
+            stmt.executeUpdate("CREATE TABLE IF NOT EXISTS Matrimonios (region_matrimonio TEXT, acta TEXT)");
+        
+            try (ResultSet rs = stmt.executeQuery(sqlPersonas)) {
+                while (rs.next()) {
+                    String region = rs.getString("region");
+                    String rut = rs.getString("rut");
+                    this.registrarPersona(region, rut, rs.getString("primer_nombre"), rs.getString("segundo_nombre"), 
+                                    rs.getString("primer_apellido"), rs.getString("segundo_apellido"), 
+                                    rs.getString("sexo"), rs.getInt("dia"), rs.getInt("mes"), rs.getInt("anio"));
                 
-                Persona p = buscarPersona(region, rut);
-                if (p != null) {
-                    p.setEstadoCivil(rs.getString("estado_civil"));
-                    p.setEstadoVital(rs.getString("estado_vital"));
+                    Persona p = buscarPersona(region, rut);
+                    if (p != null) {
+                        p.setEstadoCivil(rs.getString("estado_civil"));
+                        p.setEstadoVital(rs.getString("estado_vital"));
+                    }
                 }
             }
-        }
 
-        try (ResultSet rsM = stmt.executeQuery(sqlMatrimonios)) {
-            while (rsM.next()) {
-                String nomRegion = rsM.getString("region_matrimonio");
-                String acta = rsM.getString("acta");
+            try (ResultSet rsM = stmt.executeQuery(sqlMatrimonios)) {
+                while (rsM.next()) {
+                    String nomRegion = rsM.getString("region_matrimonio");
+                    String acta = rsM.getString("acta");
                 
-                Region reg = regiones.get(nomRegion);
-                if (reg != null) {
-                    reg.registrarActaMatrimonio(acta); 
-                    reg.incrementarMatrimonios(); 
+                    Region reg = regiones.get(nomRegion);
+                    if (reg != null) {
+                        reg.registrarActaMatrimonio(acta); 
+                        reg.incrementarMatrimonios(); 
+                    }
                 }
             }
-        }
-        System.out.println("DATOS Y MATRIMONIOS CARGADOS CORRECTAMENTE");
-    } catch (SQLException e) {
-        System.out.println("No se pudo cargar la BD: " + e.getMessage());
+            System.out.println("DATOS Y MATRIMONIOS CARGADOS CORRECTAMENTE");
+        } catch (SQLException e) {
+            System.out.println("No se pudo cargar la BD: " + e.getMessage());
         }
     }
 
@@ -368,52 +368,50 @@ public class GestionSistema{
     Toma a todos los ciudadanos que se encuentran en la memoria del programa y los inserta en el archivo de la base de datos.
     */
     public void guardarDatosEnBD() {
-    String insertPersona = "INSERT INTO Persona (region, rut, primer_nombre, segundo_nombre, primer_apellido, segundo_apellido, sexo, dia, mes, anio, estado_civil, estado_vital) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    String insertMatrimonio = "INSERT INTO Matrimonios (region_matrimonio, rut1, rut2, acta) VALUES (?, ?, ?, ?)";
+        String insertPersona = "INSERT INTO Persona (region, rut, primer_nombre, segundo_nombre, primer_apellido, segundo_apellido, sexo, dia, mes, anio, estado_civil, estado_vital) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String insertMatrimonio = "INSERT INTO Matrimonios (region_matrimonio, acta) VALUES (?, ?)";
 
-    try (Connection conn = DriverManager.getConnection(URL_BD)) {
-        Statement st = conn.createStatement();
-        st.executeUpdate("CREATE TABLE IF NOT EXISTS Matrimonios (region_matrimonio TEXT, rut1 TEXT, rut2 TEXT, acta TEXT)");
-        st.executeUpdate("DELETE FROM Persona");
-        st.executeUpdate("DELETE FROM Matrimonios");
+        try (Connection conn = DriverManager.getConnection(URL_BD)) {
+            Statement st = conn.createStatement();
+            st.executeUpdate("CREATE TABLE IF NOT EXISTS Matrimonios (region_matrimonio TEXT, acta TEXT)");
+            st.executeUpdate("DELETE FROM Persona");
+            st.executeUpdate("DELETE FROM Matrimonios");
 
-        try (PreparedStatement pstmt = conn.prepareStatement(insertPersona)) {
-            for (Region r : regiones.values()) {
-                for (Persona p : r.getCiudadanos()) {
-                    pstmt.setString(1, r.getNombre());
-                    pstmt.setString(2, p.getRut());
-                    pstmt.setString(3, p.getPrimerNombre());
-                    pstmt.setString(4, p.getSegundoNombre());
-                    pstmt.setString(5, p.getPrimerApellido());
-                    pstmt.setString(6, p.getSegundoApellido());
-                    pstmt.setString(7, p.getSexo());
-                    pstmt.setInt(8, p.getDiaNacimiento());
-                    pstmt.setInt(9, p.getMesNacimiento());
-                    pstmt.setInt(10, p.getAñoNacimiento());
-                    pstmt.setString(11, p.getEstadoCivil());
-                    pstmt.setString(12, p.getEstadoVital());
-                    pstmt.addBatch();
+            try (PreparedStatement pstmt = conn.prepareStatement(insertPersona)) {
+                for (Region r : regiones.values()) {
+                    for (Persona p : r.getCiudadanos()) {
+                        pstmt.setString(1, r.getNombre());
+                        pstmt.setString(2, p.getRut());
+                        pstmt.setString(3, p.getPrimerNombre());
+                        pstmt.setString(4, p.getSegundoNombre());
+                        pstmt.setString(5, p.getPrimerApellido());
+                        pstmt.setString(6, p.getSegundoApellido());
+                        pstmt.setString(7, p.getSexo());
+                        pstmt.setInt(8, p.getDiaNacimiento());
+                        pstmt.setInt(9, p.getMesNacimiento());
+                        pstmt.setInt(10, p.getAñoNacimiento());
+                        pstmt.setString(11, p.getEstadoCivil());
+                        pstmt.setString(12, p.getEstadoVital());
+                        pstmt.addBatch();
+                    }
                 }
-            }
-            pstmt.executeBatch();
-        }
+                pstmt.executeBatch();
+            }   
 
-        try (PreparedStatement pstmtM = conn.prepareStatement(insertMatrimonio)) {
-            for (Region r : regiones.values()) {
-                for (String acta : r.getActasMatrimonio()) {
-                    pstmtM.setString(1, r.getNombre()); 
-                    pstmtM.setString(2, ""); 
-                    pstmtM.setString(3, "");
-                    pstmtM.setString(4, acta);
-                    pstmtM.addBatch();
+            try (PreparedStatement pstmtM = conn.prepareStatement(insertMatrimonio)) {
+                for (Region r : regiones.values()) {
+                    for (String acta : r.getActasMatrimonio()) {
+                        pstmtM.setString(1, r.getNombre()); 
+                        pstmtM.setString(2, acta);
+                        pstmtM.addBatch();
+                    }
                 }
+                pstmtM.executeBatch();
             }
-            pstmtM.executeBatch();
-        }
         
-        System.out.println("Base de datos y matrimonios actualizados con éxito");
-    } catch (SQLException e) {
-        System.out.println("Error crítico al guardar: " + e.getMessage());
+            System.out.println("Base de datos y matrimonios actualizados con éxito");
+        } catch (SQLException e) {
+            System.out.println("Error crítico al guardar: " + e.getMessage());
         }
     }
   
