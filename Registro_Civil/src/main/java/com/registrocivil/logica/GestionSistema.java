@@ -24,7 +24,7 @@ public class GestionSistema{
     */
     private void inicializarRegiones(){
         String[] nombresRegiones = {"Arica y Parinacota", "Tarapaca", "Antofagasta", "Atacama", "Coquimbo", 
-            "Valparaiso", "Región Metropolitana", "O'Higgins", 
+            "Valparaiso", "Metropolitana", "O'Higgins", 
             "Maule", "Nuble", "Biobio", "La Araucania", "Los Rios", "Los Lagos", 
             "Aysen", "Magallanes"}; 
         
