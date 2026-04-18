@@ -503,7 +503,7 @@ public class GestorConsolaCiudadano {
     private String seleccionarRegion() {
         String[] regiones = {
             "Arica y Parinacota", "Tarapaca", "Antofagasta", "Atacama",
-            "Coquimbo", "Valparaiso", "Región Metropolitana", "O'Higgins",
+            "Coquimbo", "Valparaiso", "Metropolitana", "O'Higgins",
             "Maule", "Ñuble", "Biobio", "La Araucania", "Los Rios",
             "Los Lagos", "Aysen", "Magallanes"
         };
