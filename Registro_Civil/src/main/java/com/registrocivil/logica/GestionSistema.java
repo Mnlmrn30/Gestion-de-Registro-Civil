@@ -358,7 +358,7 @@ public class GestionSistema{
             }
         }
 
-        System.out.println("DATOS Y MATRIMONIOS CARGADOS CORRECTAMENTE");
+        System.out.println("DATOS CARGADOS CORRECTAMENTE");
     } catch (SQLException e) {
         System.out.println("No se pudo cargar la BD: " + e.getMessage());
         }
@@ -415,7 +415,7 @@ public class GestionSistema{
             pstmtM.executeBatch();
         }
         
-        System.out.println("Datos y matrimonios guardados con éxito.");
+        System.out.println("Datos guardados con éxito.");
     } catch (SQLException e) {
         System.out.println("Error crítico al guardar en la BD: " + e.getMessage());
         }
