@@ -26,10 +26,12 @@ public class GestionSistema{
         String[] nombresRegiones = {"Arica y Parinacota", "Tarapaca", "Antofagasta", "Atacama", "Coquimbo", 
             "Valparaiso", "Metropolitana", "O'Higgins", 
             "Maule", "Nuble", "Biobio", "La Araucania", "Los Rios", "Los Lagos", 
-            "Aysen", "Magallanes"}; 
-        
-        for (String nombre: nombresRegiones){
-            regiones.put(nombre, new Region(nombre)); 
+            "Aysen", "Magallanes"};
+    
+        for (String nombre : nombresRegiones) {
+            if (!regiones.containsKey(nombre)) {
+                regiones.put(nombre, new Region(nombre));
+            }
         }
     }
     
