@@ -280,6 +280,7 @@ public class GestionSistema{
            regiones.get(nombreRegion).registrarActaMatrimonio(acta);
            return true; 
         }
+        return false;
     }
 
     

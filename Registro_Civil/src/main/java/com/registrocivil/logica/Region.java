@@ -43,7 +43,7 @@ public class Region {
     }
     
     public void registrarActaMatrimonio(String nombresPareja) {
-    this.actasMatrimonio.add(nombresPareja);
+        this.actasMatrimonio.add(nombresPareja);
     }
 
     public List<String> getActasMatrimonio() {
