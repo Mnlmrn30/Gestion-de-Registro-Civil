@@ -318,29 +318,18 @@ public class GestionSistema{
 
         stmt.executeUpdate("CREATE TABLE IF NOT EXISTS Persona (rut TEXT PRIMARY KEY, region TEXT, primer_nombre TEXT, segundo_nombre TEXT, primer_apellido TEXT, segundo_apellido TEXT, sexo TEXT, dia INTEGER, mes INTEGER, anio INTEGER, estado_civil TEXT, estado_vital TEXT)");
         stmt.executeUpdate("CREATE TABLE IF NOT EXISTS Matrimonios (region_matrimonio TEXT, rut1 TEXT, rut2 TEXT, acta TEXT)");
-
         try (ResultSet rs = stmt.executeQuery(sqlPersonas)) {
             while (rs.next()) {
                 String region = rs.getString("region");
                 String rut = rs.getString("rut");
-                String pNombre = rs.getString("primer_nombre");
-                String sNombre = rs.getString("segundo_nombre");
-                String pApellido = rs.getString("primer_apellido");
-                String sApellido = rs.getString("segundo_apellido");
-                String sexo = rs.getString("sexo");
-                int dia = rs.getInt("dia");
-                int mes = rs.getInt("mes");
-                int anio = rs.getInt("anio");
-
-                this.registrarPersona(region, rut, pNombre, sNombre, pApellido, sApellido, sexo, dia, mes, anio);
-
+                this.registrarPersona(region, rut, rs.getString("primer_nombre"), rs.getString("segundo_nombre"), 
+                                     rs.getString("primer_apellido"), rs.getString("segundo_apellido"), 
+                                     rs.getString("sexo"), rs.getInt("dia"), rs.getInt("mes"), rs.getInt("anio"));
+                
                 Persona p = buscarPersona(region, rut);
                 if (p != null) {
                     p.setEstadoCivil(rs.getString("estado_civil"));
-                    String estVital = rs.getString("estado_vital");
-                    if (estVital != null) {
-                        p.setEstadoVital(estVital);
-                    }
+                    p.setEstadoVital(rs.getString("estado_vital"));
                 }
             }
         }
@@ -349,37 +338,33 @@ public class GestionSistema{
             while (rsM.next()) {
                 String nomRegion = rsM.getString("region_matrimonio");
                 String acta = rsM.getString("acta");
-
+                
                 Region reg = regiones.get(nomRegion);
                 if (reg != null) {
-                    reg.registrarActaMatrimonio(acta);
-                    reg.incrementarMatrimonios();
+                    reg.registrarActaMatrimonio(acta); 
+                    reg.incrementarMatrimonios(); 
                 }
             }
         }
-
-        System.out.println("DATOS CARGADOS CORRECTAMENTE");
+        System.out.println("DATOS Y MATRIMONIOS CARGADOS CORRECTAMENTE");
     } catch (SQLException e) {
         System.out.println("No se pudo cargar la BD: " + e.getMessage());
         }
     }
+
     
     /*
     Toma a todos los ciudadanos que se encuentran en la memoria del programa y los inserta en el archivo de la base de datos.
     */
     public void guardarDatosEnBD() {
-    String deletePersonas = "DELETE FROM Persona";
-    String deleteMatrimonios = "DELETE FROM Matrimonios"; 
     String insertPersona = "INSERT INTO Persona (region, rut, primer_nombre, segundo_nombre, primer_apellido, segundo_apellido, sexo, dia, mes, anio, estado_civil, estado_vital) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     String insertMatrimonio = "INSERT INTO Matrimonios (region_matrimonio, rut1, rut2, acta) VALUES (?, ?, ?, ?)";
 
     try (Connection conn = DriverManager.getConnection(URL_BD)) {
         Statement st = conn.createStatement();
-       
-        st.executeUpdate(deletePersonas);
-        
         st.executeUpdate("CREATE TABLE IF NOT EXISTS Matrimonios (region_matrimonio TEXT, rut1 TEXT, rut2 TEXT, acta TEXT)");
-        st.executeUpdate(deleteMatrimonios);
+        st.executeUpdate("DELETE FROM Persona");
+        st.executeUpdate("DELETE FROM Matrimonios");
 
         try (PreparedStatement pstmt = conn.prepareStatement(insertPersona)) {
             for (Region r : regiones.values()) {
@@ -393,7 +378,7 @@ public class GestionSistema{
                     pstmt.setString(7, p.getSexo());
                     pstmt.setInt(8, p.getDiaNacimiento());
                     pstmt.setInt(9, p.getMesNacimiento());
-                    pstmt.setInt(10, p.getAñoNacimiento()); 
+                    pstmt.setInt(10, p.getAñoNacimiento());
                     pstmt.setString(11, p.getEstadoCivil());
                     pstmt.setString(12, p.getEstadoVital());
                     pstmt.addBatch();
@@ -405,9 +390,9 @@ public class GestionSistema{
         try (PreparedStatement pstmtM = conn.prepareStatement(insertMatrimonio)) {
             for (Region r : regiones.values()) {
                 for (String acta : r.getActasMatrimonio()) {
-                    pstmtM.setString(1, r.getNombre());
-                    pstmtM.setString(2, "");
-                    pstmtM.setString(3, ""); 
+                    pstmtM.setString(1, r.getNombre()); 
+                    pstmtM.setString(2, ""); 
+                    pstmtM.setString(3, "");
                     pstmtM.setString(4, acta);
                     pstmtM.addBatch();
                 }
@@ -415,9 +400,9 @@ public class GestionSistema{
             pstmtM.executeBatch();
         }
         
-        System.out.println("Datos guardados con éxito.");
+        System.out.println("Base de datos y matrimonios actualizados con éxito");
     } catch (SQLException e) {
-        System.out.println("Error crítico al guardar en la BD: " + e.getMessage());
+        System.out.println("Error crítico al guardar: " + e.getMessage());
         }
     }
   

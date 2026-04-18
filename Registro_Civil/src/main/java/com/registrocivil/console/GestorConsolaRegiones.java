@@ -97,8 +97,8 @@ public class GestorConsolaRegiones {
         }
     } catch (Exception e){
         System.out.println("Error al mostrar el listado: " + e.getMessage());
+        }
     }
-}
     
     public void verEstadisticasGenerales(){
         System.out.println("\n ==== ESTADISTICAS GENERALES TOTAL ==== ");
