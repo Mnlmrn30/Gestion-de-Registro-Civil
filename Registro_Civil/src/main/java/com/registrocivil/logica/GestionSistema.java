@@ -289,26 +289,19 @@ public class GestionSistema{
     /*
     Encargada de la base de datos, donde aqui se ejecuta el codigo SQL.
     */
-    private void crearTabla(){
-        String sql = "CREATE TABLE IF NOT EXISTS Persona (\n" +
-                     " rut TEXT PRIMARY KEY,\n" +
-                     " region TEXT NOT NULL,\n" +
-                     " primer_nombre TEXT,\n" +
-                     " segundo_nombre TEXT,\n" +
-                     " primer_apellido TEXT,\n" +
-                     " segundo_apellido TEXT,\n" +
-                     " sexo TEXT,\n" +
-                     " dia INTEGER,\n" +
-                     " mes INTEGER,\n" +
-                     " anio INTEGER,\n" +
-                     " estado_civil TEXT,\n" +
-                     " estado_vital TEXT\n" +
-                     ");";
-        try(Connection conn = DriverManager.getConnection(URL_BD);
-            Statement stmt = conn.createStatement()) {
-            stmt.execute(sql);
-        } catch (SQLException e) {
-            System.out.println("Error al crear la tabla: " + e.getMessage());
+    private void crearTabla() {
+    // Tabla existente de Persona
+    String sqlPersona = "CREATE TABLE IF NOT EXISTS Persona (rut TEXT PRIMARY KEY, region TEXT, primer_nombre TEXT,"
+            + " segundo_nombre TEXT, primer_apellido TEXT, segundo_apellido TEXT, sexo TEXT, dia INTEGER, "
+            + "mes INTEGER, anio INTEGER, estado_civil TEXT, estado_vital TEXT);";
+    
+    String sqlMatrimonio = "CREATE TABLE IF NOT EXISTS Matrimonio (region TEXT, acta TEXT);";
+
+    try (Connection conn = DriverManager.getConnection(URL_BD); Statement stmt = conn.createStatement()) {
+        stmt.execute(sqlPersona);
+        stmt.execute(sqlMatrimonio);
+    } catch (SQLException e) {
+        System.out.println("Error al crear tablas: " + e.getMessage());
         }
     }
    
@@ -317,12 +310,15 @@ public class GestionSistema{
     guardados.
     */
     
-    public void cargarDatosDesdeBD(){
-        String sql = "SELECT * FROM Persona";
-        try(Connection conn = DriverManager.getConnection(URL_BD);
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(sql)){
-            while(rs.next()){
+    public void cargarDatosDesdeBD() {
+    String sqlPersonas = "SELECT * FROM Persona";
+    String sqlMatrimonios = "SELECT * FROM Matrimonios"; 
+
+    try (Connection conn = DriverManager.getConnection(URL_BD);
+         Statement stmt = conn.createStatement()) {
+        
+        try (ResultSet rs = stmt.executeQuery(sqlPersonas)) {
+            while (rs.next()) {
                 String region = rs.getString("region");
                 String rut = rs.getString("rut");
                 String pNombre = rs.getString("primer_nombre");
@@ -333,20 +329,34 @@ public class GestionSistema{
                 int dia = rs.getInt("dia");
                 int mes = rs.getInt("mes");
                 int anio = rs.getInt("anio");
+
                 this.registrarPersona(region, rut, pNombre, sNombre, pApellido, sApellido, sexo, dia, mes, anio);
-                
+
                 Persona p = buscarPersona(region, rut);
-                if(p!=null){
+                if (p != null) {
                     p.setEstadoCivil(rs.getString("estado_civil"));
-                    String estVital = rs.getString("estado_vital"); 
-                    if(estVital != null){
+                    String estVital = rs.getString("estado_vital");
+                    if (estVital != null) {
                         p.setEstadoVital(estVital);
                     }
                 }
             }
-            System.out.println("DATOS CARGADOS CORRECTAMENTE DESDE SQLITE");
-        } catch (SQLException e){
-            System.out.println("No se pudo cargar la BD");
+        }
+        try (ResultSet rsM = stmt.executeQuery(sqlMatrimonios)) {
+            while (rsM.next()) {
+                String nomRegion = rsM.getString("region_matrimonio");
+                String acta = rsM.getString("acta");
+                Region reg = regiones.get(nomRegion);
+                if (reg != null) {
+                    reg.registrarActaMatrimonio(acta);
+                    reg.incrementarMatrimonios();
+                }
+            }
+        }
+
+        System.out.println("DATOS Y MATRIMONIOS CARGADOS CORRECTAMENTE DESDE SQLITE");
+    } catch (SQLException e) {
+        System.out.println("No se pudo cargar la BD: " + e.getMessage());
         }
     }
     
@@ -354,14 +364,20 @@ public class GestionSistema{
     Toma a todos los ciudadanos que se encuentran en la memoria del programa y los inserta en el archivo de la base de datos.
     */
     public void guardarDatosEnBD() {
-    String deleteSql = "DELETE FROM Persona";
-    String insertSql = "INSERT INTO Persona (region, rut, primer_nombre, segundo_nombre, primer_apellido, segundo_apellido, sexo, dia, mes, anio, estado_civil, estado_vital) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    String deletePersonas = "DELETE FROM Persona";
+    String deleteMatrimonios = "DELETE FROM Matrimonios"; 
+    String insertPersona = "INSERT INTO Persona (region, rut, primer_nombre, segundo_nombre, primer_apellido, segundo_apellido, sexo, dia, mes, anio, estado_civil, estado_vital) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    String insertMatrimonio = "INSERT INTO Matrimonios (region_matrimonio, rut1, rut2, acta) VALUES (?, ?, ?, ?)";
 
     try (Connection conn = DriverManager.getConnection(URL_BD)) {
         Statement st = conn.createStatement();
-        st.executeUpdate(deleteSql);
+       
+        st.executeUpdate(deletePersonas);
+        
+        st.executeUpdate("CREATE TABLE IF NOT EXISTS Matrimonios (region_matrimonio TEXT, rut1 TEXT, rut2 TEXT, acta TEXT)");
+        st.executeUpdate(deleteMatrimonios);
 
-        try (PreparedStatement pstmt = conn.prepareStatement(insertSql)) {
+        try (PreparedStatement pstmt = conn.prepareStatement(insertPersona)) {
             for (Region r : regiones.values()) {
                 for (Persona p : r.getCiudadanos()) {
                     pstmt.setString(1, r.getNombre());
@@ -373,21 +389,33 @@ public class GestionSistema{
                     pstmt.setString(7, p.getSexo());
                     pstmt.setInt(8, p.getDiaNacimiento());
                     pstmt.setInt(9, p.getMesNacimiento());
-                    pstmt.setInt(10, p.getAñoNacimiento());
+                    pstmt.setInt(10, p.getAñoNacimiento()); 
                     pstmt.setString(11, p.getEstadoCivil());
-                    
                     pstmt.setString(12, p.getEstadoVital());
-                    
-                    pstmt.addBatch(); 
+                    pstmt.addBatch();
                 }
             }
             pstmt.executeBatch();
         }
-        System.out.println("Base de datos actualizada con éxito antes de salir");
+
+        try (PreparedStatement pstmtM = conn.prepareStatement(insertMatrimonio)) {
+            for (Region r : regiones.values()) {
+                for (String acta : r.getActasMatrimonio()) {
+                    pstmtM.setString(1, r.getNombre());
+                    pstmtM.setString(2, "");
+                    pstmtM.setString(3, ""); 
+                    pstmtM.setString(4, acta);
+                    pstmtM.addBatch();
+                }
+            }
+            pstmtM.executeBatch();
+        }
+        
+        System.out.println("Datos y matrimonios guardados con éxito.");
     } catch (SQLException e) {
-        System.out.println("Error crítico al guardar: " + e.getMessage());
+        System.out.println("Error crítico al guardar en la BD: " + e.getMessage());
+        }
     }
-  }
   
   public int obtenerFallecidosPorRegion(String nombreRegion){
       int contador = 0; 

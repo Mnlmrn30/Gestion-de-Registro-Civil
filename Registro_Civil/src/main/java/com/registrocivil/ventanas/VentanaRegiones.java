@@ -9,7 +9,7 @@ public class VentanaRegiones extends JFrame {
 
     private static final String[] NOMBRES_REGIONES = {
         "Arica y Parinacota", "Tarapaca", "Antofagasta", "Atacama",
-        "Coquimbo", "Valparaiso", "Region Metropolitana", "O'Higgins",
+        "Coquimbo", "Valparaiso", "Metropolitana", "O'Higgins",
         "Maule", "Nuble", "Biobio", "La Araucania", "Los Rios",
         "Los Lagos", "Aysen", "Magallanes"
     };
