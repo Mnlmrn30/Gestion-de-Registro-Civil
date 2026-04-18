@@ -275,11 +275,13 @@ public class GestionSistema{
         p2.setConyuge(p1);
         
         if(regiones.containsKey(nombreRegion)){
-            regiones.get(nombreRegion).incrementarMatrimonios(); 
-            return true; 
+           regiones.get(nombreRegion).incrementarMatrimonios(); 
+           String acta = p1.getPrimerNombre() + " " + p1.getPrimerApellido() + " & " + p2.getPrimerNombre() + " " + p2.getPrimerApellido();
+           regiones.get(nombreRegion).registrarActaMatrimonio(acta);
+           return true; 
         }
-        return true; 
     }
+
     
     /*
     Encargada de la base de datos, donde aqui se ejecuta el codigo SQL.

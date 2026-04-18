@@ -6,6 +6,7 @@ public class Region {
     private String nombre;
     private List<Persona> ciudadanos; 
     private int matrimonios = 0;
+    private List<String> actasMatrimonio = new ArrayList<>();
     
     public Region(String nombre){
         this.nombre = nombre; 
@@ -40,5 +41,12 @@ public class Region {
     public int getContadorMatrimonios() {
         return matrimonios;
     }
-       
+    
+    public void registrarActaMatrimonio(String nombresPareja) {
+    this.actasMatrimonio.add(nombresPareja);
+    }
+
+    public List<String> getActasMatrimonio() {
+        return actasMatrimonio;
+    }
 }

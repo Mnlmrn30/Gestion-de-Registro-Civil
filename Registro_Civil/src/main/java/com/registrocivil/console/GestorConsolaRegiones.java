@@ -8,6 +8,7 @@ package com.registrocivil.console;
 import com.registrocivil.logica.*;
 import java.io.*;
 import java.util.HashMap;
+import java.util.List;
 import java.util.HashSet;
 
 /*
@@ -70,41 +71,34 @@ public class GestorConsolaRegiones {
     }
     
     public void verListadoMatrimonio(BufferedReader lector){
-        try {
-            System.out.println("\n LISTADO DE MATRIMONIOS POR REGION ");
-            String nombreRegion = seleccionarRegion();
+    try {
+        System.out.println("\n LISTADO DE MATRIMONIOS POR REGION ");
+        String nombreRegion = seleccionarRegion(); 
+        
+        Region regionEncontrada = regiones.get(nombreRegion);
+        
+        if(regionEncontrada != null){
+            System.out.println("\n=== REGISTRO CIVIL: " + regionEncontrada.getNombre().toUpperCase() + " ===");
             
-            Region regionEncontrada = regiones.get(nombreRegion);
-            if(regionEncontrada != null){
-                System.out.println("\nMatrimonios registrados en " + regionEncontrada.getNombre() + ":");
-                boolean hayMatrimonios = false;
-                
-                HashSet<String> rutsProcesados = new HashSet<>();
-                
-                for(Persona p : regionEncontrada.getCiudadanos()){
-                    Persona conyuge = p.getConyuge();
-                    
-                    if(conyuge != null && !rutsProcesados.contains(p.getRut())){
-                        hayMatrimonios = true;
-                        System.out.println(" MATRIMONIO:");
-                        System.out.println("   " + p.toString());
-                        System.out.println("   " + conyuge.toString());
-                        System.out.println("------------------------------------------------");
-                        rutsProcesados.add(p.getRut());
-                        rutsProcesados.add(conyuge.getRut());
-                    }
-                }
-                
-                if(!hayMatrimonios){
-                    System.out.println("No hay matrimonios activos registrados en esta región.");
-                }
+            List<String> actas = regionEncontrada.getActasMatrimonio();
+            
+            if(actas.isEmpty()){
+                System.out.println("No se han celebrado matrimonios en esta jurisdicción.");
             } else {
-                System.out.println("Error: No se encontró la región en el sistema.");
+                System.out.println("Total de matrimonios celebrados: " + regionEncontrada.getContadorMatrimonios());
+                System.out.println("------------------------------------------------");
+                for(String acta : actas){
+                    System.out.println(" [LIBRO DE ACTAS]: " + acta);
+                }
+                System.out.println("------------------------------------------------");
             }
-        } catch (Exception e){
-            System.out.println("Error al leer la entrada: " + e.getMessage());
+        } else {
+            System.out.println("Error: Región no válida.");
         }
+    } catch (Exception e){
+        System.out.println("Error al mostrar el listado: " + e.getMessage());
     }
+}
     
     public void verEstadisticasGenerales(){
         System.out.println("\n ==== ESTADISTICAS GENERALES TOTAL ==== ");
