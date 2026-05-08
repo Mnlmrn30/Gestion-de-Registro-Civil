@@ -3,36 +3,43 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Region {
-    private String nombre;
+    private NombreRegion nombre;
     private List<Persona> ciudadanos; 
     private int matrimonios = 0;
     private List<String> actasMatrimonio = new ArrayList<>();
     
-    public Region(String nombre){
+    public Region(NombreRegion nombre){
         this.nombre = nombre; 
         this.ciudadanos = new ArrayList<>(); // Se inicializa una lista de ciudadanos vacia. 
     }
     
     // Getters y Setters. 
-    public String getNombre(){
+    public NombreRegion getNombre(){
         return nombre; 
     }
-    public void setNombre(String nombre){
+    public void setNombre(NombreRegion nombre){
         this.nombre = nombre;
     }
     
     public List<Persona> getCiudadanos(){
-        return ciudadanos; 
+        return java.util.Collections.unmodifiableList(ciudadanos); 
     }
     public void setCiudadanos(ArrayList<Persona> ciudadanos){
         this.ciudadanos = ciudadanos;
     }
+    public void agregarCiudadano(Persona p){
+        this.ciudadanos.add(p); 
+    }
+    public void eliminarCiudadano(Persona p){
+        this.ciudadanos.remove(p); 
+    }
+    
     public int getNumeroHabitantes(){
         return ciudadanos.size(); 
     }
     @Override
     public String toString(){
-        return "Region: " + this.nombre + " | Total Ciudadanos Inscritos: " + this.ciudadanos.size(); 
+        return "Region: " + this.nombre.getNombreVisible() + " | Total Ciudadanos Inscritos: " + this.ciudadanos.size(); 
     }
     
     public void incrementarMatrimonios() {

@@ -1,7 +1,6 @@
 
 package com.registrocivil.console;
 
-
 import com.registrocivil.logica.GestionSistema;
 import com.registrocivil.logica.Persona;
 import java.io.BufferedReader;
@@ -453,7 +452,7 @@ public class GestorConsolaCiudadano {
                
                 for (com.registrocivil.logica.Region r : sistema.getRegiones().values()) {
                     if (r.getCiudadanos().contains(p)) {
-                        nombreRegion = r.getNombre();
+                        nombreRegion = r.getNombre().getNombreVisible();
                         break;
                     }
                 }

@@ -102,14 +102,15 @@ public class VentanaRegiones extends JFrame {
     private void mostrarTodasRegiones() {
         StringBuilder sb = new StringBuilder();
         sb.append("=== INFORMACION DE TODAS LAS REGIONES ===\n\n");
-        HashMap<String, Region> regiones = sistema.getRegiones();
+        HashMap<NombreRegion, Region> regiones = sistema.getRegiones();
         for (String nombre : NOMBRES_REGIONES) {
-            Region r = regiones.get(nombre);
+            Region r = sistema.getRegionPorNombre(nombre);
             if (r != null) {
+                String nombreStr = r.getNombre().getNombreVisible();
                 sb.append("Region: ").append(r.getNombre()).append("\n");
                 sb.append("  Inscritos:   ").append(r.getNumeroHabitantes()).append("\n");
-                sb.append("  Vivos:       ").append(sistema.obtenerVivosPorRegion(r.getNombre())).append("\n");
-                sb.append("  Fallecidos:  ").append(sistema.obtenerFallecidosPorRegion(r.getNombre())).append("\n");
+                sb.append("  Vivos:       ").append(sistema.obtenerVivosPorRegion(nombreStr)).append("\n");
+                sb.append("  Fallecidos:  ").append(sistema.obtenerFallecidosPorRegion(nombreStr)).append("\n");
                 sb.append("------------------------------------------------\n");
             }
         }
@@ -123,7 +124,7 @@ public class VentanaRegiones extends JFrame {
             JOptionPane.PLAIN_MESSAGE, null, NOMBRES_REGIONES, NOMBRES_REGIONES[0]);
         if (sel == null) return;
 
-        Region r = sistema.getRegiones().get(sel);
+        Region r = sistema.getRegionPorNombre(sel);
         StringBuilder sb = new StringBuilder();
         sb.append("=== CIUDADANOS EN ").append(sel.toUpperCase()).append(" ===\n\n");
         if (r == null || r.getCiudadanos().isEmpty()) {
@@ -168,12 +169,13 @@ public class VentanaRegiones extends JFrame {
         int totalNac = 0, totalVivos = 0, totalFall = 0, hombres = 0, mujeres = 0, otros = 0;
 
         for (String nombre : NOMBRES_REGIONES) {
-            Region r = sistema.getRegiones().get(nombre);
+            Region r = sistema.getRegionPorNombre(nombre);
             if (r != null && r.getNumeroHabitantes() > 0) {
-                int v = sistema.obtenerVivosPorRegion(r.getNombre());
-                int f = sistema.obtenerFallecidosPorRegion(r.getNombre());
+                String nombreStr = r.getNombre().getNombreVisible();
+                int v = sistema.obtenerVivosPorRegion(nombreStr);
+                int f = sistema.obtenerFallecidosPorRegion(nombreStr);
                 totalNac += r.getNumeroHabitantes(); totalVivos += v; totalFall += f;
-                sb.append("REGION: ").append(r.getNombre().toUpperCase()).append("\n");
+                sb.append("REGION: ").append(nombreStr.toUpperCase()).append("\n");
                 sb.append("  Inscritos: ").append(r.getNumeroHabitantes())
                   .append(" | Vivos: ").append(v).append(" | Fallecidos: ").append(f).append("\n");
                 for (Persona p : r.getCiudadanos()) {

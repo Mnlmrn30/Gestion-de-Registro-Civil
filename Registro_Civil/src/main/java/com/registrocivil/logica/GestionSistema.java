@@ -5,9 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random; 
 import java.sql.*;
+import java.util.HashSet;
 
 public class GestionSistema{
-    private HashMap<String, Region> regiones; 
+    private HashMap<NombreRegion, Region> regiones; 
     private static final String URL_BD = "jdbc:sqlite:registrocivil.db";
     
     public GestionSistema(){
@@ -23,19 +24,12 @@ public class GestionSistema{
     a los ciudadanos por zona
     */
     private void inicializarRegiones(){
-        String[] nombresRegiones = {"Arica y Parinacota", "Tarapaca", "Antofagasta", "Atacama", "Coquimbo", 
-            "Valparaiso", "Metropolitana", "O'Higgins", 
-            "Maule", "Nuble", "Biobio", "La Araucania", "Los Rios", "Los Lagos", 
-            "Aysen", "Magallanes"};
-    
-        for (String nombre : nombresRegiones) {
-            if (!regiones.containsKey(nombre)) {
-                regiones.put(nombre, new Region(nombre));
-            }
+        for (NombreRegion nr : NombreRegion.values()) {
+            regiones.put(nr, new Region(nr));
         }
     }
     
-    public HashMap<String, Region> getRegiones(){
+    public HashMap<NombreRegion, Region> getRegiones(){
         return regiones; 
     }
     
@@ -88,10 +82,10 @@ public class GestionSistema{
             this.registrarPersona("Coquimbo", "21901234-9", "Vicente", "Tomas", "Godoy", "Sanhueza", "Masculino", 6, 12, 2005);
 
             // --- ARAUCANIA ---
-            this.registrarPersona("Araucania", "09888777-6", "Pedro", "Pablo", "Melinao", "Curaqueo", "Masculino", 25, 12, 1960);
-            this.registrarPersona("Araucania", "10999888-7", "Carmen", "Gloria", "Huenchuman", "Catrileo", "Femenino", 17, 4, 1963);
-            this.registrarPersona("Araucania", "18111222-8", "Rodrigo", "Alejandro", "Soto", "Jara", "Masculino", 2, 9, 1991);
-            this.registrarPersona("Araucania", "19222333-9", "Macarena", "Paz", "Garrido", "Lagos", "Femenino", 11, 1, 1995);
+            this.registrarPersona("La Araucania", "09888777-6", "Pedro", "Pablo", "Melinao", "Curaqueo", "Masculino", 25, 12, 1960);
+            this.registrarPersona("La Araucania", "10999888-7", "Carmen", "Gloria", "Huenchuman", "Catrileo", "Femenino", 17, 4, 1963);
+            this.registrarPersona("La Araucania", "18111222-8", "Rodrigo", "Alejandro", "Soto", "Jara", "Masculino", 2, 9, 1991);
+            this.registrarPersona("La Araucania", "19222333-9", "Macarena", "Paz", "Garrido", "Lagos", "Femenino", 11, 1, 1995);
 
             // --- ANTOFAGASTA ---
             this.registrarPersona("Antofagasta", "14555666-0", "Jorge", "Luis", "Pena", "Guzman", "Masculino", 8, 8, 1981);
@@ -143,9 +137,10 @@ public class GestionSistema{
             return false; 
         }
         
-        if(regiones.containsKey(nombreRegion)){
-            Persona nuevaPersona = new Persona(rut, primerNombre, segundoNombre, primerApellido, segundoApellido, sexo, diaNac, mesNac, añoNac); 
-            regiones.get(nombreRegion).getCiudadanos().add(nuevaPersona);
+        NombreRegion enumRegion = NombreRegion.buscarPorNombre(nombreRegion);
+        if(enumRegion != null && regiones.containsKey(enumRegion)){
+            Persona nuevaPersona = new Persona(rut, primerNombre, segundoNombre, primerApellido, segundoApellido, sexo, diaNac, mesNac, añoNac);
+            regiones.get(enumRegion).agregarCiudadano(nuevaPersona);
             return true; 
         }
         return false; 
@@ -155,7 +150,8 @@ public class GestionSistema{
     */
     public String registrarNacimiento(String nombreRegion, String pNombre, String sNombre, String pApellido, String sApellido, String sexo, int d, int m, int a, 
             String rutPadre, String rutMadre){
-        if(!regiones.containsKey(nombreRegion)){
+        NombreRegion enumRegion = NombreRegion.buscarPorNombre(nombreRegion); 
+        if(enumRegion == null || !regiones.containsKey(enumRegion)){
             return null; 
         }
         String nuevoRut = generarRutAleatorio(); 
@@ -165,7 +161,7 @@ public class GestionSistema{
         
         bebe.setPadre(padre);
         bebe.setMadre(madre);
-        regiones.get(nombreRegion).getCiudadanos().add(bebe); 
+        regiones.get(enumRegion).agregarCiudadano(bebe); 
         return nuevoRut; 
         
     }
@@ -200,7 +196,7 @@ public class GestionSistema{
         for(Region r: regiones.values()){
             for(Persona p: r.getCiudadanos()){
                 if(p.getRut().equals(rut)){
-                    return r.getNombre(); 
+                    return r.getNombre().getNombreVisible(); 
                 }
             }
         }
@@ -230,18 +226,23 @@ public class GestionSistema{
     
     // Elimina persona con el rut.
     public boolean eliminarPersona(String nombreRegion, String rut) {
-        Persona personaAEliminar = buscarPersona(nombreRegion, rut);
-        if(personaAEliminar != null){
-            regiones.get(nombreRegion).getCiudadanos().remove(personaAEliminar);
-            return true;
+        NombreRegion enumRegion = NombreRegion.buscarPorNombre(nombreRegion); 
+        
+        if(enumRegion != null && regiones.containsKey(enumRegion)){
+            Persona personaAEliminar = busquedaGlobalPersona(rut); 
+            if(personaAEliminar != null){
+                regiones.get(enumRegion).eliminarCiudadano(personaAEliminar);
+                return true; 
+            }
         }
         return false;
     }
     
     // Primera busqueda de persona por Rut (localmente en persona) 
     public Persona buscarPersona(String nombreRegion, String rut) {
-        if(regiones.containsKey(nombreRegion)){
-            for(Persona p : regiones.get(nombreRegion).getCiudadanos()){
+        NombreRegion enumRegion = NombreRegion.buscarPorNombre(nombreRegion);
+        if(enumRegion != null && regiones.containsKey(enumRegion)){
+            for(Persona p : regiones.get(enumRegion).getCiudadanos()){
                 if(p.getRut().equals(rut)){
                     return p;
                 }
@@ -276,28 +277,32 @@ public class GestionSistema{
         p1.setConyuge(p2);
         p2.setConyuge(p1);
         
-        if(regiones.containsKey(nombreRegion)){
-           regiones.get(nombreRegion).incrementarMatrimonios(); 
+        NombreRegion enumRegion = NombreRegion.buscarPorNombre(nombreRegion);
+        if(enumRegion != null && regiones.containsKey(enumRegion)){
+           regiones.get(enumRegion).incrementarMatrimonios(); 
            String acta = p1.getPrimerNombre() + " " + p1.getPrimerApellido() + " & " + p2.getPrimerNombre() + " " + p2.getPrimerApellido();
-           regiones.get(nombreRegion).registrarActaMatrimonio(acta);
+           regiones.get(enumRegion).registrarActaMatrimonio(acta);
            return true; 
         }
         return false;
     }
 
     public int obtenerCantidadMatrimoniosPorRegion(String nombreRegion) {
-    if (regiones.containsKey(nombreRegion)) {
-        return regiones.get(nombreRegion).getContadorMatrimonios();
-    }
+        NombreRegion enumRegion = NombreRegion.buscarPorNombre(nombreRegion);
+        if (enumRegion != null && regiones.containsKey(enumRegion)) {
+            return regiones.get(enumRegion).getContadorMatrimonios();
+        }
         return 0; 
     }
     
     public List<String> obtenerActasMatrimonioPorRegion(String nombreRegion) {
-    if (regiones.containsKey(nombreRegion)) {
-        return regiones.get(nombreRegion).getActasMatrimonio();
-    }
+        NombreRegion enumRegion = NombreRegion.buscarPorNombre(nombreRegion); 
+        if (enumRegion != null && regiones.containsKey(enumRegion)) {
+            return regiones.get(enumRegion).getActasMatrimonio();
+        }
         return new ArrayList<>(); 
     }
+    
     /*
     Encargada de la base de datos, donde aqui se ejecuta el codigo SQL.
     */
@@ -333,6 +338,8 @@ public class GestionSistema{
                 while (rs.next()) {
                     String region = rs.getString("region");
                     String rut = rs.getString("rut");
+                    NombreRegion enumRegion = NombreRegion.buscarPorNombre(region);
+                    
                     this.registrarPersona(region, rut, rs.getString("primer_nombre"), rs.getString("segundo_nombre"), 
                                     rs.getString("primer_apellido"), rs.getString("segundo_apellido"), 
                                     rs.getString("sexo"), rs.getInt("dia"), rs.getInt("mes"), rs.getInt("anio"));
@@ -349,9 +356,10 @@ public class GestionSistema{
                 while (rsM.next()) {
                     String nomRegion = rsM.getString("region_matrimonio");
                     String acta = rsM.getString("acta");
-                
-                    Region reg = regiones.get(nomRegion);
-                    if (reg != null) {
+                    
+                    NombreRegion enumRegionMat = NombreRegion.buscarPorNombre(nomRegion);
+                    if (enumRegionMat != null && regiones.containsKey(enumRegionMat)) {
+                        Region reg = regiones.get(enumRegionMat);
                         reg.registrarActaMatrimonio(acta); 
                         reg.incrementarMatrimonios(); 
                     }
@@ -362,7 +370,6 @@ public class GestionSistema{
             System.out.println("No se pudo cargar la BD: " + e.getMessage());
         }
     }
-
     
     /*
     Toma a todos los ciudadanos que se encuentran en la memoria del programa y los inserta en el archivo de la base de datos.
@@ -372,15 +379,26 @@ public class GestionSistema{
         String insertMatrimonio = "INSERT INTO Matrimonios (region_matrimonio, acta) VALUES (?, ?)";
 
         try (Connection conn = DriverManager.getConnection(URL_BD)) {
-            Statement st = conn.createStatement();
-            st.executeUpdate("CREATE TABLE IF NOT EXISTS Matrimonios (region_matrimonio TEXT, acta TEXT)");
-            st.executeUpdate("DELETE FROM Persona");
-            st.executeUpdate("DELETE FROM Matrimonios");
+            conn.setAutoCommit(false); 
 
-            try (PreparedStatement pstmt = conn.prepareStatement(insertPersona)) {
+            try (Statement st = conn.createStatement();
+                 PreparedStatement pstmt = conn.prepareStatement(insertPersona)) {
+                st.executeUpdate("CREATE TABLE IF NOT EXISTS Matrimonios (region_matrimonio TEXT, acta TEXT)");
+                st.executeUpdate("DELETE FROM Persona");
+                st.executeUpdate("DELETE FROM Matrimonios");
+
+                HashSet<String> rutsGuardados = new HashSet<>(); 
+
                 for (Region r : regiones.values()) {
                     for (Persona p : r.getCiudadanos()) {
-                        pstmt.setString(1, r.getNombre());
+                        
+                        if(rutsGuardados.contains(p.getRut())){
+                            continue; // Si el RUT ya está, lo saltamos
+                        }
+                        
+                        rutsGuardados.add(p.getRut());
+                        
+                        pstmt.setString(1, r.getNombre().getNombreVisible());
                         pstmt.setString(2, p.getRut());
                         pstmt.setString(3, p.getPrimerNombre());
                         pstmt.setString(4, p.getSegundoNombre());
@@ -392,48 +410,67 @@ public class GestionSistema{
                         pstmt.setInt(10, p.getAñoNacimiento());
                         pstmt.setString(11, p.getEstadoCivil());
                         pstmt.setString(12, p.getEstadoVital());
-                        pstmt.addBatch();
+                        
+                        pstmt.addBatch(); 
                     }
                 }
-                pstmt.executeBatch();
-            }   
+                pstmt.executeBatch(); // Guardamos todos los ciudadanos
 
-            try (PreparedStatement pstmtM = conn.prepareStatement(insertMatrimonio)) {
-                for (Region r : regiones.values()) {
-                    for (String acta : r.getActasMatrimonio()) {
-                        pstmtM.setString(1, r.getNombre()); 
-                        pstmtM.setString(2, acta);
-                        pstmtM.addBatch();
+                // 3. Guardar Matrimonios
+                try (PreparedStatement pstmtM = conn.prepareStatement(insertMatrimonio)) {
+                    for (Region r : regiones.values()) {
+                        for (String acta : r.getActasMatrimonio()) {
+                            pstmtM.setString(1, r.getNombre().getNombreVisible()); 
+                            pstmtM.setString(2, acta);
+                            pstmtM.addBatch();
+                        }
                     }
+                    pstmtM.executeBatch();
                 }
-                pstmtM.executeBatch();
+
+                conn.commit(); 
+                System.out.println("[SISTEMA] Base de datos guardada y actualizada con éxito.");
+
+            } catch (Exception e){
+                conn.rollback();
+                System.out.println("Error al guardar. Se Cancelo el borrado"); 
+                System.out.println("Detalle del error: " + e.getMessage());
+            } finally{
+                conn.setAutoCommit(true);
             }
-        
-            System.out.println("Base de datos actualizados con éxito");
         } catch (SQLException e) {
             System.out.println("Error crítico al guardar: " + e.getMessage());
         }
     }
   
   public int obtenerFallecidosPorRegion(String nombreRegion){
-      int contador = 0; 
-      Region r = regiones.get(nombreRegion);
-      if(r != null){
-          for(Persona p : r.getCiudadanos()){
-              if("Fallecido".equalsIgnoreCase(p.getEstadoVital())){
-                  contador++; 
+        int contador = 0; 
+        NombreRegion enumRegion = NombreRegion.buscarPorNombre(nombreRegion);
+        if(enumRegion != null && regiones.containsKey(enumRegion)){
+            Region r = regiones.get(enumRegion);
+            for(Persona p : r.getCiudadanos()){
+                if("Fallecido".equalsIgnoreCase(p.getEstadoVital())){
+                 contador++; 
               }
           }
       }
       return contador; 
   }
+     
  
   public int obtenerVivosPorRegion(String nombreRegion){
-      Region r = regiones.get(nombreRegion); 
-      if(r!=null){
+    NombreRegion enumRegion = NombreRegion.buscarPorNombre(nombreRegion);
+      if(enumRegion != null && regiones.containsKey(enumRegion)){
+          Region r = regiones.get(enumRegion);
           return r.getCiudadanos().size() - obtenerFallecidosPorRegion(nombreRegion);
       }
-      return 0; 
+      return 0;
   }
+  
+  public Region getRegionPorNombre(String nombre){
+    NombreRegion nr = NombreRegion.buscarPorNombre(nombre);
+    return (nr != null) ? regiones.get(nr) : null;
+  }
+
   
 }

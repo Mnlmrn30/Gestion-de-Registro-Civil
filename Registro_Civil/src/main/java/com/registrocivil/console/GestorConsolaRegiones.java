@@ -9,7 +9,6 @@ import com.registrocivil.logica.*;
 import java.io.*;
 import java.util.HashMap;
 import java.util.List;
-import java.util.HashSet;
 
 /*
 Las funciones necesarias para que subMenuRegiones funcione correctamente, cada metodo corresponde a un case
@@ -18,7 +17,7 @@ para que a la hora de ingresar el numero nos arroje el metodo correspondiente.
 public class GestorConsolaRegiones {
     
     private GestionSistema sistema;
-    private HashMap<String, Region> regiones;
+    private HashMap<NombreRegion, Region> regiones;
     private BufferedReader lector; 
 
     public GestorConsolaRegiones(GestionSistema sistema, BufferedReader lector) {
@@ -36,7 +35,7 @@ public class GestorConsolaRegiones {
         }
         
         for (Region region : regiones.values()){
-            System.out.println("Region: " + region.getNombre());
+            System.out.println("Region: " + region.getNombre().getNombreVisible());
             System.out.println("Poblacion Actual: " + region.getNumeroHabitantes() + " Habitantes.");            
         }
     }
@@ -47,7 +46,7 @@ public class GestorConsolaRegiones {
             System.out.println("Ingrese el nombre de la region a consultar: ");
             
             String nombreRegion = seleccionarRegion(); 
-            Region regionEncontrada = regiones.get(nombreRegion);
+            Region regionEncontrada = sistema.getRegionPorNombre(nombreRegion);
             
             if(regionEncontrada != null){
                 System.out.println("\nRegistro de ciudadanos en " + regionEncontrada.getNombre() + ":");
@@ -75,10 +74,10 @@ public class GestorConsolaRegiones {
         System.out.println("\n LISTADO DE MATRIMONIOS POR REGION ");
         String nombreRegion = seleccionarRegion(); 
         
-        Region regionEncontrada = regiones.get(nombreRegion);
+        Region regionEncontrada = sistema.getRegionPorNombre(nombreRegion);
         
         if(regionEncontrada != null){
-            System.out.println("\n=== REGISTRO CIVIL: " + regionEncontrada.getNombre().toUpperCase() + " ===");
+            System.out.println("\n=== REGISTRO CIVIL: " + regionEncontrada.getNombre().getNombreVisible().toUpperCase() + " ===");
             
             List<String> actas = regionEncontrada.getActasMatrimonio();
             
@@ -113,8 +112,9 @@ public class GestorConsolaRegiones {
         
         for(Region r : regiones.values()){
             int totalRegion = r.getCiudadanos().size();
-            int fallecidosRegion = sistema.obtenerFallecidosPorRegion(r.getNombre());
-            int vivosRegion = sistema.obtenerVivosPorRegion(r.getNombre()); 
+            String nombreStr = r.getNombre().getNombreVisible();
+            int fallecidosRegion = sistema.obtenerFallecidosPorRegion(nombreStr);
+            int vivosRegion = sistema.obtenerVivosPorRegion(nombreStr); 
             
             totalNacional += totalRegion; 
             totalFallecidosNacional += fallecidosRegion;
@@ -132,7 +132,7 @@ public class GestorConsolaRegiones {
                 }
             }
             if(totalRegion > 0){
-                System.out.println("\n REGIÓN: " + r.getNombre().toUpperCase());
+                System.out.println("\n REGIÓN: " + nombreStr.toUpperCase());
                 System.out.println("        Total Histórico Inscritos: " + totalRegion);
                 System.out.println("        Ciudadanos Vivos: " + vivosRegion);
                 System.out.println("        Defunciones Registradas: " + fallecidosRegion);
@@ -151,7 +151,7 @@ public class GestorConsolaRegiones {
     }
     
     private String seleccionarRegion() {
-        String[] regiones = {
+        String[] regionesLista = {
             "Arica y Parinacota", "Tarapaca", "Antofagasta", "Atacama",
             "Coquimbo", "Valparaiso", "Metropolitana", "O'Higgins",
             "Maule", "Nuble", "Biobio", "La Araucania", "Los Rios",
@@ -161,14 +161,14 @@ public class GestorConsolaRegiones {
         while (true) {
             try {
                 System.out.println("\n--- SELECCIONE LA REGIÓN ---");
-                for (int i = 0; i < regiones.length; i++) {              
-                    System.out.println((i + 1) + ". " + regiones[i]); 
+                for (int i = 0; i < regionesLista.length; i++) {              
+                    System.out.println((i + 1) + ". " + regionesLista[i]); 
                 }
                 System.out.println("Ingrese el número de la región (1-16): ");
                 int opcion = Integer.parseInt(lector.readLine());
 
-                if (opcion >= 1 && opcion <= regiones.length) {
-                    return regiones[opcion - 1]; 
+                if (opcion >= 1 && opcion <= regionesLista.length) {
+                    return regionesLista[opcion - 1]; 
                 } else {
                     System.out.println("Error: Ingrese un número válido.");
                 }

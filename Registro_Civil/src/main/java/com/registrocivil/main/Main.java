@@ -25,7 +25,7 @@ public class Main {
         System.out.println("1. Consola (Texto)"); 
         System.out.println("2. Ventana (Interfaz Gráfica)"); 
         System.out.print("Ingrese una opción (1 o 2): ");
-        
+
         try {
             String opcion = lector.readLine();
             
