@@ -9,6 +9,7 @@ public class VentanaMatrimonio extends JFrame {
     private GestionSistema sistema;
     private JFrame ventanaAnterior;
     private JTextField txtRut1, txtRut2;
+    private JComboBox<String> cmbRegion;
 
     public VentanaMatrimonio(GestionSistema sistema, JFrame ventanaAnterior) {
         this.sistema = sistema;
@@ -18,7 +19,7 @@ public class VentanaMatrimonio extends JFrame {
 
     private void initComponents() {
         setTitle("Inscribir Matrimonio");
-        setSize(420, 310);
+        setSize(420, 350);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         setResizable(false);
@@ -29,7 +30,8 @@ public class VentanaMatrimonio extends JFrame {
 
         JPanel panelPrincipal = new JPanel(new BorderLayout());
         panelPrincipal.setBackground(VentanaMenu.COLOR_FONDO);
-        panelPrincipal.add(VentanaMenu.crearHeader("INSCRIBIR MATRIMONIO", "Ambos ciudadanos deben estar registrados y ser solteros/viudos"), BorderLayout.NORTH);
+        panelPrincipal.add(VentanaMenu.crearHeader("INSCRIBIR MATRIMONIO",
+            "Ambos ciudadanos deben estar registrados y ser solteros/viudos"), BorderLayout.NORTH);
 
         JPanel form = new JPanel(new GridBagLayout());
         form.setBackground(Color.WHITE);
@@ -38,8 +40,9 @@ public class VentanaMatrimonio extends JFrame {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(8, 5, 8, 5);
 
-        txtRut1 = new JTextField();
-        txtRut2 = new JTextField();
+        txtRut1   = new JTextField();
+        txtRut2   = new JTextField();
+        cmbRegion = new JComboBox<>(VentanaCiudadanos.NOMBRES_REGIONES);
 
         gbc.gridx = 0; gbc.gridy = 0; gbc.weightx = 0.4;
         form.add(new JLabel("RUT Contrayente 1:"), gbc);
@@ -51,10 +54,15 @@ public class VentanaMatrimonio extends JFrame {
         gbc.gridx = 1; gbc.weightx = 0.6;
         form.add(txtRut2, gbc);
 
+        gbc.gridx = 0; gbc.gridy = 2; gbc.weightx = 0.4;
+        form.add(new JLabel("Region donde contraen:"), gbc);
+        gbc.gridx = 1; gbc.weightx = 0.6;
+        form.add(cmbRegion, gbc);
+
         JLabel nota = new JLabel("Formato RUT: 12345678-9");
         nota.setFont(new Font("Arial", Font.ITALIC, 11));
         nota.setForeground(Color.GRAY);
-        gbc.gridx = 0; gbc.gridy = 2; gbc.gridwidth = 2;
+        gbc.gridx = 0; gbc.gridy = 3; gbc.gridwidth = 2;
         form.add(nota, gbc);
 
         JPanel footer = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 8));
@@ -79,13 +87,14 @@ public class VentanaMatrimonio extends JFrame {
 
     private void registrar() {
         try {
-            String rut1 = txtRut1.getText().trim();
-            String rut2 = txtRut2.getText().trim();
+            String rut1         = txtRut1.getText().trim();
+            String rut2         = txtRut2.getText().trim();
+            String nombreRegion = (String) cmbRegion.getSelectedItem();
 
             Validador.validarFormatoRutObligatorio(rut1);
             Validador.validarFormatoRutObligatorio(rut2);
 
-            boolean exito = sistema.registrarMatrimonio(rut1, rut2, "Region de Prueba");
+            boolean exito = sistema.registrarMatrimonio(rut1, rut2, nombreRegion);
             if (exito) {
                 JOptionPane.showMessageDialog(this,
                     "Matrimonio registrado exitosamente.\nEl estado civil de ambos cambio a Casado/a.",
@@ -93,14 +102,21 @@ public class VentanaMatrimonio extends JFrame {
                 volver();
             } else {
                 JOptionPane.showMessageDialog(this,
-                    "No se pudo registrar el matrimonio.\nPosibles causas:\n- Un RUT no existe en el sistema\n- Mismo RUT dos veces\n- Alguno ya esta casado",
+                    "No se pudo registrar el matrimonio.\nPosibles causas:\n"
+                    + "- Un RUT no existe en el sistema\n"
+                    + "- Mismo RUT ingresado dos veces\n"
+                    + "- Alguno de los dos ya esta casado",
                     "Error", JOptionPane.ERROR_MESSAGE);
             }
 
         } catch (RutInvalidoException e) {
-            JOptionPane.showMessageDialog(this, "Error de validacion de RUT:\n" + e.getMessage(), "RUT Invalido", JOptionPane.ERROR_MESSAGE);
-        } catch (HeadlessException e) {
-            JOptionPane.showMessageDialog(this, "Error inesperado: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this,
+                "Error de validacion de RUT:\n" + e.getMessage(),
+                "RUT Invalido", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this,
+                "Error inesperado: " + e.getMessage(),
+                "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 }
