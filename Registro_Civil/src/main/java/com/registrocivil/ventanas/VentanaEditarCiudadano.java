@@ -37,7 +37,6 @@ public class VentanaEditarCiudadano extends JFrame {
         panelPrincipal.setBackground(VentanaMenu.COLOR_FONDO);
         panelPrincipal.add(VentanaMenu.crearHeader("EDITAR REGISTRO DE CIUDADANO"), BorderLayout.NORTH);
 
-        // Barra de busqueda
         JPanel panelBusqueda = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
         panelBusqueda.setBackground(Color.WHITE);
         panelBusqueda.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(200, 210, 230)));
@@ -48,7 +47,6 @@ public class VentanaEditarCiudadano extends JFrame {
         panelBusqueda.add(txtRutBuscar);
         panelBusqueda.add(btnBuscar);
 
-        // Formulario de edicion
         panelDatos = new JPanel(new GridBagLayout());
         panelDatos.setBackground(Color.WHITE);
         panelDatos.setBorder(BorderFactory.createEmptyBorder(12, 25, 12, 25));
@@ -61,7 +59,7 @@ public class VentanaEditarCiudadano extends JFrame {
         cmbSexo = new JComboBox<>(new String[]{"Masculino", "Femenino"});
         spnDia  = new JSpinner(new SpinnerNumberModel(1,    1,    31,   1));
         spnMes  = new JSpinner(new SpinnerNumberModel(1,    1,    12,   1));
-        spnAnio = new JSpinner(new SpinnerNumberModel(2000, 1900, 2026, 1));
+        spnAnio = new JSpinner(new SpinnerNumberModel(2000, 1, 2026,    1));
         txtRutPadre = new JTextField();
         txtRutMadre = new JTextField();
 
@@ -89,7 +87,6 @@ public class VentanaEditarCiudadano extends JFrame {
         scrollDatos.setBorder(BorderFactory.createEmptyBorder());
         panelCentro.add(scrollDatos, BorderLayout.CENTER);
 
-        // Footer con botones
         JPanel footer = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 8));
         footer.setBackground(VentanaMenu.COLOR_FONDO);
         footer.setBorder(BorderFactory.createEmptyBorder(0, 15, 5, 15));
@@ -115,31 +112,35 @@ public class VentanaEditarCiudadano extends JFrame {
     }
 
     private void buscarCiudadano() {
-        String rut = txtRutBuscar.getText().trim();
-        if (!rut.matches("^[0-9]{7,8}-[0-9Kk]{1}$")) {
-            JOptionPane.showMessageDialog(this, "Formato de RUT incorrecto.\nEjemplo: 12345678-9", "Error RUT", JOptionPane.ERROR_MESSAGE);
-            return;
+        try {
+            String rut = txtRutBuscar.getText().trim();
+
+            Validador.validarFormatoRutObligatorio(rut);
+
+            personaActual = sistema.busquedaGlobalPersona(rut);
+            if (personaActual == null) {
+                JOptionPane.showMessageDialog(this, "No se encontro ciudadano con RUT: " + rut, "No encontrado", JOptionPane.WARNING_MESSAGE);
+                panelDatos.setVisible(false);
+                btnGuardar.setVisible(false);
+                return;
+            }
+            txtPrimerNombre.setText(personaActual.getPrimerNombre());
+            txtSegundoNombre.setText(personaActual.getSegundoNombre());
+            txtPrimerApellido.setText(personaActual.getPrimerApellido());
+            txtSegundoApellido.setText(personaActual.getSegundoApellido());
+            cmbSexo.setSelectedItem(personaActual.getSexo());
+            spnDia.setValue(personaActual.getDiaNacimiento());
+            spnMes.setValue(personaActual.getMesNacimiento());
+            spnAnio.setValue(personaActual.getAñoNacimiento());
+            txtRutPadre.setText(personaActual.getPadre() != null ? personaActual.getPadre().getRut() : "");
+            txtRutMadre.setText(personaActual.getMadre() != null ? personaActual.getMadre().getRut() : "");
+            panelDatos.setVisible(true);
+            btnGuardar.setVisible(true);
+            revalidate(); repaint();
+
+        } catch (RutInvalidoException e) {
+            JOptionPane.showMessageDialog(this, "Error de validacion de RUT:\n" + e.getMessage(), "RUT Invalido", JOptionPane.ERROR_MESSAGE);
         }
-        personaActual = sistema.busquedaGlobalPersona(rut);
-        if (personaActual == null) {
-            JOptionPane.showMessageDialog(this, "No se encontro ciudadano con RUT: " + rut, "No encontrado", JOptionPane.WARNING_MESSAGE);
-            panelDatos.setVisible(false);
-            btnGuardar.setVisible(false);
-            return;
-        }
-        txtPrimerNombre.setText(personaActual.getPrimerNombre());
-        txtSegundoNombre.setText(personaActual.getSegundoNombre());
-        txtPrimerApellido.setText(personaActual.getPrimerApellido());
-        txtSegundoApellido.setText(personaActual.getSegundoApellido());
-        cmbSexo.setSelectedItem(personaActual.getSexo());
-        spnDia.setValue(personaActual.getDiaNacimiento());
-        spnMes.setValue(personaActual.getMesNacimiento());
-        spnAnio.setValue(personaActual.getAñoNacimiento());
-        txtRutPadre.setText(personaActual.getPadre() != null ? personaActual.getPadre().getRut() : "");
-        txtRutMadre.setText(personaActual.getMadre() != null ? personaActual.getMadre().getRut() : "");
-        panelDatos.setVisible(true);
-        btnGuardar.setVisible(true);
-        revalidate(); repaint();
     }
 
     private void guardarCambios() {
@@ -158,14 +159,14 @@ public class VentanaEditarCiudadano extends JFrame {
                 JOptionPane.showMessageDialog(this, "El primer nombre y apellido son obligatorios.", "Error", JOptionPane.WARNING_MESSAGE);
                 return;
             }
+
+            Validador.validarFecha(dia, mes, anio);
+
             sistema.editarPersona(personaActual.getRut(), pNombre, sNombre, pApellido, sApellido, sexo, dia, mes, anio);
 
             String rutPadre = txtRutPadre.getText().trim();
             if (!rutPadre.isEmpty()) {
-                if (!rutPadre.matches("^[0-9]{7,8}-[0-9Kk]{1}$")) {
-                    JOptionPane.showMessageDialog(this, "Formato de RUT del padre incorrecto.", "Error RUT", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
+                Validador.validarFormatoRut(rutPadre);
                 Persona padre = sistema.busquedaGlobalPersona(rutPadre);
                 if (padre != null) personaActual.setPadre(padre);
                 else JOptionPane.showMessageDialog(this, "No se encontro padre con RUT: " + rutPadre, "Aviso", JOptionPane.WARNING_MESSAGE);
@@ -173,10 +174,7 @@ public class VentanaEditarCiudadano extends JFrame {
 
             String rutMadre = txtRutMadre.getText().trim();
             if (!rutMadre.isEmpty()) {
-                if (!rutMadre.matches("^[0-9]{7,8}-[0-9Kk]{1}$")) {
-                    JOptionPane.showMessageDialog(this, "Formato de RUT de la madre incorrecto.", "Error RUT", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
+                Validador.validarFormatoRut(rutMadre);
                 Persona madre = sistema.busquedaGlobalPersona(rutMadre);
                 if (madre != null) personaActual.setMadre(madre);
                 else JOptionPane.showMessageDialog(this, "No se encontro madre con RUT: " + rutMadre, "Aviso", JOptionPane.WARNING_MESSAGE);
@@ -184,8 +182,13 @@ public class VentanaEditarCiudadano extends JFrame {
 
             JOptionPane.showMessageDialog(this, "Ciudadano actualizado con exito.", "Exito", JOptionPane.INFORMATION_MESSAGE);
             volver();
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+
+        } catch (RutInvalidoException e) {
+            JOptionPane.showMessageDialog(this, "Error de validacion de RUT:\n" + e.getMessage(), "RUT Invalido", JOptionPane.ERROR_MESSAGE);
+        } catch (FechaInvalidaException e) {
+            JOptionPane.showMessageDialog(this, "Error de validacion de fecha:\n" + e.getMessage(), "Fecha Invalida", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error inesperado: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 }

@@ -60,13 +60,13 @@ public class VentanaEliminarCiudadano extends JFrame {
         JPanel footer = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 8));
         footer.setBackground(VentanaMenu.COLOR_FONDO);
         footer.setBorder(BorderFactory.createEmptyBorder(0, 15, 5, 15));
-        JButton btnVolver    = VentanaMenu.crearBotonVolver("Volver");
-        JButton btnEliminar  = VentanaMenu.crearBoton("Eliminar Registro");
+        JButton btnVolver   = VentanaMenu.crearBotonVolver("Volver");
+        JButton btnEliminar = VentanaMenu.crearBoton("Eliminar Registro");
         btnVolver.addActionListener(e -> volver());
         btnEliminar.addActionListener(e -> eliminar());
         footer.add(btnVolver);
         footer.add(btnEliminar);
-        this.getRootPane().setDefaultButton(btnEliminar);
+
         panelPrincipal.add(form, BorderLayout.CENTER);
         panelPrincipal.add(footer, BorderLayout.SOUTH);
         add(panelPrincipal);
@@ -78,37 +78,44 @@ public class VentanaEliminarCiudadano extends JFrame {
     }
 
     private void eliminar() {
-        String rut = txtRut.getText().trim();
-        if (!rut.matches("^[0-9]{7,8}-[0-9Kk]{1}$")) {
-            JOptionPane.showMessageDialog(this, "Formato de RUT incorrecto.\nEjemplo: 12345678-9", "Error RUT", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        Persona p = sistema.busquedaGlobalPersona(rut);
-        if (p == null) {
-            JOptionPane.showMessageDialog(this, "No se encontro ningun ciudadano con RUT: " + rut, "No encontrado", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-        int confirmar = JOptionPane.showConfirmDialog(this,
-            "Confirmar eliminacion de:\n" + p.getPrimerNombre() + " " + p.getPrimerApellido()
-            + "\nRUT: " + rut + "\n\nEsta accion no se puede deshacer.",
-            "Confirmar Eliminacion", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+        try {
+            String rut = txtRut.getText().trim();
 
-        if (confirmar == JOptionPane.YES_OPTION) {
-            String nombreRegion = "";
-            for (Region r : sistema.getRegiones().values()) {
-                if (r.getCiudadanos().contains(p)) { nombreRegion = r.getNombre(); break; }
+            Validador.validarFormatoRutObligatorio(rut);
+
+            Persona p = sistema.busquedaGlobalPersona(rut);
+            if (p == null) {
+                JOptionPane.showMessageDialog(this, "No se encontro ningun ciudadano con RUT: " + rut, "No encontrado", JOptionPane.WARNING_MESSAGE);
+                return;
             }
-            if (!nombreRegion.isEmpty()) {
-                boolean exito = sistema.eliminarPersona(nombreRegion, rut);
-                if (exito) {
-                    JOptionPane.showMessageDialog(this, "Registro eliminado exitosamente.", "Exito", JOptionPane.INFORMATION_MESSAGE);
-                    volver();
-                } else {
-                    JOptionPane.showMessageDialog(this, "Error al eliminar el registro.", "Error", JOptionPane.ERROR_MESSAGE);
+
+            int confirmar = JOptionPane.showConfirmDialog(this,
+                "Confirmar eliminacion de:\n" + p.getPrimerNombre() + " " + p.getPrimerApellido()
+                + "\nRUT: " + rut + "\n\nEsta accion no se puede deshacer.",
+                "Confirmar Eliminacion", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+
+            if (confirmar == JOptionPane.YES_OPTION) {
+                String nombreRegion = "";
+                for (Region r : sistema.getRegiones().values()) {
+                    if (r.getCiudadanos().contains(p)) { nombreRegion = r.getNombre(); break; }
                 }
-            } else {
-                JOptionPane.showMessageDialog(this, "No se pudo determinar la region del ciudadano.", "Error", JOptionPane.ERROR_MESSAGE);
+                if (!nombreRegion.isEmpty()) {
+                    boolean exito = sistema.eliminarPersona(nombreRegion, rut);
+                    if (exito) {
+                        JOptionPane.showMessageDialog(this, "Registro eliminado exitosamente.", "Exito", JOptionPane.INFORMATION_MESSAGE);
+                        volver();
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Error al eliminar el registro.", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(this, "No se pudo determinar la region del ciudadano.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
             }
+
+        } catch (RutInvalidoException e) {
+            JOptionPane.showMessageDialog(this, "Error de validacion de RUT:\n" + e.getMessage(), "RUT Invalido", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error inesperado: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 }
