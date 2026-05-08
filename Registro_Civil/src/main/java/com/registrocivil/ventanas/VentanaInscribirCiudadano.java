@@ -13,7 +13,7 @@ public class VentanaInscribirCiudadano extends JFrame {
     private JTextField txtRut, txtPrimerNombre, txtSegundoNombre;
     private JTextField txtPrimerApellido, txtSegundoApellido;
     private JComboBox<String> cmbSexo;
-    private JSpinner spnDia, spnMes, spnAnio;
+    private JTextField spnDia, spnMes, spnAnio;
 
     public VentanaInscribirCiudadano(GestionSistema sistema, JFrame ventanaAnterior) {
         this.sistema = sistema;
@@ -32,10 +32,11 @@ public class VentanaInscribirCiudadano extends JFrame {
             @Override public void windowClosing(java.awt.event.WindowEvent e) { volver(); }
         });
 
-        JPanel panelPrincipal = new JPanel(new BorderLayout(0, 0));
+        JPanel panelPrincipal = new JPanel(new BorderLayout());
         panelPrincipal.setBackground(VentanaMenu.COLOR_FONDO);
         panelPrincipal.add(VentanaMenu.crearHeader("INSCRIBIR CIUDADANO", "Registro General"), BorderLayout.NORTH);
 
+        // Formulario
         JPanel form = new JPanel(new GridBagLayout());
         form.setBackground(Color.WHITE);
         form.setBorder(BorderFactory.createEmptyBorder(15, 25, 10, 25));
@@ -50,38 +51,51 @@ public class VentanaInscribirCiudadano extends JFrame {
         txtPrimerApellido  = new JTextField();
         txtSegundoApellido = new JTextField();
         cmbSexo = new JComboBox<>(new String[]{"Masculino", "Femenino"});
-        spnDia  = new JSpinner(new SpinnerNumberModel(1,    1,  31,   1));
-        spnMes  = new JSpinner(new SpinnerNumberModel(1,    1,  12,   1));
-        spnAnio = new JSpinner(new SpinnerNumberModel(2000, 1, 2026,  1));
+        spnDia = new JTextField(3);  
+        spnMes = new JTextField(3);
+        spnAnio = new JTextField(3);
+        
+        JPanel panelFecha = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
+        panelFecha.setOpaque(false);
+        panelFecha.add(spnDia);
+        panelFecha.add(new JLabel("/"));
+        panelFecha.add(spnMes);
+        panelFecha.add(new JLabel("/"));
+        panelFecha.add(spnAnio);
 
-        String[]    labels = {"Region:", "RUT (ej: 12345678-9):", "Primer Nombre:", "Segundo Nombre:",
-                              "Primer Apellido:", "Segundo Apellido:", "Sexo:",
-                              "Dia Nacimiento:", "Mes Nacimiento:", "Anio Nacimiento:"};
+        String[] labels = {"RegiÃ³n:", "RUT (ej: 12345678-9):", "Primer Nombre:", "Segundo Nombre:",
+                           "Primer Apellido:", "Segundo Apellido:", "Sexo:", "Fecha Nac. (DD/MM/AAAA):"};
+        
         Component[] campos = {cmbRegion, txtRut, txtPrimerNombre, txtSegundoNombre,
-                              txtPrimerApellido, txtSegundoApellido, cmbSexo, spnDia, spnMes, spnAnio};
+                              txtPrimerApellido, txtSegundoApellido, cmbSexo, panelFecha};
 
         for (int i = 0; i < labels.length; i++) {
-            gbc.gridx = 0; gbc.gridy = i; gbc.weightx = 0.38;
+            gbc.gridx = 0; gbc.gridy = i; gbc.weightx = 0.35;
             form.add(new JLabel(labels[i]), gbc);
-            gbc.gridx = 1; gbc.weightx = 0.62;
+            gbc.gridx = 1; gbc.weightx = 0.65;
             form.add(campos[i], gbc);
         }
 
         JScrollPane scrollForm = new JScrollPane(form);
         scrollForm.setBorder(BorderFactory.createEmptyBorder());
 
-        JPanel footer = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 8));
+        // Footer con botones
+        JPanel footer = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 12));
         footer.setBackground(VentanaMenu.COLOR_FONDO);
         footer.setBorder(BorderFactory.createEmptyBorder(0, 15, 5, 15));
-        JButton btnVolver    = VentanaMenu.crearBotonVolver("Volver");
+        
         JButton btnInscribir = VentanaMenu.crearBoton("Inscribir Ciudadano");
-        btnVolver.addActionListener(e -> volver());
+        JButton btnVolver    = VentanaMenu.crearBotonVolver("Volver");
+        
         btnInscribir.addActionListener(e -> inscribir());
-        footer.add(btnVolver);
+        btnVolver.addActionListener(e -> volver());
+        
         footer.add(btnInscribir);
-
+        footer.add(btnVolver);
+        
         panelPrincipal.add(scrollForm, BorderLayout.CENTER);
         panelPrincipal.add(footer, BorderLayout.SOUTH);
+        this.getRootPane().setDefaultButton(btnInscribir);
         add(panelPrincipal);
     }
 
@@ -92,30 +106,32 @@ public class VentanaInscribirCiudadano extends JFrame {
 
     private void inscribir() {
         try {
-            String region    = (String) cmbRegion.getSelectedItem();
-            String rut       = txtRut.getText().trim();
-            String pNombre   = txtPrimerNombre.getText().trim();
-            String sNombre   = txtSegundoNombre.getText().trim();
-            String pApellido = txtPrimerApellido.getText().trim();
-            String sApellido = txtSegundoApellido.getText().trim();
-            String sexo      = (String) cmbSexo.getSelectedItem();
-            int dia  = (int) spnDia.getValue();
-            int mes  = (int) spnMes.getValue();
-            int anio = (int) spnAnio.getValue();
+            String region = (String) cmbRegion.getSelectedItem();
+            String rut    = txtRut.getText().trim();
 
-            Validador.validarFormatoRutObligatorio(rut);
-
+            if (!rut.matches("^[0-9]{7,8}-[0-9Kk]{1}$")) {
+                JOptionPane.showMessageDialog(this, "Formato de RUT incorrecto.\nEjemplo: 12345678-9", "Error RUT", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
             if (sistema.busquedaGlobalPersona(rut) != null) {
                 JOptionPane.showMessageDialog(this, "Ya existe un ciudadano con ese RUT.", "RUT Duplicado", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
+            String pNombre   = txtPrimerNombre.getText().trim();
+            String sNombre   = txtSegundoNombre.getText().trim();
+            String pApellido = txtPrimerApellido.getText().trim();
+            String sApellido = txtSegundoApellido.getText().trim();
+            String sexo      = (String) cmbSexo.getSelectedItem();
+            
+            int dia = Integer.parseInt(spnDia.getText().trim());
+            int mes = Integer.parseInt(spnMes.getText().trim());
+            int anio = Integer.parseInt(spnAnio.getText().trim());
+
             if (pNombre.isEmpty() || pApellido.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "El primer nombre y apellido son obligatorios.", "Campos vacios", JOptionPane.WARNING_MESSAGE);
                 return;
             }
-
-            Validador.validarFecha(dia, mes, anio);
 
             boolean exito = sistema.registrarPersona(region, rut, pNombre, sNombre, pApellido, sApellido, sexo, dia, mes, anio);
             if (exito) {
@@ -124,13 +140,8 @@ public class VentanaInscribirCiudadano extends JFrame {
             } else {
                 JOptionPane.showMessageDialog(this, "No se pudo registrar. Verifique los datos.", "Error", JOptionPane.ERROR_MESSAGE);
             }
-
-        } catch (RutInvalidoException e) {
-            JOptionPane.showMessageDialog(this, "Error de validacion de RUT:\n" + e.getMessage(), "RUT Invalido", JOptionPane.ERROR_MESSAGE);
-        } catch (FechaInvalidaException e) {
-            JOptionPane.showMessageDialog(this, "Error de validacion de fecha:\n" + e.getMessage(), "Fecha Invalida", JOptionPane.ERROR_MESSAGE);
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Error inesperado: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 }

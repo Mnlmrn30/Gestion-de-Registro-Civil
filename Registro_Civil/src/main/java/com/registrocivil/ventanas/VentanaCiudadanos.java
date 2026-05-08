@@ -90,4 +90,3 @@ public class VentanaCiudadanos extends JFrame {
         dispose();
     }
 }
-

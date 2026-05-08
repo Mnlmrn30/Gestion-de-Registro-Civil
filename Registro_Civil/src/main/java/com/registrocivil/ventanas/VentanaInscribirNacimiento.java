@@ -13,7 +13,7 @@ public class VentanaInscribirNacimiento extends JFrame {
     private JTextField txtPrimerNombre, txtSegundoNombre;
     private JTextField txtPrimerApellido, txtSegundoApellido;
     private JTextField txtRutPadre, txtRutMadre;
-    private JSpinner spnDia, spnMes, spnAnio;
+    private JTextField spnDia, spnMes, spnAnio;
 
     public VentanaInscribirNacimiento(GestionSistema sistema, JFrame ventanaAnterior) {
         this.sistema = sistema;
@@ -49,19 +49,33 @@ public class VentanaInscribirNacimiento extends JFrame {
         txtPrimerApellido  = new JTextField();
         txtSegundoApellido = new JTextField();
         cmbSexo = new JComboBox<>(new String[]{"Masculino", "Femenino"});
-        spnDia  = new JSpinner(new SpinnerNumberModel(1,    1,    31,   1));
-        spnMes  = new JSpinner(new SpinnerNumberModel(1,    1,    12,   1));
-        spnAnio = new JSpinner(new SpinnerNumberModel(2025, 1, 2026,    1));
+        spnDia = new JTextField(3);
+        spnMes = new JTextField(3);
+        spnAnio = new JTextField(3);
+        
+        JPanel panelFecha = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
+        panelFecha.setOpaque(false);
+        panelFecha.add(spnDia);
+        panelFecha.add(new JLabel("/"));
+        panelFecha.add(spnMes);
+        panelFecha.add(new JLabel("/"));
+        panelFecha.add(spnAnio);
+    
         txtRutPadre = new JTextField();
         txtRutMadre = new JTextField();
 
-        String[]    labels = {"Region de nacimiento:", "Primer Nombre:", "Segundo Nombre:",
-                              "Primer Apellido:", "Segundo Apellido:", "Sexo:",
-                              "Dia Nacimiento:", "Mes Nacimiento:", "Anio Nacimiento:",
-                              "RUT Padre (opcional):", "RUT Madre (opcional):"};
-        Component[] campos = {cmbRegion, txtPrimerNombre, txtSegundoNombre,
-                              txtPrimerApellido, txtSegundoApellido, cmbSexo,
-                              spnDia, spnMes, spnAnio, txtRutPadre, txtRutMadre};
+        String[] labels = {
+            "Región de nacimiento:", "Primer Nombre:", "Segundo Nombre:",
+            "Primer Apellido:", "Segundo Apellido:", "Sexo:",
+            "Fecha Nacimiento:",
+            "RUT Padre (opcional):", "RUT Madre (opcional):"
+        };
+        Component[] campos = {
+            cmbRegion, txtPrimerNombre, txtSegundoNombre,
+            txtPrimerApellido, txtSegundoApellido, cmbSexo,
+            panelFecha, // ¡Aquí metemos el panel que creaste arriba!
+            txtRutPadre, txtRutMadre
+        };
 
         for (int i = 0; i < labels.length; i++) {
             gbc.gridx = 0; gbc.gridy = i; gbc.weightx = 0.4;
@@ -82,7 +96,7 @@ public class VentanaInscribirNacimiento extends JFrame {
         btnRegistrar.addActionListener(e -> registrar());
         footer.add(btnVolver);
         footer.add(btnRegistrar);
-
+        this.getRootPane().setDefaultButton(btnRegistrar);
         panelPrincipal.add(scrollForm, BorderLayout.CENTER);
         panelPrincipal.add(footer, BorderLayout.SOUTH);
         add(panelPrincipal);
@@ -101,9 +115,9 @@ public class VentanaInscribirNacimiento extends JFrame {
             String pApellido = txtPrimerApellido.getText().trim();
             String sApellido = txtSegundoApellido.getText().trim();
             String sexo      = (String) cmbSexo.getSelectedItem();
-            int dia  = (int) spnDia.getValue();
-            int mes  = (int) spnMes.getValue();
-            int anio = (int) spnAnio.getValue();
+            int dia = Integer.parseInt(spnDia.getText().trim());
+            int mes = Integer.parseInt(spnMes.getText().trim());
+            int anio = Integer.parseInt(spnAnio.getText().trim());;
             String rutPadre  = txtRutPadre.getText().trim();
             String rutMadre  = txtRutMadre.getText().trim();
 
@@ -111,11 +125,14 @@ public class VentanaInscribirNacimiento extends JFrame {
                 JOptionPane.showMessageDialog(this, "El primer nombre y apellido son obligatorios.", "Campos vacios", JOptionPane.WARNING_MESSAGE);
                 return;
             }
-
-            Validador.validarFecha(dia, mes, anio);
-
-            Validador.validarFormatoRut(rutPadre);
-            Validador.validarFormatoRut(rutMadre);
+            if (!rutPadre.isEmpty() && !rutPadre.matches("^[0-9]{7,8}-[0-9Kk]{1}$")) {
+                JOptionPane.showMessageDialog(this, "Formato de RUT del padre incorrecto.", "Error RUT", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            if (!rutMadre.isEmpty() && !rutMadre.matches("^[0-9]{7,8}-[0-9Kk]{1}$")) {
+                JOptionPane.showMessageDialog(this, "Formato de RUT de la madre incorrecto.", "Error RUT", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
 
             String rutGenerado = sistema.registrarNacimiento(region, pNombre, sNombre, pApellido, sApellido, sexo, dia, mes, anio,
                     rutPadre.isEmpty() ? null : rutPadre,
@@ -129,14 +146,8 @@ public class VentanaInscribirNacimiento extends JFrame {
             } else {
                 JOptionPane.showMessageDialog(this, "No se pudo registrar. Verifique los datos.", "Error", JOptionPane.ERROR_MESSAGE);
             }
-
-        } catch (RutInvalidoException e) {
-            JOptionPane.showMessageDialog(this, "Error de validacion de RUT:\n" + e.getMessage(), "RUT Invalido", JOptionPane.ERROR_MESSAGE);
-        } catch (FechaInvalidaException e) {
-            JOptionPane.showMessageDialog(this, "Error de validacion de fecha:\n" + e.getMessage(), "Fecha Invalida", JOptionPane.ERROR_MESSAGE);
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Error inesperado: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 }
-

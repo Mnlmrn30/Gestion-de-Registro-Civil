@@ -53,7 +53,7 @@ public class VentanaDefuncion extends JFrame {
 
         JLabel advertencia = new JLabel("Esta accion marca al ciudadano como Fallecido.");
         advertencia.setFont(new Font("Arial", Font.PLAIN, 11));
-        advertencia.setForeground(new Color(130, 60, 60));
+        advertencia.setForeground(new Color(150, 50, 50));
         gbc.gridy = 2;
         form.add(advertencia, gbc);
 
@@ -64,6 +64,7 @@ public class VentanaDefuncion extends JFrame {
         JButton btnRegistrar = VentanaMenu.crearBoton("Registrar Defuncion");
         btnVolver.addActionListener(e -> volver());
         btnRegistrar.addActionListener(e -> registrar());
+        this.getRootPane().setDefaultButton(btnRegistrar);
         footer.add(btnVolver);
         footer.add(btnRegistrar);
 
@@ -78,44 +79,35 @@ public class VentanaDefuncion extends JFrame {
     }
 
     private void registrar() {
-        try {
-            String rut = txtRut.getText().trim();
-
-            // Reutiliza el mismo validador de la consola
-            Validador.validarFormatoRutObligatorio(rut);
-
-            Persona fallecido = sistema.busquedaGlobalPersona(rut);
-            if (fallecido == null) {
-                JOptionPane.showMessageDialog(this, "No se encontro ningun ciudadano con RUT: " + rut, "No encontrado", JOptionPane.WARNING_MESSAGE);
-                return;
+        String rut = txtRut.getText().trim();
+        if (!rut.matches("^[0-9]{7,8}-[0-9Kk]{1}$")) {
+            JOptionPane.showMessageDialog(this, "Formato de RUT incorrecto.\nEjemplo: 12345678-9", "Error RUT", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        Persona fallecido = sistema.busquedaGlobalPersona(rut);
+        if (fallecido == null) {
+            JOptionPane.showMessageDialog(this, "No se encontro ningun ciudadano con RUT: " + rut, "No encontrado", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        if ("Fallecido".equalsIgnoreCase(fallecido.getEstadoVital())) {
+            JOptionPane.showMessageDialog(this, "Este ciudadano ya esta registrado como fallecido.", "Aviso", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        int confirmar = JOptionPane.showConfirmDialog(this,
+            "Confirmar defuncion de:\n" + fallecido.getPrimerNombre() + " " + fallecido.getPrimerApellido() + "\nRUT: " + rut,
+            "Confirmar", JOptionPane.YES_NO_OPTION);
+        if (confirmar == JOptionPane.YES_OPTION) {
+            fallecido.setEstadoVital("Fallecido");
+            StringBuilder msg = new StringBuilder("Defuncion registrada correctamente.");
+            Persona conyuge = fallecido.getConyuge();
+            if (conyuge != null) {
+                conyuge.setEstadoCivil("Viudo/a");
+                conyuge.setConyuge(null);
+                msg.append("\nEl estado civil de ").append(conyuge.getPrimerNombre())
+                   .append(" ").append(conyuge.getPrimerApellido()).append(" fue actualizado a Viudo/a.");
             }
-            if ("Fallecido".equalsIgnoreCase(fallecido.getEstadoVital())) {
-                JOptionPane.showMessageDialog(this, "Este ciudadano ya esta registrado como fallecido.", "Aviso", JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-
-            int confirmar = JOptionPane.showConfirmDialog(this,
-                "Confirmar defuncion de:\n" + fallecido.getPrimerNombre() + " " + fallecido.getPrimerApellido() + "\nRUT: " + rut,
-                "Confirmar", JOptionPane.YES_NO_OPTION);
-
-            if (confirmar == JOptionPane.YES_OPTION) {
-                fallecido.setEstadoVital("Fallecido");
-                StringBuilder msg = new StringBuilder("Defuncion registrada correctamente.");
-                Persona conyuge = fallecido.getConyuge();
-                if (conyuge != null) {
-                    conyuge.setEstadoCivil("Viudo/a");
-                    conyuge.setConyuge(null);
-                    msg.append("\nEl estado civil de ").append(conyuge.getPrimerNombre())
-                       .append(" ").append(conyuge.getPrimerApellido()).append(" fue actualizado a Viudo/a.");
-                }
-                JOptionPane.showMessageDialog(this, msg.toString(), "Exito", JOptionPane.INFORMATION_MESSAGE);
-                volver();
-            }
-
-        } catch (RutInvalidoException e) {
-            JOptionPane.showMessageDialog(this, "Error de validacion de RUT:\n" + e.getMessage(), "RUT Invalido", JOptionPane.ERROR_MESSAGE);
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Error inesperado: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, msg.toString(), "Exito", JOptionPane.INFORMATION_MESSAGE);
+            volver();
         }
     }
 }
