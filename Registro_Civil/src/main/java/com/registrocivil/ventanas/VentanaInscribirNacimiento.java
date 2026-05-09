@@ -73,7 +73,7 @@ public class VentanaInscribirNacimiento extends JFrame {
         Component[] campos = {
             cmbRegion, txtPrimerNombre, txtSegundoNombre,
             txtPrimerApellido, txtSegundoApellido, cmbSexo,
-            panelFecha, // ¡Aquí metemos el panel que creaste arriba!
+            panelFecha,
             txtRutPadre, txtRutMadre
         };
 
@@ -117,7 +117,7 @@ public class VentanaInscribirNacimiento extends JFrame {
             String sexo      = (String) cmbSexo.getSelectedItem();
             int dia = Integer.parseInt(spnDia.getText().trim());
             int mes = Integer.parseInt(spnMes.getText().trim());
-            int anio = Integer.parseInt(spnAnio.getText().trim());;
+            int anio = Integer.parseInt(spnAnio.getText().trim());
             String rutPadre  = txtRutPadre.getText().trim();
             String rutMadre  = txtRutMadre.getText().trim();
 
@@ -125,14 +125,10 @@ public class VentanaInscribirNacimiento extends JFrame {
                 JOptionPane.showMessageDialog(this, "El primer nombre y apellido son obligatorios.", "Campos vacios", JOptionPane.WARNING_MESSAGE);
                 return;
             }
-            if (!rutPadre.isEmpty() && !rutPadre.matches("^[0-9]{7,8}-[0-9Kk]{1}$")) {
-                JOptionPane.showMessageDialog(this, "Formato de RUT del padre incorrecto.", "Error RUT", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            if (!rutMadre.isEmpty() && !rutMadre.matches("^[0-9]{7,8}-[0-9Kk]{1}$")) {
-                JOptionPane.showMessageDialog(this, "Formato de RUT de la madre incorrecto.", "Error RUT", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
+
+            Validador.validarFecha(dia, mes, anio);
+            Validador.validarFormatoRut(rutPadre);
+            Validador.validarFormatoRut(rutMadre);
 
             String rutGenerado = sistema.registrarNacimiento(region, pNombre, sNombre, pApellido, sApellido, sexo, dia, mes, anio,
                     rutPadre.isEmpty() ? null : rutPadre,
@@ -146,6 +142,10 @@ public class VentanaInscribirNacimiento extends JFrame {
             } else {
                 JOptionPane.showMessageDialog(this, "No se pudo registrar. Verifique los datos.", "Error", JOptionPane.ERROR_MESSAGE);
             }
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Dia, mes y año deben ser números válidos.", "Error de Formato", JOptionPane.ERROR_MESSAGE);
+        } catch (RutInvalidoException | FechaInvalidaException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Error de validación", JOptionPane.ERROR_MESSAGE);
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }

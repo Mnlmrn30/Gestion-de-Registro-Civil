@@ -113,10 +113,13 @@ public class VentanaEditarCiudadano extends JFrame {
 
     private void buscarCiudadano() {
         String rut = txtRutBuscar.getText().trim();
-        if (!rut.matches("^[0-9]{7,8}-[0-9Kk]{1}$")) {
-            JOptionPane.showMessageDialog(this, "Formato de RUT incorrecto.\nEjemplo: 12345678-9", "Error RUT", JOptionPane.ERROR_MESSAGE);
+        try {
+            Validador.validarFormatoRutObligatorio(rut);
+        } catch (RutInvalidoException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Error RUT", JOptionPane.ERROR_MESSAGE);
             return;
         }
+
         personaActual = sistema.busquedaGlobalPersona(rut);
         if (personaActual == null) {
             JOptionPane.showMessageDialog(this, "No se encontro ciudadano con RUT: " + rut, "No encontrado", JOptionPane.WARNING_MESSAGE);
@@ -155,25 +158,21 @@ public class VentanaEditarCiudadano extends JFrame {
                 JOptionPane.showMessageDialog(this, "El primer nombre y apellido son obligatorios.", "Error", JOptionPane.WARNING_MESSAGE);
                 return;
             }
+
+            Validador.validarFecha(dia, mes, anio);
             sistema.editarPersona(personaActual.getRut(), pNombre, sNombre, pApellido, sApellido, sexo, dia, mes, anio);
 
             String rutPadre = txtRutPadre.getText().trim();
+            Validador.validarFormatoRut(rutPadre);
             if (!rutPadre.isEmpty()) {
-                if (!rutPadre.matches("^[0-9]{7,8}-[0-9Kk]{1}$")) {
-                    JOptionPane.showMessageDialog(this, "Formato de RUT del padre incorrecto.", "Error RUT", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
                 Persona padre = sistema.busquedaGlobalPersona(rutPadre);
                 if (padre != null) personaActual.setPadre(padre);
                 else JOptionPane.showMessageDialog(this, "No se encontro padre con RUT: " + rutPadre, "Aviso", JOptionPane.WARNING_MESSAGE);
             }
 
             String rutMadre = txtRutMadre.getText().trim();
+            Validador.validarFormatoRut(rutMadre);
             if (!rutMadre.isEmpty()) {
-                if (!rutMadre.matches("^[0-9]{7,8}-[0-9Kk]{1}$")) {
-                    JOptionPane.showMessageDialog(this, "Formato de RUT de la madre incorrecto.", "Error RUT", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
                 Persona madre = sistema.busquedaGlobalPersona(rutMadre);
                 if (madre != null) personaActual.setMadre(madre);
                 else JOptionPane.showMessageDialog(this, "No se encontro madre con RUT: " + rutMadre, "Aviso", JOptionPane.WARNING_MESSAGE);
@@ -181,6 +180,10 @@ public class VentanaEditarCiudadano extends JFrame {
 
             JOptionPane.showMessageDialog(this, "Ciudadano actualizado con exito.", "Exito", JOptionPane.INFORMATION_MESSAGE);
             volver();
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Error en el formato de numeros.", "Error", JOptionPane.ERROR_MESSAGE);
+        } catch (RutInvalidoException | FechaInvalidaException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Error de validacion", JOptionPane.ERROR_MESSAGE);
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }

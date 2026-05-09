@@ -88,8 +88,11 @@ public class VentanaMatrimonio extends JFrame {
         String rut2 = txtRut2.getText().trim();
         String region = (String) cmbRegion.getSelectedItem();
 
-        if (!rut1.matches("^[0-9]{7,8}-[0-9Kk]{1}$") || !rut2.matches("^[0-9]{7,8}-[0-9Kk]{1}$")) {
-            JOptionPane.showMessageDialog(this, "Formato de RUT incorrecto.", "Error RUT", JOptionPane.ERROR_MESSAGE);
+        try {
+            Validador.validarFormatoRutObligatorio(rut1);
+            Validador.validarFormatoRutObligatorio(rut2);
+        } catch (RutInvalidoException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Error RUT", JOptionPane.ERROR_MESSAGE);
             return;
         }
 

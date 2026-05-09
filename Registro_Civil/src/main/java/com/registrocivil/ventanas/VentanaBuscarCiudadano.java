@@ -15,7 +15,6 @@ public class VentanaBuscarCiudadano extends JFrame {
     private JTextField txtRut;
     private JTextField txtPrimerNombre;
     private JTextField txtPrimerApellido;
-    
     private JTextArea areaResultado;
 
     public VentanaBuscarCiudadano(GestionSistema sistema, JFrame ventanaAnterior) {
@@ -38,7 +37,6 @@ public class VentanaBuscarCiudadano extends JFrame {
         panelPrincipal.setBackground(VentanaMenu.COLOR_FONDO);
         panelPrincipal.add(VentanaMenu.crearHeader("BUSCAR CIUDADANO", "Búsqueda por RUT o Nombre"), BorderLayout.NORTH);
 
- 
         JPanel panelBusquedaTop = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
         panelBusquedaTop.setBackground(Color.WHITE);
         cmbTipoBusqueda = new JComboBox<>(new String[]{"Buscar por RUT", "Buscar por Nombre y Apellido"});
@@ -59,10 +57,8 @@ public class VentanaBuscarCiudadano extends JFrame {
         panelInputsBusqueda.add(txtRut);
         panelInputsBusqueda.add(btnBuscar);
         
-
         cmbTipoBusqueda.addActionListener(e -> {
             panelInputsBusqueda.removeAll();
-            
             if (cmbTipoBusqueda.getSelectedIndex() == 0) {
                 panelInputsBusqueda.add(new JLabel("RUT (ej: 12345678-9):"));
                 panelInputsBusqueda.add(txtRut);
@@ -73,7 +69,6 @@ public class VentanaBuscarCiudadano extends JFrame {
                 panelInputsBusqueda.add(txtPrimerApellido);
             }
             panelInputsBusqueda.add(btnBuscar);
-            
             panelInputsBusqueda.revalidate();
             panelInputsBusqueda.repaint();
         });
@@ -82,7 +77,6 @@ public class VentanaBuscarCiudadano extends JFrame {
         panelControles.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(200, 210, 230)));
         panelControles.add(panelBusquedaTop, BorderLayout.NORTH);
         panelControles.add(panelInputsBusqueda, BorderLayout.CENTER);
-
 
         areaResultado = new JTextArea();
         areaResultado.setEditable(false);
@@ -124,10 +118,13 @@ public class VentanaBuscarCiudadano extends JFrame {
         
         if (cmbTipoBusqueda.getSelectedIndex() == 0) {
             String rut = txtRut.getText().trim();
-            if (!rut.matches("^[0-9]{7,8}-[0-9Kk]{1}$")) {
-                areaResultado.setText("Error: Formato de RUT incorrecto.\nEjemplo: 12345678-9");
+            try {
+                Validador.validarFormatoRutObligatorio(rut);
+            } catch (RutInvalidoException ex) {
+                areaResultado.setText("Error: " + ex.getMessage());
                 return;
             }
+            
             Persona p = sistema.busquedaGlobalPersona(rut);
             if (p != null) {
                 listaEncontrados.add(p);

@@ -91,10 +91,14 @@ public class VentanaCertificados extends JFrame {
 
     private void emitir() {
         String rut = txtRut.getText().trim();
-        if (!rut.matches("^[0-9]{7,8}-[0-9Kk]{1}$")) {
-            JOptionPane.showMessageDialog(this, "Formato de RUT incorrecto.\nEjemplo: 12345678-9", "Error RUT", JOptionPane.ERROR_MESSAGE);
+        
+        try {
+            Validador.validarFormatoRutObligatorio(rut);
+        } catch (RutInvalidoException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Error RUT", JOptionPane.ERROR_MESSAGE);
             return;
         }
+        
         Persona p = sistema.busquedaGlobalPersona(rut);
         String region = sistema.obtenerRegionDePersona(rut);
         if (p == null) { areaCertificado.setText("Error: No se encontro ciudadano con RUT " + rut); return; }

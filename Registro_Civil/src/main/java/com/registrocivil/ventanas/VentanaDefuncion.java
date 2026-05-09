@@ -80,10 +80,14 @@ public class VentanaDefuncion extends JFrame {
 
     private void registrar() {
         String rut = txtRut.getText().trim();
-        if (!rut.matches("^[0-9]{7,8}-[0-9Kk]{1}$")) {
-            JOptionPane.showMessageDialog(this, "Formato de RUT incorrecto.\nEjemplo: 12345678-9", "Error RUT", JOptionPane.ERROR_MESSAGE);
+        
+        try {
+            Validador.validarFormatoRutObligatorio(rut);
+        } catch (RutInvalidoException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Error RUT", JOptionPane.ERROR_MESSAGE);
             return;
         }
+        
         Persona fallecido = sistema.busquedaGlobalPersona(rut);
         if (fallecido == null) {
             JOptionPane.showMessageDialog(this, "No se encontro ningun ciudadano con RUT: " + rut, "No encontrado", JOptionPane.WARNING_MESSAGE);

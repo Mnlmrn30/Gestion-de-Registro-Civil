@@ -79,10 +79,13 @@ public class VentanaEliminarCiudadano extends JFrame {
 
     private void eliminar() {
         String rut = txtRut.getText().trim();
-        if (!rut.matches("^[0-9]{7,8}-[0-9Kk]{1}$")) {
-            JOptionPane.showMessageDialog(this, "Formato de RUT incorrecto.\nEjemplo: 12345678-9", "Error RUT", JOptionPane.ERROR_MESSAGE);
+        try {
+            Validador.validarFormatoRutObligatorio(rut);
+        } catch (RutInvalidoException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Error RUT", JOptionPane.ERROR_MESSAGE);
             return;
         }
+
         Persona p = sistema.busquedaGlobalPersona(rut);
         if (p == null) {
             JOptionPane.showMessageDialog(this, "No se encontro ningun ciudadano con RUT: " + rut, "No encontrado", JOptionPane.WARNING_MESSAGE);

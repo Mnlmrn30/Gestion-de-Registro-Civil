@@ -36,7 +36,6 @@ public class VentanaInscribirCiudadano extends JFrame {
         panelPrincipal.setBackground(VentanaMenu.COLOR_FONDO);
         panelPrincipal.add(VentanaMenu.crearHeader("INSCRIBIR CIUDADANO", "Registro General"), BorderLayout.NORTH);
 
-        // Formulario
         JPanel form = new JPanel(new GridBagLayout());
         form.setBackground(Color.WHITE);
         form.setBorder(BorderFactory.createEmptyBorder(15, 25, 10, 25));
@@ -79,7 +78,6 @@ public class VentanaInscribirCiudadano extends JFrame {
         JScrollPane scrollForm = new JScrollPane(form);
         scrollForm.setBorder(BorderFactory.createEmptyBorder());
 
-        // Footer con botones
         JPanel footer = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 12));
         footer.setBackground(VentanaMenu.COLOR_FONDO);
         footer.setBorder(BorderFactory.createEmptyBorder(0, 15, 5, 15));
@@ -109,10 +107,8 @@ public class VentanaInscribirCiudadano extends JFrame {
             String region = (String) cmbRegion.getSelectedItem();
             String rut    = txtRut.getText().trim();
 
-            if (!rut.matches("^[0-9]{7,8}-[0-9Kk]{1}$")) {
-                JOptionPane.showMessageDialog(this, "Formato de RUT incorrecto.\nEjemplo: 12345678-9", "Error RUT", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
+            Validador.validarFormatoRutObligatorio(rut);
+
             if (sistema.busquedaGlobalPersona(rut) != null) {
                 JOptionPane.showMessageDialog(this, "Ya existe un ciudadano con ese RUT.", "RUT Duplicado", JOptionPane.ERROR_MESSAGE);
                 return;
@@ -133,6 +129,8 @@ public class VentanaInscribirCiudadano extends JFrame {
                 return;
             }
 
+            Validador.validarFecha(dia, mes, anio);
+
             boolean exito = sistema.registrarPersona(region, rut, pNombre, sNombre, pApellido, sApellido, sexo, dia, mes, anio);
             if (exito) {
                 JOptionPane.showMessageDialog(this, "Ciudadano registrado con exito en " + region + ".", "Exito", JOptionPane.INFORMATION_MESSAGE);
@@ -140,6 +138,10 @@ public class VentanaInscribirCiudadano extends JFrame {
             } else {
                 JOptionPane.showMessageDialog(this, "No se pudo registrar. Verifique los datos.", "Error", JOptionPane.ERROR_MESSAGE);
             }
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Dia, mes y año deben ser números válidos.", "Error de Formato", JOptionPane.ERROR_MESSAGE);
+        } catch (RutInvalidoException | FechaInvalidaException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Error de validación", JOptionPane.ERROR_MESSAGE);
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
