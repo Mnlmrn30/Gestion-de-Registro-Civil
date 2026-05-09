@@ -477,7 +477,6 @@ public class GestorConsolaCiudadano {
         }
     }
     
-    
     private void validarFecha(int dia, int mes, int anio) throws com.registrocivil.logica.FechaInvalidaException{
         if(anio < 0|| anio > 2026){
             throw new com.registrocivil.logica.FechaInvalidaException("El año debe estar entre 0 y 2026,"); 
@@ -495,9 +494,11 @@ public class GestorConsolaCiudadano {
     
     private void validarFormatoRut(String rut) throws com.registrocivil.logica.RutInvalidoException{
         if(!rut.matches("^[0-9]{7,8}-[0-9Kk]{1}$")){
-            throw new com.registrocivil.logica.RutInvalidoException("Formato de RUT incorrecto. Debe ser sin puntos y con guión (ej. 12345678-9)");
+            throw new com.registrocivil.logica.RutInvalidoException("Formato de RUT incorrecto. Debe ser sin puntos y con guiÃ³n (ej. 12345678-9)");
         }
     }
+    
+   
     
     private String seleccionarRegion() {
         String[] regiones = {
