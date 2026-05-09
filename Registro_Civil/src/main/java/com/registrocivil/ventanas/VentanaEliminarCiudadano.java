@@ -96,7 +96,7 @@ public class VentanaEliminarCiudadano extends JFrame {
         if (confirmar == JOptionPane.YES_OPTION) {
             String nombreRegion = "";
             for (Region r : sistema.getRegiones().values()) {
-                if (r.getCiudadanos().contains(p)) { nombreRegion = r.getNombre(); break; }
+                if (r.getCiudadanos().contains(p)) { nombreRegion = r.getNombre().getNombreVisible(); break; }
             }
             if (!nombreRegion.isEmpty()) {
                 boolean exito = sistema.eliminarPersona(nombreRegion, rut);

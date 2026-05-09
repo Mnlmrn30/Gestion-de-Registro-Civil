@@ -30,7 +30,6 @@ public class VentanaRegiones extends JFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
-        // Al cerrar esta ventana vuelve al menu anterior
         addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent e) {
@@ -41,15 +40,12 @@ public class VentanaRegiones extends JFrame {
         JPanel panelPrincipal = new JPanel(new BorderLayout(0, 0));
         panelPrincipal.setBackground(VentanaMenu.COLOR_FONDO);
 
-        // Header
         panelPrincipal.add(VentanaMenu.crearHeader("GESTION DE REGIONES"), BorderLayout.NORTH);
 
-        // Panel central: botones izquierda + resultados derecha
         JPanel panelCentro = new JPanel(new BorderLayout(10, 0));
         panelCentro.setBackground(VentanaMenu.COLOR_FONDO);
         panelCentro.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
 
-        // Columna de botones
         JPanel panelBotones = new JPanel(new GridLayout(4, 1, 0, 10));
         panelBotones.setBackground(VentanaMenu.COLOR_FONDO);
         panelBotones.setPreferredSize(new Dimension(210, 0));
@@ -69,7 +65,6 @@ public class VentanaRegiones extends JFrame {
         panelBotones.add(btnMatrimonios);
         panelBotones.add(btnEstadisticas);
 
-        // Area de resultados
         areaResultado = new JTextArea();
         areaResultado.setEditable(false);
         areaResultado.setFont(new Font("Courier New", Font.PLAIN, 13));
@@ -81,7 +76,6 @@ public class VentanaRegiones extends JFrame {
         panelCentro.add(panelBotones, BorderLayout.WEST);
         panelCentro.add(scroll, BorderLayout.CENTER);
 
-        // Footer con boton Volver
         JPanel footer = new JPanel(new FlowLayout(FlowLayout.LEFT));
         footer.setBackground(VentanaMenu.COLOR_FONDO);
         footer.setBorder(BorderFactory.createEmptyBorder(0, 12, 8, 12));
@@ -102,14 +96,15 @@ public class VentanaRegiones extends JFrame {
     private void mostrarTodasRegiones() {
         StringBuilder sb = new StringBuilder();
         sb.append("=== INFORMACION DE TODAS LAS REGIONES ===\n\n");
-        HashMap<String, Region> regiones = sistema.getRegiones();
+        HashMap<NombreRegion, Region> regiones = sistema.getRegiones();
         for (String nombre : NOMBRES_REGIONES) {
-            Region r = regiones.get(nombre);
+            NombreRegion nr = NombreRegion.buscarPorNombre(nombre);
+            Region r = nr != null ? regiones.get(nr) : null;
             if (r != null) {
-                sb.append("Region: ").append(r.getNombre()).append("\n");
+                sb.append("Region: ").append(r.getNombre().getNombreVisible()).append("\n");
                 sb.append("  Inscritos:   ").append(r.getNumeroHabitantes()).append("\n");
-                sb.append("  Vivos:       ").append(sistema.obtenerVivosPorRegion(r.getNombre())).append("\n");
-                sb.append("  Fallecidos:  ").append(sistema.obtenerFallecidosPorRegion(r.getNombre())).append("\n");
+                sb.append("  Vivos:       ").append(sistema.obtenerVivosPorRegion(r.getNombre().getNombreVisible())).append("\n");
+                sb.append("  Fallecidos:  ").append(sistema.obtenerFallecidosPorRegion(r.getNombre().getNombreVisible())).append("\n");
                 sb.append("------------------------------------------------\n");
             }
         }
@@ -123,7 +118,8 @@ public class VentanaRegiones extends JFrame {
             JOptionPane.PLAIN_MESSAGE, null, NOMBRES_REGIONES, NOMBRES_REGIONES[0]);
         if (sel == null) return;
 
-        Region r = sistema.getRegiones().get(sel);
+        NombreRegion nr = NombreRegion.buscarPorNombre(sel);
+        Region r = nr != null ? sistema.getRegiones().get(nr) : null;
         StringBuilder sb = new StringBuilder();
         sb.append("=== CIUDADANOS EN ").append(sel.toUpperCase()).append(" ===\n\n");
         if (r == null || r.getCiudadanos().isEmpty()) {
@@ -168,12 +164,13 @@ public class VentanaRegiones extends JFrame {
         int totalNac = 0, totalVivos = 0, totalFall = 0, hombres = 0, mujeres = 0, otros = 0;
 
         for (String nombre : NOMBRES_REGIONES) {
-            Region r = sistema.getRegiones().get(nombre);
+            NombreRegion nr = NombreRegion.buscarPorNombre(nombre);
+            Region r = nr != null ? sistema.getRegiones().get(nr) : null;
             if (r != null && r.getNumeroHabitantes() > 0) {
-                int v = sistema.obtenerVivosPorRegion(r.getNombre());
-                int f = sistema.obtenerFallecidosPorRegion(r.getNombre());
+                int v = sistema.obtenerVivosPorRegion(r.getNombre().getNombreVisible());
+                int f = sistema.obtenerFallecidosPorRegion(r.getNombre().getNombreVisible());
                 totalNac += r.getNumeroHabitantes(); totalVivos += v; totalFall += f;
-                sb.append("REGION: ").append(r.getNombre().toUpperCase()).append("\n");
+                sb.append("REGION: ").append(r.getNombre().getNombreVisible().toUpperCase()).append("\n");
                 sb.append("  Inscritos: ").append(r.getNumeroHabitantes())
                   .append(" | Vivos: ").append(v).append(" | Fallecidos: ").append(f).append("\n");
                 for (Persona p : r.getCiudadanos()) {

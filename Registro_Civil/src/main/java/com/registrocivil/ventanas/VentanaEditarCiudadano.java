@@ -37,7 +37,6 @@ public class VentanaEditarCiudadano extends JFrame {
         panelPrincipal.setBackground(VentanaMenu.COLOR_FONDO);
         panelPrincipal.add(VentanaMenu.crearHeader("EDITAR REGISTRO DE CIUDADANO"), BorderLayout.NORTH);
 
-        // Barra de busqueda
         JPanel panelBusqueda = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
         panelBusqueda.setBackground(Color.WHITE);
         panelBusqueda.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(200, 210, 230)));
@@ -48,7 +47,6 @@ public class VentanaEditarCiudadano extends JFrame {
         panelBusqueda.add(txtRutBuscar);
         panelBusqueda.add(btnBuscar);
 
-        // Formulario de edicion
         panelDatos = new JPanel(new GridBagLayout());
         panelDatos.setBackground(Color.WHITE);
         panelDatos.setBorder(BorderFactory.createEmptyBorder(12, 25, 12, 25));
@@ -89,7 +87,6 @@ public class VentanaEditarCiudadano extends JFrame {
         scrollDatos.setBorder(BorderFactory.createEmptyBorder());
         panelCentro.add(scrollDatos, BorderLayout.CENTER);
 
-        // Footer con botones
         JPanel footer = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 8));
         footer.setBackground(VentanaMenu.COLOR_FONDO);
         footer.setBorder(BorderFactory.createEmptyBorder(0, 15, 5, 15));
@@ -134,7 +131,7 @@ public class VentanaEditarCiudadano extends JFrame {
         cmbSexo.setSelectedItem(personaActual.getSexo());
         spnDia.setValue(personaActual.getDiaNacimiento());
         spnMes.setValue(personaActual.getMesNacimiento());
-        spnAnio.setValue(personaActual.getAÃ±oNacimiento());
+        spnAnio.setValue(personaActual.getAñoNacimiento());
         txtRutPadre.setText(personaActual.getPadre() != null ? personaActual.getPadre().getRut() : "");
         txtRutMadre.setText(personaActual.getMadre() != null ? personaActual.getMadre().getRut() : "");
         panelDatos.setVisible(true);

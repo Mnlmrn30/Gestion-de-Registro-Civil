@@ -32,7 +32,6 @@ public class VentanaCertificados extends JFrame {
         panelPrincipal.setBackground(VentanaMenu.COLOR_FONDO);
         panelPrincipal.add(VentanaMenu.crearHeader("EMISION DE CERTIFICADOS"), BorderLayout.NORTH);
 
-        // Panel de controles
         JPanel panelControles = new JPanel(new GridLayout(2, 1, 0, 6));
         panelControles.setBackground(Color.WHITE);
         panelControles.setBorder(BorderFactory.createEmptyBorder(12, 15, 12, 15));
@@ -59,7 +58,6 @@ public class VentanaCertificados extends JFrame {
         panelControles.add(filaRut);
         panelControles.add(filaTipo);
 
-        // Area del certificado
         areaCertificado = new JTextArea();
         areaCertificado.setEditable(false);
         areaCertificado.setFont(new Font("Courier New", Font.PLAIN, 12));
@@ -114,7 +112,7 @@ public class VentanaCertificados extends JFrame {
             sb.append(String.format("%-22s: %s\n",   "RUT",              p.getRut()));
             sb.append(String.format("%-22s: %s %s\n","NOMBRES",          p.getPrimerNombre(),   p.getSegundoNombre()));
             sb.append(String.format("%-22s: %s %s\n","APELLIDOS",        p.getPrimerApellido(), p.getSegundoApellido()));
-            sb.append(String.format("%-22s: %d/%d/%d\n","FECHA NACIMIENTO", p.getDiaNacimiento(), p.getMesNacimiento(), p.getAÃ±oNacimiento()));
+            sb.append(String.format("%-22s: %d/%d/%d\n","FECHA NACIMIENTO", p.getDiaNacimiento(), p.getMesNacimiento(), p.getAñoNacimiento()));
             sb.append(String.format("%-22s: %s\n",   "SEXO",             p.getSexo()));
             sb.append(String.format("%-22s: %s\n",   "REGION",           region));
             if (p.getPadre() != null) {
