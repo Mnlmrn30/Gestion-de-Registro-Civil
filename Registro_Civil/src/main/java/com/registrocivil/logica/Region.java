@@ -24,9 +24,7 @@ public class Region {
     public List<Persona> getCiudadanos(){
         return java.util.Collections.unmodifiableList(ciudadanos); 
     }
-    public void setCiudadanos(ArrayList<Persona> ciudadanos){
-        this.ciudadanos = ciudadanos;
-    }
+
     public void agregarCiudadano(Persona p){
         this.ciudadanos.add(p); 
     }

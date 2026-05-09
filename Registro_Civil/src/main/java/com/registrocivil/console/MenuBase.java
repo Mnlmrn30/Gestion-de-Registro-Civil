@@ -4,7 +4,7 @@ import com.registrocivil.logica.*;
 import java.io.*; 
 
 // Superclase de los menus en consola. 
-public class MenuBase {
+public abstract class MenuBase {
     protected GestionSistema sistema; 
     protected BufferedReader lector; 
     
@@ -13,7 +13,5 @@ public class MenuBase {
         this.lector = lector; 
     }
     
-    public void iniciar() throws Exception{
-        System.out.println("\n===== SISTEMA DE REGISTRO CIVIL ====="); 
-    }
+    public abstract void iniciar() throws Exception;
 }
